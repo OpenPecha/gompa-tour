@@ -1,113 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/states/language_state.dart';
+import 'package:gompa_tour/states/theme_mode_state.dart';
+
+import 'config/go_router.dart';
+import 'config/style.dart';
+import 'l10n/l10n.dart';
+import 'l10n/localization_delegate.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Gompa tour',
-      theme: ThemeData(
-        primaryColor: Colors.blue,
-        scaffoldBackgroundColor: Colors.grey[100],
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const PilgrimageHome(),
-    );
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ThemeModeState currentTheme = ref.watch(themeProvider);
+    final LanguageState currentLanguage = ref.watch(languageProvider);
 
-class PilgrimageHome extends StatelessWidget {
-  const PilgrimageHome({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Gompa Tour'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildCard(
-              'Pilgrimage',
-              'assets/images/buddha.png',
-            ),
-            const SizedBox(height: 16),
-            _buildCard(
-              'Organization',
-              'assets/images/potala2.png',
-            ),
-            const SizedBox(height: 16),
-            _buildCard(
-              'Festival',
-              'assets/images/duchen.png',
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-      // bottom navigation bar with 5 items as home, map, qr code, search and settings
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.qr_code),
-            label: 'QR Code',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCard(String title, String imagePath) {
-    return Card(
-      color: Colors.blue,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Image.asset(
-              imagePath,
-              fit: BoxFit.contain,
-              height: 150,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return MaterialApp.router(
+      title: 'Gonpa Tour',
+      locale: Locale(currentLanguage.currentLanguage),
+      theme: Style.lightTheme,
+      darkTheme: Style.darkTheme,
+      themeMode: currentTheme.themeMode,
+      localizationsDelegates: [
+        MaterialLocalizationTbDelegate(),
+        AppLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      supportedLocales: L10n.all,
+      debugShowCheckedModeBanner: false,
+      routerConfig: router,
     );
   }
 }
