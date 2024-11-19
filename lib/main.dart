@@ -7,10 +7,13 @@ import 'package:gompa_tour/states/theme_mode_state.dart';
 
 import 'config/go_router.dart';
 import 'config/style.dart';
+import 'helper/database_helper.dart';
 import 'l10n/l10n.dart';
 import 'l10n/localization_delegate.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDatabase();
   runApp(const ProviderScope(child: MyApp()));
 }
 
