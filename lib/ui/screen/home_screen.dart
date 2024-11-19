@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/ui/screen/list_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -12,46 +13,22 @@ class HomeScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Image.asset(
-            'assets/images/logo.png',
-            width: 100,
-            height: 100,
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Explore Monastery Wonders on Your Pilgrimage.',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Welcome to monastery tour!',
-            style: TextStyle(
-              color: Colors.blue,
-              fontSize: 20,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
           _buildCard(
-            'Pilgrimage',
-            'letters and sounds.',
+            'Deties',
             'assets/images/buddha.png',
+            context,
           ),
           const SizedBox(height: 16),
           _buildCard(
-            'Organization',
-            'letters, sounds and map.',
+            'Gompa',
             'assets/images/potala2.png',
+            context,
           ),
           const SizedBox(height: 16),
           _buildCard(
             'Festival',
-            'letters and sounds.',
             'assets/images/duchen.png',
+            context,
           ),
           const SizedBox(height: 32),
         ],
@@ -59,43 +36,55 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCard(String title, String subtitle, String imagePath) {
-    return Card(
-      color: Colors.blue,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Image.asset(
-              imagePath,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Icon(Icons.qr_code, color: Colors.white),
-                Icon(Icons.map, color: Colors.white),
-                Icon(Icons.search, color: Colors.white),
+  Widget _buildCard(String title, String imagePath, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to the list of items screen
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ListScreen(
+              items: [
+                Item(
+                    title: 'ZhangzhungDrenpaNamkha',
+                    description:
+                        'ZhangzhungDrenpaNamkha was born to GrungyarMukhoe and ShazaGungzun at the silver palace of Garuda, Zhangzhung in 914 BCE.',
+                    imgUrl:
+                        'https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731301190TN977449.jpg'),
+                Item(
+                    title: 'Yellow Goddess Vasundra (Wealth-Granting Goddess)',
+                    description:
+                        ' The Yellow Goddess Vasundra has a yellow body with one face and two arms.',
+                    imgUrl:
+                        'https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1730443713TN208873.jpg'),
+
+                // Add more items here
               ],
             ),
-          ],
+          ),
+        );
+      },
+      child: Card(
+        color: Colors.blue,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Image.asset(
+                imagePath,
+                height: 140,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
