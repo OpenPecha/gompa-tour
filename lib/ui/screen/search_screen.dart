@@ -24,9 +24,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   // Recent searches
   final List<String> _recentSearches = [
-    'Coffee Shop Near Me',
-    'Italian Restaurant',
-    'Nearest Pharmacy'
+    'Sera',
+    'Tashi',
+    'Golden',
   ];
 
   @override
@@ -40,8 +40,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
+    return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -152,7 +151,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           )
         ],
       ),
-    ));
+    );
   }
 
   @override
