@@ -14,27 +14,21 @@ class SettingsScreen extends ConsumerWidget {
     final language = ref.watch(languageProvider).currentLanguage;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        elevation: 0,
-      ),
-      body: ListView(
-        children: [
-          const SizedBox(height: 16),
-          _buildSectionHeader(context, 'Appearance'),
-          _buildThemeSelector(context, ref, themeMode),
-          const SizedBox(height: 24),
-          _buildSectionHeader(context, 'Language'),
-          _buildLanguageSelector(context, ref, language),
-          const SizedBox(height: 24),
-          _buildSectionHeader(context, 'Support'),
-          _buildSupportSection(context),
-          const SizedBox(height: 24),
-          _buildSectionHeader(context, 'Legal'),
-          _buildLegalSection(context),
-        ],
-      ),
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      children: [
+        _buildSectionHeader(context, 'Appearance'),
+        _buildThemeSelector(context, ref, themeMode),
+        const SizedBox(height: 24),
+        _buildSectionHeader(context, 'Language'),
+        _buildLanguageSelector(context, ref, language),
+        const SizedBox(height: 24),
+        _buildSectionHeader(context, 'Support'),
+        _buildSupportSection(context),
+        const SizedBox(height: 24),
+        _buildSectionHeader(context, 'Legal'),
+        _buildLegalSection(context),
+      ],
     );
   }
 
