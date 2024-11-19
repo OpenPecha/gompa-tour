@@ -7,19 +7,34 @@ GonpaTour is a mobile application built with Flutter that allows users to view, 
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
-2. [Features](#features)
-3. [Project Structure](#project-structure)
-4. [Libraries Used](#libraries-used)
-5. [Installation and Setup](#installation-and-setup)
-6. [Usage](#usage)
-7. [Contributing](#contributing)
-8. [License](#license)
+2. [Demo](#demo)
+3. [Features](#features)
+4. [Project Structure](#project-structure)
+5. [Libraries Used](#libraries-used)
+6. [Installation and Setup](#installation-and-setup)
+7. [Usage](#usage)
+8. [Contributing](#contributing)
+9. [License](#license)
 
 ---
 
 ## Project Overview
 
 GonpaTour enables users to discover and explore various monasteries and organizations, presenting rich multimedia content such as text descriptions, audio recordings, and images. Users can search, view, or scan for specific information, making it a valuable tool for learning and exploration.
+
+## Demo
+
+<table>
+  <tr>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/main/demo/1.jpeg?raw=true" alt="Screenshot 1" width="240"></td>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/main/demo/2.jpeg?raw=true" alt="Screenshot 2" width="240"></td>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/main/demo/3.jpeg?raw=true" alt="Screenshot 3" width="240"></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/main/demo/4.jpeg?raw=true" alt="Screenshot 4" width="240"></td>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/main/demo/5.jpeg?raw=true" alt="Screenshot 5" width="240"></td>
+  </tr>
+</table>
 
 ---
 
