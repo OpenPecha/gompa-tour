@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/states/language_state.dart';
+import 'package:gompa_tour/ui/widget/audio_player.dart';
+import 'package:gompa_tour/ui/widget/flutter_tts_speaker.dart';
 
 class DetailsScreen extends StatelessWidget {
   final String title;
@@ -29,15 +32,27 @@ class DetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Center(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
-              Image.network(imageUrl),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  imageUrl,
+                  width: double.infinity,
+                  height: 400,
+                  fit: BoxFit.contain,
+                ),
+              ),
               const SizedBox(height: 16),
-              // AudioPlayerWidget(audioUrl: audioUrl),
+              SpeakerWidget(audioUrl: audioUrl, description: description),
               const SizedBox(height: 16),
               Text(
                 description,
@@ -59,52 +74,21 @@ class DetailsScreen extends StatelessWidget {
   }
 }
 
-// class AudioPlayerWidget extends StatefulWidget {
-//   final String audioUrl;
+class SpeakerWidget extends ConsumerWidget {
+  final String audioUrl;
+  final String description;
 
-//   AudioPlayerWidget({required this.audioUrl});
+  const SpeakerWidget(
+      {super.key, required this.audioUrl, required this.description});
 
-//   @override
-//   _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
-// }
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LanguageState currentLanguage = ref.watch(languageProvider);
 
-// class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
-//   late AudioPlayer _audioPlayer;
-//   bool isPlaying = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _audioPlayer = AudioPlayer();
-//   }
-
-//   @override
-//   void dispose() {
-//     _audioPlayer.dispose();
-//     super.dispose();
-//   }
-
-//   void _togglePlayPause() {
-//     if (isPlaying) {
-//       _audioPlayer.pause();
-//     } else {
-//       _audioPlayer.play(widget.audioUrl);
-//     }
-//     setState(() {
-//       isPlaying = !isPlaying;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       children: [
-//         IconButton(
-//           icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-//           onPressed: _togglePlayPause,
-//         ),
-//         Text(isPlaying ? 'Pause' : 'Play'),
-//       ],
-//     );
-//   }
-// }
+    return currentLanguage.currentLanguage == "en"
+        ? FlutterTtsSpeaker(
+            text: description,
+          )
+        : AudioPlayerWidget(audioUrl: audioUrl);
+  }
+}
