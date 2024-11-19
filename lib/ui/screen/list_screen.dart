@@ -32,6 +32,8 @@ class ListScreen extends StatelessWidget {
               );
             },
             child: Card(
+              shadowColor: Theme.of(context).colorScheme.shadow,
+              color: Theme.of(context).colorScheme.surfaceContainer,
               margin: const EdgeInsets.only(
                   left: 16, right: 16, top: 16, bottom: 0),
               child: Padding(

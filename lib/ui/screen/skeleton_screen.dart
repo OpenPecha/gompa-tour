@@ -33,8 +33,7 @@ class SkeletonScreen extends ConsumerWidget {
           ? AppBar(
               title: Text(currentTab['title']),
               centerTitle: true,
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              elevation: 0,
+              elevation: 1,
             )
           : null,
       body: AnimatedSwitcher(
