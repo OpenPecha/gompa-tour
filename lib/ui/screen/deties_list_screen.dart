@@ -78,19 +78,6 @@ class _DetiesListScreenState extends ConsumerState<DetiesListScreen> {
                   onTap: () {
                     ref.read(selectedDeityProvider.notifier).state = deity;
                     context.push(DeityDetailScreen.routeName);
-                    // Navigate to the detail screen of the item
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => DetailsScreen(
-                    //       title: items[index].title,
-                    //       imageUrl: items[index].imgUrl,
-                    //       audioUrl:
-                    //       'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-                    //       description: items[index].description,
-                    //       qrData: items[index].title,
-                    //     ),
-                    //   ),
-                    // );
                   },
                   child: Card(
                     shadowColor: Theme.of(context).colorScheme.shadow,

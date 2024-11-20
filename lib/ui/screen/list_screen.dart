@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gompa_tour/ui/screen/details_screen.dart';
+import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 
 class ListScreen extends StatelessWidget {
   final List<Item> items;
@@ -9,9 +10,7 @@ class ListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('List of Items'),
-      ),
+      appBar: const GonpaAppBar(title: 'List of Items'),
       body: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
