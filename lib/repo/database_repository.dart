@@ -21,6 +21,16 @@ class DatabaseRepository<T> {
     return maps.map((map) => fromMap(map)).toList();
   }
 
+  Future<List<T>> getAllPaginated(int page, int pageSize) async {
+    final db = await dbHelper.database;
+    final maps = await db.query(
+      tableName,
+      limit: pageSize,
+      offset: page * pageSize,
+    );
+    return maps.map((map) => fromMap(map)).toList();
+  }
+
   Future<T?> getById(int id) async {
     final db = await dbHelper.database;
     final maps = await db.query(
