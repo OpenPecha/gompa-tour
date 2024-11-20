@@ -31,6 +31,19 @@ class DatabaseRepository<T> {
     return maps.map((map) => fromMap(map)).toList();
   }
 
+  Future<T?> getBySlug(String slug) async {
+    final db = await dbHelper.database;
+    final maps = await db.query(
+      tableName,
+      where: 'slug = ?',
+      whereArgs: [slug],
+    );
+    if (maps.isNotEmpty) {
+      return fromMap(maps.first);
+    }
+    return null;
+  }
+
   Future<T?> getById(int id) async {
     final db = await dbHelper.database;
     final maps = await db.query(

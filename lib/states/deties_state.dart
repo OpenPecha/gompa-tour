@@ -29,6 +29,10 @@ class DeityNotifier extends StateNotifier<List<Deity>> {
     final newDeties = await repository.getAllPaginated(page, pageSize);
     state = [...state, ...newDeties];
   }
+
+  Future<Deity?> fetchDeityBySlug(String slug) async {
+    return await repository.getBySlug(slug);
+  }
 }
 
 final selectedDeityProvider = StateProvider<Deity?>((ref) => null);
