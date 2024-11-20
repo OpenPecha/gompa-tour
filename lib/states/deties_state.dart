@@ -33,6 +33,15 @@ class DeityNotifier extends StateNotifier<List<Deity>> {
   Future<Deity?> fetchDeityBySlug(String slug) async {
     return await repository.getBySlug(slug);
   }
+
+  Future<void> searchDeities(String query) async {
+    final results = await repository.searchByTitleAndContent(query);
+    state = results;
+  }
+
+  void clearSearchResults() {
+    state = [];
+  }
 }
 
 final selectedDeityProvider = StateProvider<Deity?>((ref) => null);

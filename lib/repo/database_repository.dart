@@ -54,6 +54,28 @@ class DatabaseRepository<T> {
     return maps.isNotEmpty ? fromMap(maps.first) : null;
   }
 
+  Future<List<T>> searchByTitleAndContent(String query) async {
+    final db = await dbHelper.database;
+    final escapedQuery = query.replaceAll("'", "''");
+
+    final rawQuery = '''
+    SELECT *, 
+    CASE 
+      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(enContent) LIKE LOWER('%$escapedQuery%') THEN 2
+      ELSE 3
+    END AS match_priority
+    FROM $tableName
+    WHERE 
+      LOWER(enTitle) LIKE LOWER('%$escapedQuery%') OR 
+      LOWER(enContent) LIKE LOWER('%$escapedQuery%')
+    ORDER BY match_priority ASC
+  ''';
+
+    final maps = await db.rawQuery(rawQuery);
+    return maps.map((map) => fromMap(map)).toList();
+  }
+
   Future<int> insert(T item) async {
     final db = await dbHelper.database;
     return await db.insert(

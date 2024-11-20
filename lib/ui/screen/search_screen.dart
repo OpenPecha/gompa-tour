@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/states/deties_state.dart';
+import '../../states/recent_search.dart';
+import '../../util/search_debouncer.dart';
+import '../widget/deity_card_item.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -11,23 +15,17 @@ class SearchScreen extends ConsumerStatefulWidget {
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  final _searchDebouncer = SearchDebouncer();
 
   // Suggestion categories
   final List<Map<String, IconData>> _suggestions = [
-    {'Sera Jey': Icons.house},
-    {'Tashi Lundup': Icons.temple_buddhist},
+    {'Acharya': Icons.house},
+    {'Buddha': Icons.temple_buddhist},
     {'Gaden': Icons.temple_hindu},
-    {'Sera Mey': Icons.account_balance},
-    {'Drepung': Icons.account_balance_wallet},
-    {'Gyuto': Icons.account_balance_wallet},
-  ];
-
-  // Recent searches
-  final List<String> _recentSearches = [
-    'Sera',
-    'Tashi',
-    'Golden',
-  ];
+    {'Arya': Icons.account_balance},
+    {'King': Icons.account_balance_wallet},
+    {'Milarepa': Icons.account_balance_wallet},
+  ]..shuffle();
 
   @override
   void initState() {
@@ -38,8 +36,27 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     });
   }
 
+  void _performSearch(String query) async {
+    if (query.isEmpty || query.length < 3) {
+      _clearSearchResults();
+      return;
+    }
+
+    _searchDebouncer.run(
+      query,
+      onSearch: (q) =>
+          ref.read(detiesNotifierProvider.notifier).searchDeities(q),
+      onSaveSearch: (q) =>
+          ref.read(recentSearchesProvider.notifier).addSearch(q),
+      onClearResults: _clearSearchResults,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final searchResults = ref.watch(detiesNotifierProvider);
+    final recentSearches = ref.watch(recentSearchesProvider);
+
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +75,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           _searchController.clear();
-                          setState(() {});
+                          _clearSearchResults();
                         },
                       )
                     : null,
@@ -67,88 +84,111 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 ),
               ),
               onChanged: (value) {
-                setState(() {});
+                _performSearch(value);
               },
             ),
           ),
-          // Recent Searches Section
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Recent Searches',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+          if (searchResults.isEmpty) ...[
+            // Recent Searches Section
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Recent Searches',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              children: _recentSearches
-                  .map((search) => Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Chip(
-                          label: Text(search),
-                          onDeleted: () {
-                            setState(() {
-                              _recentSearches.remove(search);
-                            });
-                          },
-                        ),
-                      ))
-                  .toList(),
-            ),
-          ),
-          // Suggestions Section
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Text(
-              'Suggestions',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 1,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: _suggestions.length,
-              itemBuilder: (context, index) {
-                final suggestion = _suggestions[index];
-                return GestureDetector(
-                  onTap: () {
-                    _searchController.text = suggestion.keys.first;
-                  },
-                  child: Card(
-                    shadowColor: Theme.of(context).colorScheme.shadow,
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    elevation: 4,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(suggestion.values.first, size: 40),
-                        const SizedBox(height: 8),
-                        Text(
-                          suggestion.keys.first,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
+            recentSearches.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    child: Center(child: Text('No recent searches')),
+                  )
+                : SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      children: recentSearches
+                          .map((search) => Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: RawChip(
+                                  label: Text(search),
+                                  onDeleted: () {
+                                    ref
+                                        .read(recentSearchesProvider.notifier)
+                                        .removeSearch(search);
+                                  },
+                                  onPressed: () {
+                                    _searchController.text = search;
+                                    _performSearch(search);
+                                  },
+                                ),
+                              ))
+                          .toList(),
                     ),
                   ),
-                );
-              },
+            // Suggestions Section
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                'Suggestions',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          )
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: _suggestions.length,
+                itemBuilder: (context, index) {
+                  final suggestion = _suggestions[index];
+                  return GestureDetector(
+                    onTap: () {
+                      _searchController.text = suggestion.keys.first;
+                      _performSearch(suggestion.keys.first);
+                    },
+                    child: Card(
+                      shadowColor: Theme.of(context).colorScheme.shadow,
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      elevation: 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(suggestion.values.first, size: 40),
+                          const SizedBox(height: 8),
+                          Text(
+                            suggestion.keys.first,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Search Results Section
+          ] else ...[
+            Expanded(
+              child: ListView.builder(
+                itemCount: searchResults.length,
+                itemBuilder: (context, index) {
+                  final deity = searchResults[index];
+                  return DeityCardItem(deity: deity);
+                },
+              ),
+            )
+          ]
         ],
       ),
     );
@@ -158,6 +198,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _searchDebouncer.dispose();
     super.dispose();
+  }
+
+  void _clearSearchResults() {
+    ref.read(detiesNotifierProvider.notifier).clearSearchResults();
   }
 }
