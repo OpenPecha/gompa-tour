@@ -91,7 +91,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       child: GestureDetector(
         onTap: () => ref.read(selectedOrganizationProvider.notifier).state =
             organization,
-        child: const Icon(Icons.location_pin, color: Colors.red, size: 50),
+        child: Image.asset('assets/images/marker-icon.png'),
       ),
     );
   }

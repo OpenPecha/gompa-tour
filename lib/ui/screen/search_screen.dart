@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/states/deties_state.dart';
+import 'package:gompa_tour/states/search_state.dart';
+import 'package:gompa_tour/ui/widget/search_card_item.dart';
+
 import '../../states/recent_search.dart';
 import '../../util/search_debouncer.dart';
-import '../widget/deity_card_item.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -45,7 +46,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     _searchDebouncer.run(
       query,
       onSearch: (q) =>
-          ref.read(detiesNotifierProvider.notifier).searchDeities(q),
+          ref.read(searchNotifierProvider.notifier).searchAcrossTables(q),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
       onClearResults: _clearSearchResults,
@@ -54,7 +55,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final searchResults = ref.watch(detiesNotifierProvider);
+    final searchResults = ref.watch(searchNotifierProvider);
     final recentSearches = ref.watch(recentSearchesProvider);
 
     return SafeArea(
@@ -183,8 +184,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               child: ListView.builder(
                 itemCount: searchResults.length,
                 itemBuilder: (context, index) {
-                  final deity = searchResults[index];
-                  return DeityCardItem(deity: deity);
+                  final searchableItem = searchResults[index];
+
+                  return SearchCardItem(searchableItem: searchableItem);
                 },
               ),
             )
@@ -203,6 +205,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 
   void _clearSearchResults() {
-    ref.read(detiesNotifierProvider.notifier).clearSearchResults();
+    ref.read(searchNotifierProvider.notifier).clearSearchResults();
   }
 }
