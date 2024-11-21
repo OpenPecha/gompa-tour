@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gompa_tour/helper/localization_helper.dart';
 
 import '../../models/deity_model.dart';
 import '../../models/organization_model.dart';
@@ -44,7 +45,10 @@ class SearchCardItem extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        searchableItem.enTitle,
+                        context.localizedText(
+                          enText: searchableItem.enTitle,
+                          boText: searchableItem.tbTitle,
+                        ),
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -68,7 +72,12 @@ class SearchCardItem extends ConsumerWidget {
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
-                              searchableItem.enContent.substring(0, 50),
+                              context
+                                  .localizedText(
+                                    enText: searchableItem.enContent,
+                                    boText: searchableItem.tbContent,
+                                  )
+                                  .substring(0, 50),
                               style: const TextStyle(fontSize: 16),
                             ),
                           ),
