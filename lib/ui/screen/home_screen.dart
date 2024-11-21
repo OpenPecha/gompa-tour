@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gompa_tour/ui/screen/deties_list_screen.dart';
 import 'package:gompa_tour/ui/screen/list_screen.dart';
+import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -42,7 +44,10 @@ class HomeScreen extends ConsumerWidget {
       onTap: () {
         switch (title) {
           case 'Deties':
-            context.push('/deties-list');
+            context.push(DetiesListScreen.routeName);
+            return;
+          case 'Gompa':
+            context.push(OrganizationListScreen.routeName);
             return;
         }
         // Navigate to the list of items screen
