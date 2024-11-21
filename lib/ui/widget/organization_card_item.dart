@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/models/organization_model.dart';
 import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
@@ -28,7 +29,10 @@ class OrganizationCardItem extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                organization.enTitle,
+                context.localizedText(
+                  enText: organization.enTitle,
+                  boText: organization.tbTitle,
+                ),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -52,7 +56,10 @@ class OrganizationCardItem extends ConsumerWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      organization.enContent.substring(0, 50),
+                      context.localizedText(
+                        enText: organization.enContent.substring(0, 50),
+                        boText: organization.tbContent.substring(0, 50),
+                      ),
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),

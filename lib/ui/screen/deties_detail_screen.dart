@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 
@@ -22,7 +23,9 @@ class DeityDetailScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: GonpaAppBar(title: selectedDeity.enTitle),
+      appBar: GonpaAppBar(
+          title: context.localizedText(
+              enText: selectedDeity.enTitle, boText: selectedDeity.tbContent)),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
@@ -32,7 +35,10 @@ class DeityDetailScreen extends ConsumerWidget {
             children: [
               Center(
                 child: Text(
-                  selectedDeity.enTitle,
+                  context.localizedText(
+                    enText: selectedDeity.enTitle,
+                    boText: selectedDeity.tbTitle,
+                  ),
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -56,7 +62,10 @@ class DeityDetailScreen extends ConsumerWidget {
                     description: selectedDeity.enContent),
               const SizedBox(height: 16),
               Text(
-                selectedDeity.enContent,
+                context.localizedText(
+                  enText: selectedDeity.enContent,
+                  boText: selectedDeity.tbContent,
+                ),
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),

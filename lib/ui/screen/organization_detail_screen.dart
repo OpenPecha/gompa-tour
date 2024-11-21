@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
@@ -17,12 +18,14 @@ class OrganizationDetailScreen extends ConsumerWidget {
     if (selectedOrganization == null) {
       return const Scaffold(
         appBar: GonpaAppBar(title: 'Organization Detail'),
-        body: Center(child: Text('No Organization selected')),
+        body: Center(child: Text('No organization selected')),
       );
     }
-
     return Scaffold(
-      appBar: GonpaAppBar(title: selectedOrganization.enTitle),
+      appBar: GonpaAppBar(
+          title: context.localizedText(
+              enText: selectedOrganization.enTitle,
+              boText: selectedOrganization.tbContent)),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
@@ -32,7 +35,10 @@ class OrganizationDetailScreen extends ConsumerWidget {
             children: [
               Center(
                 child: Text(
-                  selectedOrganization.enTitle,
+                  context.localizedText(
+                    enText: selectedOrganization.enTitle,
+                    boText: selectedOrganization.tbTitle,
+                  ),
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -53,10 +59,15 @@ class OrganizationDetailScreen extends ConsumerWidget {
               if (selectedOrganization.sound != null)
                 SpeakerWidget(
                     audioUrl: selectedOrganization.sound!,
-                    description: selectedOrganization.enContent),
+                    description: context.localizedText(
+                        enText: selectedOrganization.enContent,
+                        boText: selectedOrganization.tbContent)),
               const SizedBox(height: 16),
               Text(
-                selectedOrganization.enContent,
+                context.localizedText(
+                  enText: selectedOrganization.enContent,
+                  boText: selectedOrganization.tbContent,
+                ),
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),
