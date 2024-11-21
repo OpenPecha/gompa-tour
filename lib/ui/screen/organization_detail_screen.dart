@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 
-import '../../states/deties_state.dart';
 import '../widget/speaker_widget.dart';
 
 class OrganizationDetailScreen extends ConsumerWidget {
@@ -12,9 +12,9 @@ class OrganizationDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedDeity = ref.watch(selectedDeityProvider);
+    final selectedOrganization = ref.watch(selectedOrganizationProvider);
 
-    if (selectedDeity == null) {
+    if (selectedOrganization == null) {
       return const Scaffold(
         appBar: GonpaAppBar(title: 'Organization Detail'),
         body: Center(child: Text('No Organization selected')),
@@ -22,7 +22,7 @@ class OrganizationDetailScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: GonpaAppBar(title: selectedDeity.enTitle),
+      appBar: GonpaAppBar(title: selectedOrganization.enTitle),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
@@ -32,7 +32,7 @@ class OrganizationDetailScreen extends ConsumerWidget {
             children: [
               Center(
                 child: Text(
-                  selectedDeity.enTitle,
+                  selectedOrganization.enTitle,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -43,20 +43,20 @@ class OrganizationDetailScreen extends ConsumerWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Hero(
-                  tag: selectedDeity.id,
+                  tag: selectedOrganization.id,
                   child: GonpaCacheImage(
-                    url: selectedDeity.pic,
+                    url: selectedOrganization.pic,
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              if (selectedDeity.sound != null)
+              if (selectedOrganization.sound != null)
                 SpeakerWidget(
-                    audioUrl: selectedDeity.sound!,
-                    description: selectedDeity.enContent),
+                    audioUrl: selectedOrganization.sound!,
+                    description: selectedOrganization.enContent),
               const SizedBox(height: 16),
               Text(
-                selectedDeity.enContent,
+                selectedOrganization.enContent,
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),
