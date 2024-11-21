@@ -55,9 +55,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final searchResults = ref.watch(searchNotifierProvider);
+    final searchState = ref.watch(searchNotifierProvider);
     final recentSearches = ref.watch(recentSearchesProvider);
 
+    if (searchState.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +94,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               },
             ),
           ),
-          if (searchResults.isEmpty) ...[
+          if (searchState.results.isEmpty) ...[
             // Recent Searches Section
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -182,9 +187,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           ] else ...[
             Expanded(
               child: ListView.builder(
-                itemCount: searchResults.length,
+                itemCount: searchState.results.length,
                 itemBuilder: (context, index) {
-                  final searchableItem = searchResults[index];
+                  final searchableItem = searchState.results[index];
 
                   return SearchCardItem(searchableItem: searchableItem);
                 },
