@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/ui/screen/deties_detail_screen.dart';
 import 'package:gompa_tour/util/qr_extractor.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -93,22 +94,6 @@ class _QrScreenState extends ConsumerState<QrScreen> {
   }
 
   void _processValidQrCode(QrCodeValidator qrCodeValidator) {
-    switch (qrCodeValidator.type) {
-      case QrType.tensum:
-        _handleTemsumQrCode(qrCodeValidator);
-        break;
-      case QrType.organization:
-        showGonpaSnackBar(context, 'Organization QR Code not handled');
-        //_resetScanner();
-        break;
-      default:
-        _resetScanner();
-        break;
-    }
-  }
-
-  void _handleTemsumQrCode(QrCodeValidator qrCodeValidator) {
-    // Show loading overlay
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -116,9 +101,19 @@ class _QrScreenState extends ConsumerState<QrScreen> {
         child: CircularProgressIndicator(),
       ),
     );
-
-    // Fetch deity details
-    _fetchDeityDetails(qrCodeValidator.urlValue!);
+    switch (qrCodeValidator.type) {
+      case QrType.tensum:
+        _fetchDeityDetails(qrCodeValidator.urlValue!);
+        return;
+      case QrType.organization:
+        _fetchOrganizationDetails(qrCodeValidator.urlValue!);
+        return;
+      default:
+        showGonpaSnackBar(context, 'Invalid QR Code');
+        Navigator.pop(context);
+        _resetScanner();
+        break;
+    }
   }
 
   Future<void> _fetchDeityDetails(String slug) async {
@@ -143,6 +138,32 @@ class _QrScreenState extends ConsumerState<QrScreen> {
       Navigator.of(context).pop();
 
       showGonpaSnackBar(context, 'Error fetching deity details');
+      _resetScanner();
+    }
+  }
+
+  Future<void> _fetchOrganizationDetails(String slug) async {
+    try {
+      final org = await ref
+          .read(organizationNotifierProvider.notifier)
+          .fetchOrganizationBySlug(slug);
+
+      // Dismiss loading dialog
+      Navigator.of(context).pop();
+
+      if (org != null) {
+        // Update selected deity and navigate
+        ref.read(selectedOrganizationProvider.notifier).state = org;
+        _navigateToDeityDetail();
+      } else {
+        showGonpaSnackBar(context, 'org not found');
+        _resetScanner();
+      }
+    } catch (e) {
+      // Dismiss loading dialog
+      Navigator.of(context).pop();
+
+      showGonpaSnackBar(context, 'Error fetching org details');
       _resetScanner();
     }
   }
