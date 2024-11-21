@@ -24,11 +24,21 @@ class MyApp extends ConsumerWidget {
     final ThemeModeState currentTheme = ref.watch(themeProvider);
     final LanguageState currentLanguage = ref.watch(languageProvider);
 
+    // Determine the font based on locale
+    ThemeData currentLightTheme = Style.lightTheme;
+    ThemeData currentDarkTheme = Style.darkTheme;
+
+    // Check if the language is Tibetan
+    if (currentLanguage.currentLanguage == 'bo') {
+      currentLightTheme = Style.getTibetanTheme(baseTheme: Style.lightTheme);
+      currentDarkTheme = Style.getTibetanTheme(baseTheme: Style.darkTheme);
+    }
+
     return MaterialApp.router(
       title: 'Gonpa Tour',
       locale: Locale(currentLanguage.currentLanguage),
-      theme: Style.lightTheme,
-      darkTheme: Style.darkTheme,
+      theme: currentLightTheme,
+      darkTheme: currentDarkTheme,
       themeMode: currentTheme.themeMode,
       localizationsDelegates: [
         MaterialLocalizationTbDelegate(),
