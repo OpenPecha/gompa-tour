@@ -29,6 +29,11 @@ class OrganizationNotifier extends StateNotifier<List<Organization>> {
   Future<void> fetchOrganizations() async {
     state = await repository.getAll();
   }
+
+  Future<void> fetchPaginatedOrganizations(int page, int pageSize) async {
+    final newOrganizations = await repository.getAllPaginated(page, pageSize);
+    state = [...state, ...newOrganizations];
+  }
 }
 
 final selectedOrganizationProvider =
