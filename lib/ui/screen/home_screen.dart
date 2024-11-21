@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/ui/screen/list_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -39,6 +40,11 @@ class HomeScreen extends ConsumerWidget {
   Widget _buildCard(String title, String imagePath, BuildContext context) {
     return GestureDetector(
       onTap: () {
+        switch (title) {
+          case 'Deties':
+            context.push('/deties-list');
+            return;
+        }
         // Navigate to the list of items screen
         Navigator.of(context).push(
           MaterialPageRoute(
