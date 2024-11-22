@@ -53,29 +53,22 @@ class Style {
     // Used for shadows and in this project also borders of cards
     shadowColor: Colors.black.withOpacity(.1),
     // Specific text styles and fonts
-    textTheme: ThemeData.light(useMaterial3: true).textTheme.apply(
-          fontFamily: 'Nunito',
-          displayColor: const Color(0xFF030712), // gray-950
-          bodyColor: const Color(0xFF111827), // gray-900
-        ),
-    primaryTextTheme: ThemeData.light(useMaterial3: true).textTheme.apply(
-          fontFamily: 'Nunito',
-          displayColor: Colors.white,
-          bodyColor: const Color(0xFFf9fafb), // gray-50
-        ),
+    textTheme: _getTextTheme(Brightness.light,
+        fontFamily: 'Nunito',
+        displayColor: const Color(0xFF030712),
+        bodyColor: const Color(0xFF111827)),
+    primaryTextTheme: _getTextTheme(Brightness.light,
+        fontFamily: 'Nunito',
+        displayColor: Colors.white,
+        bodyColor: const Color(0xFFf9fafb)),
     // Bottom navigation theme
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
       elevation: 2,
     ),
-    // Note: If different components are used you might need to provide specific styles for them
   );
 
-  // ===============
-  // | Dark Theme |
-  // ===============
-
-  /// The custom dark theme of this application
+  // Dark Theme remains similar
   static final ThemeData darkTheme =
       ThemeData.dark(useMaterial3: true).copyWith(
     // Light or dark mode
@@ -105,21 +98,55 @@ class Style {
     // Used for shadows and in this project also borders of cards
     shadowColor: Colors.white.withOpacity(.1),
     // Specific text styles and fonts
-    textTheme: ThemeData.dark(useMaterial3: true).textTheme.apply(
-          fontFamily: 'Nunito',
-          displayColor: const Color(0xFFf9fafb), // gray-50
-          bodyColor: const Color(0xFFf3f4f6), // gray-100
-        ),
-    primaryTextTheme: ThemeData.dark(useMaterial3: true).textTheme.apply(
-          fontFamily: 'Nunito',
-          displayColor: const Color(0xFF030712), // gray-950
-          bodyColor: const Color(0xFF111827), // gray-900
-        ),
+    textTheme: _getTextTheme(Brightness.dark,
+        fontFamily: 'Nunito',
+        displayColor: const Color(0xFFf9fafb),
+        bodyColor: const Color(0xFFf3f4f6)),
+    primaryTextTheme: _getTextTheme(Brightness.dark,
+        fontFamily: 'Nunito',
+        displayColor: const Color(0xFF030712),
+        bodyColor: const Color(0xFF111827)),
     // Bottom navigation theme
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Color(0xFF27272a), // zinc-800,
       elevation: 2,
     ),
-    // Note: If different components are used you might need to provide specific styles for them
   );
+
+  // New method to get text theme with dynamic font family
+  static TextTheme _getTextTheme(
+    Brightness brightness, {
+    required String fontFamily,
+    required Color displayColor,
+    required Color bodyColor,
+  }) {
+    return (brightness == Brightness.light
+            ? ThemeData.light(useMaterial3: true).textTheme
+            : ThemeData.dark(useMaterial3: true).textTheme)
+        .apply(
+      fontFamily: fontFamily,
+      displayColor: displayColor,
+      bodyColor: bodyColor,
+    );
+  }
+
+  // Method to get theme with custom font
+  static ThemeData getThemeWithFont({
+    required ThemeData baseTheme,
+    required String fontFamily,
+  }) {
+    return baseTheme.copyWith(
+      textTheme: baseTheme.textTheme.apply(fontFamily: fontFamily),
+      primaryTextTheme:
+          baseTheme.primaryTextTheme.apply(fontFamily: fontFamily),
+    );
+  }
+
+  // Specific method for Tibetan font
+  static ThemeData getTibetanTheme({
+    required ThemeData baseTheme,
+  }) {
+    return getThemeWithFont(
+        baseTheme: baseTheme, fontFamily: 'NotoSerifTibetan');
+  }
 }

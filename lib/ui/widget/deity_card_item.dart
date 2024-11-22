@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gompa_tour/helper/localization_helper.dart';
 
 import '../../models/deity_model.dart';
 import '../../states/deties_state.dart';
@@ -13,6 +14,8 @@ class DeityCardItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Locale locale = Localizations.localeOf(context);
+
     return GestureDetector(
       onTap: () {
         ref.read(selectedDeityProvider.notifier).state = deity;
@@ -28,7 +31,10 @@ class DeityCardItem extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                deity.enTitle,
+                context.localizedText(
+                  enText: deity.enTitle,
+                  boText: deity.tbTitle,
+                ),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -52,7 +58,9 @@ class DeityCardItem extends ConsumerWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      deity.enContent.substring(0, 50),
+                      context.localizedText(
+                          enText: deity.enContent.substring(0, 50),
+                          boText: deity.tbContent.substring(0, 50)),
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
