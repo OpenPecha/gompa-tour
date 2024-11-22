@@ -1,4 +1,4 @@
-enum QrType { tensum, organization }
+enum QrType { tensum, organization, event }
 
 class QrCodeValidator {
   final String? error;
@@ -27,6 +27,8 @@ QrCodeValidator extractQrAndValidate(String url) {
       type = QrType.tensum;
     } else if (path == 'organization.php') {
       type = QrType.organization;
+    } else if (path == 'event.php') {
+      type = QrType.event;
     } else {
       return QrCodeValidator(
           error: 'Invalid URL path. Must be tensum or organization');
