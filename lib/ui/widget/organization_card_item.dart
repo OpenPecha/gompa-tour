@@ -6,6 +6,7 @@ import 'package:gompa_tour/models/organization_model.dart';
 import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
 
+import '../../config/constant.dart';
 import 'gonpa_cache_image.dart';
 
 class OrganizationCardItem extends ConsumerWidget {
@@ -57,8 +58,9 @@ class OrganizationCardItem extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       context.localizedText(
-                        enText: organization.enContent.substring(0, 50),
-                        boText: organization.tbContent.substring(0, 50),
+                        enText: organization.enContent,
+                        boText: organization.tbContent,
+                        maxLength: kDescriptionMaxLength,
                       ),
                       style: const TextStyle(fontSize: 16),
                     ),

@@ -7,6 +7,7 @@ import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:gompa_tour/ui/widget/location_card.dart';
 
 import '../widget/address_card.dart';
+import '../widget/gonap_qr_card.dart';
 import '../widget/speaker_widget.dart';
 
 class OrganizationDetailScreen extends ConsumerWidget {
@@ -70,7 +71,8 @@ class OrganizationDetailScreen extends ConsumerWidget {
                   enText: selectedOrganization.enContent,
                   boText: selectedOrganization.tbContent,
                 ),
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(
+                    fontSize: 16, height: context.getLocalizedHeight()),
               ),
               const SizedBox(height: 16),
               AddressCard(
@@ -82,14 +84,10 @@ class OrganizationDetailScreen extends ConsumerWidget {
               LocationCard(
                 address: selectedOrganization,
               ),
-
-              // Center(
-              //   child: QrImage(
-              //     data: qrData,
-              //     version: QrVersions.auto,
-              //     size: 200.0,
-              //   ),
-              // ),
+              ...[
+                const SizedBox(height: 16),
+                GonpaQRCard(slug: selectedOrganization.slug)
+              ],
             ],
           ),
         ),

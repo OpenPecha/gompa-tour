@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,16 +18,16 @@ class SettingsScreen extends ConsumerWidget {
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
-        _buildSectionHeader(context, 'Appearance'),
+        _buildSectionHeader(context, AppLocalizations.of(context)!.settings),
         _buildThemeSelector(context, ref, themeMode),
         const SizedBox(height: 24),
-        _buildSectionHeader(context, 'Language'),
+        _buildSectionHeader(context, AppLocalizations.of(context)!.language),
         _buildLanguageSelector(context, ref, language),
         const SizedBox(height: 24),
-        _buildSectionHeader(context, 'Support'),
+        _buildSectionHeader(context, AppLocalizations.of(context)!.support),
         _buildSupportSection(context),
         const SizedBox(height: 24),
-        _buildSectionHeader(context, 'Legal'),
+        _buildSectionHeader(context, AppLocalizations.of(context)!.legal),
         _buildLegalSection(context),
       ],
     );
@@ -56,7 +57,7 @@ class SettingsScreen extends ConsumerWidget {
             context,
             ref,
             ThemeMode.system,
-            'System',
+            AppLocalizations.of(context)!.system,
             Icons.brightness_auto,
             currentTheme,
           ),
@@ -65,7 +66,7 @@ class SettingsScreen extends ConsumerWidget {
             context,
             ref,
             ThemeMode.light,
-            'Light',
+            AppLocalizations.of(context)!.light,
             Icons.light_mode,
             currentTheme,
           ),
@@ -74,7 +75,7 @@ class SettingsScreen extends ConsumerWidget {
             context,
             ref,
             ThemeMode.dark,
-            'Dark',
+            AppLocalizations.of(context)!.dark,
             Icons.dark_mode,
             currentTheme,
           ),
@@ -174,14 +175,14 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           _buildSupportOption(
             context,
-            'FAQ',
+            AppLocalizations.of(context)!.faq,
             Icons.help_outline,
             () => _showFAQDialog(context),
           ),
           const Divider(height: 1),
           _buildSupportOption(
             context,
-            'Contact Us',
+            AppLocalizations.of(context)!.contactUs,
             Icons.contact_support,
             () => _showContactDialog(context),
           ),
@@ -213,7 +214,7 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           _buildSupportOption(
             context,
-            'Privacy Policy',
+            AppLocalizations.of(context)!.privacyPolicy,
             Icons.privacy_tip_outlined,
             () => _showPrivacyPolicyDialog(context),
           ),
@@ -256,7 +257,7 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Contact Support'),
+          title: Text(AppLocalizations.of(context)!.contactSupport),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,13 +279,13 @@ class SettingsScreen extends ConsumerWidget {
                     await launchUrl(emailLaunchUri);
                   }
                 },
-                child: const Text('Send Email'),
+                child: Text(AppLocalizations.of(context)!.sendEmail),
               ),
             ],
           ),
           actions: [
             TextButton(
-              child: const Text('Close'),
+              child: Text(AppLocalizations.of(context)!.close),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -298,7 +299,7 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Privacy Policy'),
+          title: Text(AppLocalizations.of(context)!.privacyPolicy),
           content: const SingleChildScrollView(
             child: Text(
               'We respect your privacy and are committed to protecting your personal data. '
@@ -307,7 +308,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           actions: [
             TextButton(
-              child: const Text('Close'),
+              child: Text(AppLocalizations.of(context)!.close),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 
+import '../../config/constant.dart';
 import '../../models/deity_model.dart';
 import '../../states/deties_state.dart';
 import '../screen/deties_detail_screen.dart';
@@ -59,8 +60,10 @@ class DeityCardItem extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       context.localizedText(
-                          enText: deity.enContent.substring(0, 50),
-                          boText: deity.tbContent.substring(0, 50)),
+                        enText: deity.enContent,
+                        boText: deity.tbContent,
+                        maxLength: kDescriptionMaxLength,
+                      ),
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
