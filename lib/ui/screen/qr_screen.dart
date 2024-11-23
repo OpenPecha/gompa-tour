@@ -108,6 +108,8 @@ class _QrScreenState extends ConsumerState<QrScreen> {
       case QrType.organization:
         _fetchOrganizationDetails(qrCodeValidator.urlValue!);
         return;
+      case QrType.event:
+        _fetchEventDetails(qrCodeValidator.urlValue!);
       default:
         showGonpaSnackBar(context, 'Invalid QR Code');
         Navigator.pop(context);
@@ -183,5 +185,9 @@ class _QrScreenState extends ConsumerState<QrScreen> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  void _fetchEventDetails(String s) {
+    throw UnimplementedError();
   }
 }
