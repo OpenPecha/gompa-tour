@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../helper/database_helper.dart';
+import '../models/deity_model.dart';
+import '../models/organization_model.dart';
 
 class DatabaseRepository<T> {
   final DatabaseHelper dbHelper;
@@ -21,6 +23,29 @@ class DatabaseRepository<T> {
     return maps.map((map) => fromMap(map)).toList();
   }
 
+  Future<List<T>> getAllPaginated(int page, int pageSize) async {
+    final db = await dbHelper.database;
+    final maps = await db.query(
+      tableName,
+      limit: pageSize,
+      offset: page * pageSize,
+    );
+    return maps.map((map) => fromMap(map)).toList();
+  }
+
+  Future<T?> getBySlug(String slug) async {
+    final db = await dbHelper.database;
+    final maps = await db.query(
+      tableName,
+      where: 'slug = ?',
+      whereArgs: [slug],
+    );
+    if (maps.isNotEmpty) {
+      return fromMap(maps.first);
+    }
+    return null;
+  }
+
   Future<T?> getById(int id) async {
     final db = await dbHelper.database;
     final maps = await db.query(
@@ -29,6 +54,28 @@ class DatabaseRepository<T> {
       whereArgs: [id],
     );
     return maps.isNotEmpty ? fromMap(maps.first) : null;
+  }
+
+  Future<List<T>> searchByTitleAndContent(String query) async {
+    final db = await dbHelper.database;
+    final escapedQuery = query.replaceAll("'", "''");
+
+    final rawQuery = '''
+    SELECT *, 
+    CASE 
+      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(enContent) LIKE LOWER('%$escapedQuery%') THEN 2
+      ELSE 3
+    END AS match_priority
+    FROM $tableName
+    WHERE 
+      LOWER(enTitle) LIKE LOWER('%$escapedQuery%') OR 
+      LOWER(enContent) LIKE LOWER('%$escapedQuery%')
+    ORDER BY match_priority ASC
+  ''';
+
+    final maps = await db.rawQuery(rawQuery);
+    return maps.map((map) => fromMap(map)).toList();
   }
 
   Future<int> insert(T item) async {
@@ -57,5 +104,68 @@ class DatabaseRepository<T> {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+}
+
+class SearchRepository {
+  final DatabaseHelper dbHelper;
+  SearchRepository({
+    required this.dbHelper,
+  });
+  Future<List<dynamic>> searchAcrossTables(String query) async {
+    final escapedQuery = query.replaceAll("'", "''");
+
+    // Query organizations with score
+    final organizationQuery = '''
+    SELECT *, 
+    CASE 
+      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(enContent) LIKE LOWER('%$escapedQuery%') THEN 2
+      ELSE 3 
+    END as match_score
+    FROM organization 
+    WHERE LOWER(enTitle) LIKE LOWER('%$escapedQuery%') 
+    OR LOWER(enContent) LIKE LOWER('%$escapedQuery%')
+  ''';
+
+    // Query deities with score
+    final deityQuery = '''
+    SELECT *, 
+    CASE 
+      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(enContent) LIKE LOWER('%$escapedQuery%') THEN 2
+      ELSE 3 
+    END as match_score
+    FROM tensum 
+    WHERE LOWER(enTitle) LIKE LOWER('%$escapedQuery%') 
+    OR LOWER(enContent) LIKE LOWER('%$escapedQuery%')
+  ''';
+
+    final db = await dbHelper.database;
+
+    final organizationMaps = await db.rawQuery(organizationQuery);
+    final deityMaps = await db.rawQuery(deityQuery);
+
+    // Convert to models while preserving scores
+    final organizations = organizationMaps.map((map) {
+      final score = map['match_score'] as int;
+      final mapWithoutScore = Map<String, dynamic>.from(map)
+        ..remove('match_score');
+      return (Organization.fromMap(mapWithoutScore), score);
+    }).toList();
+
+    final deities = deityMaps.map((map) {
+      final score = map['match_score'] as int;
+      final mapWithoutScore = Map<String, dynamic>.from(map)
+        ..remove('match_score');
+      return (Deity.fromMap(mapWithoutScore), score);
+    }).toList();
+
+    // Combine and sort by score
+    final combinedResults = [...organizations, ...deities];
+    combinedResults.sort((a, b) => a.$2.compareTo(b.$2)); // Sort by score
+
+    // Return just the models in sorted order
+    return combinedResults.map((tuple) => tuple.$1).toList();
   }
 }

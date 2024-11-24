@@ -1,5 +1,5 @@
 class Organization {
-  final int? id;
+  final int id;
   final int uid;
   final String tbTitle;
   final String enTitle;
@@ -25,7 +25,7 @@ class Organization {
   final DateTime updated;
 
   Organization({
-    this.id,
+    required this.id,
     required this.uid,
     required this.tbTitle,
     required this.enTitle,
@@ -53,7 +53,7 @@ class Organization {
 
   factory Organization.fromMap(Map<String, dynamic> map) {
     return Organization(
-      id: map['id'] as int?,
+      id: map['id'] as int,
       uid: map['uid'] as int,
       tbTitle: map['tbtitle'] as String,
       enTitle: map['entitle'] as String,

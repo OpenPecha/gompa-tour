@@ -1,8 +1,37 @@
 {
+     "appName": "Gonpa Tour",
      "home":"Home",
      "map":"Map",
      "qr":"QR",
      "search":"Search",
-     "settings":"Settings"
+     "settings":"Settings",
+     "appearance": "Appearance",
+     "language": "Language",
+     "support" : "Support",
+     "legal":"Legal",
+     "system":"System",
+     "dark":"Dark",
+     "light":"Light",
+     "faq":"FAQ",
+     "contactUs":"Contact Us",
+     "privacyPolicy":"Privacy Policy",
+     "contactSupport":"Contact Support",
+     "sendEmail" : "Send Email",
+     "close":"Close",
+     "recentSearches":"Recent Search",
+     "suggestion":"Suggestion",
+     "detail":"Detail",
+     "deities": "Deities",
+     "organizations": "Organizations",
+     "festival": "Festival",
+     "deity": "Deity",
+     "organization": "Organization",
+     "scanQrCode": "Scan QR Code",
+     "address": "Address",
+     "location": "Location"
+
+
+
+
 
 }

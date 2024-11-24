@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/ui/screen/qr_screen.dart';
 import 'package:gompa_tour/ui/screen/search_screen.dart';
@@ -17,7 +18,7 @@ class SkeletonScreen extends ConsumerWidget {
     final int? navIndex = ref.watch(bottomNavProvider) as int?;
 
     // Tab configuration
-    List<Map<String, dynamic>> tabConfigurations = _tabConfiguration();
+    List<Map<String, dynamic>> tabConfigurations = _tabConfiguration(context);
     final currentTab = tabConfigurations[navIndex ?? 1];
     const List<Widget> pageNavigation = <Widget>[
       HomeScreen(),
@@ -45,20 +46,20 @@ class SkeletonScreen extends ConsumerWidget {
     );
   }
 
-  List<Map<String, dynamic>> _tabConfiguration() {
+  List<Map<String, dynamic>> _tabConfiguration(BuildContext context) {
     return [
       {
-        'title': 'Gonpa Tour',
+        'title': AppLocalizations.of(context)!.appName,
         'icon': Icons.home,
         'screen': const HomeScreen(),
       },
       {
-        'title': 'Map',
+        'title': AppLocalizations.of(context)!.map,
         'icon': Icons.map,
         'screen': const MapScreen(),
       },
       {
-        'title': 'QR Scanner',
+        'title': AppLocalizations.of(context)!.qr,
         'icon': Icons.qr_code_scanner,
         'screen': const QrScreen(),
       },
@@ -68,7 +69,7 @@ class SkeletonScreen extends ConsumerWidget {
         'screen': const SearchScreen(),
       },
       {
-        'title': 'Settings',
+        'title': AppLocalizations.of(context)!.settings,
         'icon': Icons.settings,
         'screen': const SettingsScreen(),
       },

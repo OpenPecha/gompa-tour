@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/database_helper.dart';
+import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/models/organization_model.dart';
+import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
+import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../config/constant.dart';
@@ -91,7 +96,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       child: GestureDetector(
         onTap: () => ref.read(selectedOrganizationProvider.notifier).state =
             organization,
-        child: const Icon(Icons.location_pin, color: Colors.red, size: 50),
+        child: Image.asset('assets/images/marker-icon.png'),
       ),
     );
   }
@@ -112,7 +117,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).colorScheme.onSurface,
-              blurRadius: 10,
+              blurRadius: 5,
               offset: const Offset(0, 4),
             ),
           ],
@@ -123,10 +128,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(15)),
-              child: Image.asset(
-                'assets/images/buddha.png',
-                height: 150,
-                fit: BoxFit.cover,
+              child: Hero(
+                tag: selectedOrganization.id,
+                child: GonpaCacheImage(
+                  url: selectedOrganization.pic,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             Padding(
@@ -142,8 +150,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Some description',
+                  Text(
+                    context.localizedText(
+                      enText: selectedOrganization.enContent,
+                      boText: selectedOrganization.tbContent,
+                      maxLength: kDescriptionMaxLength,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -151,15 +163,18 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          // Navigate to details page
+                          ref
+                              .read(selectedOrganizationProvider.notifier)
+                              .state = selectedOrganization;
+                          context.push(OrganizationDetailScreen.routeName);
                         },
-                        child: const Text('Details'),
+                        child: Text(AppLocalizations.of(context)!.detail),
                       ),
                       TextButton(
                         onPressed: () => ref
                             .read(selectedOrganizationProvider.notifier)
                             .state = null,
-                        child: const Text('Close'),
+                        child: Text(AppLocalizations.of(context)!.close),
                       ),
                     ],
                   ),
