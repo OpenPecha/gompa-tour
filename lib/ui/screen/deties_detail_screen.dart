@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
+import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 
@@ -14,6 +15,7 @@ class DeityDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDeity = ref.watch(selectedDeityProvider);
+    final height = MediaQuery.of(context).size.height;
 
     if (selectedDeity == null) {
       return const Scaffold(
@@ -66,16 +68,13 @@ class DeityDetailScreen extends ConsumerWidget {
                   enText: selectedDeity.enContent,
                   boText: selectedDeity.tbContent,
                 ),
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(
+                    fontSize: 16, height: context.getLocalizedHeight()),
               ),
-              const SizedBox(height: 16),
-              // Center(
-              //   child: QrImage(
-              //     data: qrData,
-              //     version: QrVersions.auto,
-              //     size: 200.0,
-              //   ),
-              // ),
+              if (selectedDeity.slug != null) ...[
+                const SizedBox(height: 16),
+                GonpaQRCard(slug: selectedDeity.slug!)
+              ],
             ],
           ),
         ),

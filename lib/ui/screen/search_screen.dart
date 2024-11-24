@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/states/search_state.dart';
 import 'package:gompa_tour/ui/widget/search_card_item.dart';
@@ -74,7 +75,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               focusNode: _searchFocusNode,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: 'Search',
+                hintText: AppLocalizations.of(context)!.search,
+                hintStyle: TextStyle(
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                ),
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -96,16 +101,20 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           ),
           if (searchState.results.isEmpty) ...[
             // Recent Searches Section
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
               child: Text(
-                'Recent Searches',
-                style: TextStyle(
+                AppLocalizations.of(context)!.recentSearches,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
+
             recentSearches.isEmpty
                 ? const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -120,7 +129,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           .map((search) => Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: RawChip(
-                                  label: Text(search),
+                                  label: Text(
+                                    search,
+                                    style: const TextStyle(
+                                      fontFamily: 'Roboto',
+                                    ),
+                                  ),
                                   onDeleted: () {
                                     ref
                                         .read(recentSearchesProvider.notifier)
@@ -136,11 +150,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     ),
                   ),
             // Suggestions Section
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
-                'Suggestions',
-                style: TextStyle(
+                AppLocalizations.of(context)!.suggestion,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -174,7 +189,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           const SizedBox(height: 8),
                           Text(
                             suggestion.keys.first,
-                            style: const TextStyle(fontSize: 12),
+                            style: const TextStyle(
+                                fontSize: 12, fontFamily: 'Roboto'),
                           ),
                         ],
                       ),

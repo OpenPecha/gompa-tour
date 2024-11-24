@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/database_helper.dart';
+import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/models/organization_model.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
@@ -115,7 +116,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).colorScheme.onSurface,
-              blurRadius: 10,
+              blurRadius: 5,
               offset: const Offset(0, 4),
             ),
           ],
@@ -148,8 +149,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Some description',
+                  Text(
+                    context.localizedText(
+                      enText: selectedOrganization.enContent,
+                      boText: selectedOrganization.tbContent,
+                      maxLength: kDescriptionMaxLength,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Row(
