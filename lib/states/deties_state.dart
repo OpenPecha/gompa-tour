@@ -4,7 +4,7 @@ import '../models/deity_model.dart';
 import '../repo/database_repository.dart';
 import 'database_state.dart';
 
-final detiesRepositoryProvider = Provider<DatabaseRepository<Deity>>((ref) {
+final deitiesRepositoryProvider = Provider<DatabaseRepository<Deity>>((ref) {
   final dbHelper = ref.read(databaseHelperProvider);
   return DatabaseRepository<Deity>(
     dbHelper: dbHelper,
@@ -16,7 +16,7 @@ final detiesRepositoryProvider = Provider<DatabaseRepository<Deity>>((ref) {
 
 final detiesNotifierProvider =
     StateNotifierProvider<DeityNotifier, List<Deity>>((ref) {
-  final repository = ref.read(detiesRepositoryProvider);
+  final repository = ref.read(deitiesRepositoryProvider);
   return DeityNotifier(repository);
 });
 

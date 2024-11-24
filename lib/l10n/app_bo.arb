@@ -19,6 +19,15 @@
     "sendEmail" : "གློག་འཕྲིན་",
     "close":"ཁ་རྒྱག",
     "recentSearches":"ཉེ་ཆར་གྱི་འཚོལ་བྱེད་",
-    "suggestion":"འོས་སྦྱོར་"
+    "suggestion":"འོས་སྦྱོར་",
+    "detail":"ཞིབ་ཕྲ།",
+    "deities": "རྟེན་བཤད།",
+    "organizations": "གནས་བཤད།",
+    "festival": "དུས་ཆེན།",
+    "deity": "རྟེན་བཤད།",
+    "organization": "གནས་བཤད།",
+    "scanQrCode": "ཚབ་ཨང་ཕབ་སྒྱུར།",
+    "address": "ཁ་བྱང་",
+    "location": "ས་གནས།"
 
 }

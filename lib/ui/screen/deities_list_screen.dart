@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
-import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 
 import '../../states/deties_state.dart';
 import '../widget/deity_card_item.dart';
-import 'deties_detail_screen.dart';
 
-class DetiesListScreen extends ConsumerStatefulWidget {
+class DeitiesListScreen extends ConsumerStatefulWidget {
   static const String routeName = '/deties-list';
 
-  const DetiesListScreen({super.key});
+  const DeitiesListScreen({super.key});
 
   @override
   ConsumerState createState() => _DetiesListScreenState();
 }
 
-class _DetiesListScreenState extends ConsumerState<DetiesListScreen> {
+class _DetiesListScreenState extends ConsumerState<DeitiesListScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
   int _page = 0;
@@ -62,7 +60,7 @@ class _DetiesListScreenState extends ConsumerState<DetiesListScreen> {
     final deties = ref.watch(detiesNotifierProvider);
 
     return Scaffold(
-      appBar: const GonpaAppBar(title: 'Deties List'),
+      appBar: GonpaAppBar(title: AppLocalizations.of(context)!.deities),
       body: deties.isEmpty && _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
@@ -76,7 +74,7 @@ class _DetiesListScreenState extends ConsumerState<DetiesListScreen> {
                 final deity = deties[index];
 
                 return DeityCardItem(
-                    deity: deity,
+                  deity: deity,
                 );
               },
             ),

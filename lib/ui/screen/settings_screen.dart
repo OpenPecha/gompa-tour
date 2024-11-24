@@ -243,7 +243,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           actions: [
             TextButton(
-              child: const Text('Close'),
+              child: Text(AppLocalizations.of(context)!.close),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -269,7 +269,7 @@ class SettingsScreen extends ConsumerWidget {
               const Text('Fax: +91-1892-228037'),
               const Text('Email: religion@tibet.net'),
               const SizedBox(height: 16),
-              ElevatedButton(
+              TextButton(
                 onPressed: () async {
                   final Uri emailLaunchUri = Uri(
                     scheme: 'mailto',

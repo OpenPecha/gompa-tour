@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
@@ -7,7 +8,7 @@ import '../../models/deity_model.dart';
 import '../../models/organization_model.dart';
 import '../../states/deties_state.dart';
 import '../../states/organization_state.dart';
-import '../screen/deties_detail_screen.dart';
+import '../screen/deities_detail_screen.dart';
 import '../screen/organization_detail_screen.dart';
 import 'gonpa_cache_image.dart';
 
@@ -87,17 +88,21 @@ class SearchCardItem extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        bottomRight: Radius.circular(8),
-                      ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
                     ),
-                    child: Text(
-                        searchableItem is Deity ? 'Deity' : 'Organization'))
+                  ),
+                  child: Text(
+                    searchableItem is Deity
+                        ? AppLocalizations.of(context)!.deity
+                        : AppLocalizations.of(context)!.organization,
+                  ),
+                )
               ],
             ),
           ),

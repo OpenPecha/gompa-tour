@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/states/organization_state.dart';
-import 'package:gompa_tour/ui/screen/deties_detail_screen.dart';
+import 'package:gompa_tour/ui/screen/deities_detail_screen.dart';
 import 'package:gompa_tour/util/qr_extractor.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 

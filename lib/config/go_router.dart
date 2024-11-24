@@ -1,9 +1,9 @@
 import 'package:go_router/go_router.dart';
-import 'package:gompa_tour/ui/screen/deties_list_screen.dart';
+import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 
-import '../ui/screen/deties_detail_screen.dart';
+import '../ui/screen/deities_detail_screen.dart';
 import '../ui/screen/skeleton_screen.dart';
 
 final router = GoRouter(
@@ -15,9 +15,9 @@ final router = GoRouter(
           return const SkeletonScreen();
         }),
     GoRoute(
-      path: DetiesListScreen.routeName,
+      path: DeitiesListScreen.routeName,
       builder: (context, state) {
-        return const DetiesListScreen();
+        return const DeitiesListScreen();
       },
     ),
     GoRoute(

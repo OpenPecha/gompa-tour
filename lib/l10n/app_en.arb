@@ -19,7 +19,16 @@
      "sendEmail" : "Send Email",
      "close":"Close",
      "recentSearches":"Recent Search",
-     "suggestion":"Suggestion"
+     "suggestion":"Suggestion",
+     "detail":"Detail",
+     "deities": "Deities",
+     "organizations": "Organizations",
+     "festival": "Festival",
+     "deity": "Deity",
+     "organization": "Organization",
+     "scanQrCode": "Scan QR Code",
+     "address": "Address",
+     "location": "Location"
 
 
 

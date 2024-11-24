@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gompa_tour/ui/screen/deties_list_screen.dart';
+import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/screen/list_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
+import 'package:gompa_tour/util/enum.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -17,19 +19,19 @@ class HomeScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildCard(
-            'Deties',
+            MenuType.deities,
             'assets/images/buddha.png',
             context,
           ),
           const SizedBox(height: 16),
           _buildCard(
-            'Gompa',
+            MenuType.organization,
             'assets/images/potala2.png',
             context,
           ),
           const SizedBox(height: 16),
           _buildCard(
-            'Festival',
+            MenuType.festival,
             'assets/images/duchen.png',
             context,
           ),
@@ -39,16 +41,19 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCard(String title, String imagePath, BuildContext context) {
+  Widget _buildCard(MenuType type, String imagePath, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        switch (title) {
-          case 'Deties':
-            context.push(DetiesListScreen.routeName);
+        switch (type) {
+          case MenuType.deities:
+            context.push(DeitiesListScreen.routeName);
             return;
-          case 'Gompa':
+          case MenuType.organization:
             context.push(OrganizationListScreen.routeName);
             return;
+          case MenuType.festival:
+          default:
+            break;
         }
         // Navigate to the list of items screen
         Navigator.of(context).push(
@@ -87,7 +92,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                title,
+                _getTitle(type, context),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -99,5 +104,16 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _getTitle(MenuType type, BuildContext context) {
+    switch (type) {
+      case MenuType.deities:
+        return AppLocalizations.of(context)!.deities;
+      case MenuType.organization:
+        return AppLocalizations.of(context)!.organizations;
+      case MenuType.festival:
+        return AppLocalizations.of(context)!.festival;
+    }
   }
 }
