@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
@@ -58,7 +59,7 @@ class _DetiesListScreenState extends ConsumerState<OrganizationListScreen> {
     final organizationList = ref.watch(organizationNotifierProvider);
 
     return Scaffold(
-      appBar: const GonpaAppBar(title: 'Organization List'),
+      appBar: GonpaAppBar(title: AppLocalizations.of(context)!.organizations),
       body: organizationList.isEmpty && _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(

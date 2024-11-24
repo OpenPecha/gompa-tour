@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class GonpaAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -20,11 +21,9 @@ class GonpaAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       leading: enableBackButton
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+          ? GestureDetector(
+              onTap: context.pop,
+              child: const Icon(Icons.arrow_back_ios),
             )
           : null,
       title: Text(title),

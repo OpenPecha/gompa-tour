@@ -73,6 +73,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: TextField(
               controller: _searchController,
               focusNode: _searchFocusNode,
+              style: const TextStyle(
+                fontFamily: 'Roboto',
+              ),
               autofocus: true,
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context)!.search,

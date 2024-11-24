@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -167,13 +168,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                               .state = selectedOrganization;
                           context.push(OrganizationDetailScreen.routeName);
                         },
-                        child: const Text('Details'),
+                        child: Text(AppLocalizations.of(context)!.detail),
                       ),
                       TextButton(
                         onPressed: () => ref
                             .read(selectedOrganizationProvider.notifier)
                             .state = null,
-                        child: const Text('Close'),
+                        child: Text(AppLocalizations.of(context)!.close),
                       ),
                     ],
                   ),

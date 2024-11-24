@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:gompa_tour/models/organization_model.dart';
 import 'package:latlong2/latlong.dart';
@@ -22,15 +23,15 @@ class LocationCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                Icon(Icons.map, color: Colors.green),
-                SizedBox(width: 8),
+                const Icon(Icons.map, color: Colors.green),
+                const SizedBox(width: 8),
                 Text(
-                  'Location',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.location,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),

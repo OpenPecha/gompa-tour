@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/models/organization_model.dart';
 
@@ -21,13 +22,13 @@ class AddressCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.location_on, color: Colors.red),
-                    SizedBox(width: 8),
+                    const Icon(Icons.location_on, color: Colors.red),
+                    const SizedBox(width: 8),
                     Text(
-                      'Address',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.address,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../config/constant.dart';
@@ -19,15 +20,15 @@ class GonpaQRCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                Icon(Icons.qr_code_scanner, color: Colors.blue),
-                SizedBox(width: 8),
+                const Icon(Icons.qr_code_scanner, color: Colors.blue),
+                const SizedBox(width: 8),
                 Text(
-                  'Scan QR Code',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.scanQrCode,
+                  style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),

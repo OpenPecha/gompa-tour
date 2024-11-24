@@ -6,7 +6,7 @@ import 'package:gompa_tour/helper/localization_helper.dart';
 import '../../config/constant.dart';
 import '../../models/deity_model.dart';
 import '../../states/deties_state.dart';
-import '../screen/deties_detail_screen.dart';
+import '../screen/deities_detail_screen.dart';
 import 'gonpa_cache_image.dart';
 
 class DeityCardItem extends ConsumerWidget {

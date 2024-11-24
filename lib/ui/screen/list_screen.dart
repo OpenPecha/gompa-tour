@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gompa_tour/ui/screen/details_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 
@@ -10,7 +11,7 @@ class ListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const GonpaAppBar(title: 'List of Items'),
+      appBar: GonpaAppBar(title: AppLocalizations.of(context)!.festival),
       body: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
