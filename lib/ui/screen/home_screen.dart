@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
-import 'package:gompa_tour/ui/screen/list_screen.dart';
+import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 import 'package:gompa_tour/util/enum.dart';
 
@@ -52,32 +52,10 @@ class HomeScreen extends ConsumerWidget {
             context.push(OrganizationListScreen.routeName);
             return;
           case MenuType.festival:
+            context.push(FestivalListScreen.routeName);
           default:
             break;
         }
-        // Navigate to the list of items screen
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ListScreen(
-              items: [
-                Item(
-                    title: 'ZhangzhungDrenpaNamkha',
-                    description:
-                        'ZhangzhungDrenpaNamkha was born to GrungyarMukhoe and ShazaGungzun at the silver palace of Garuda, Zhangzhung in 914 BCE.',
-                    imgUrl:
-                        'https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731301190TN977449.jpg'),
-                Item(
-                    title: 'Yellow Goddess Vasundra (Wealth-Granting Goddess)',
-                    description:
-                        ' The Yellow Goddess Vasundra has a yellow body with one face and two arms.',
-                    imgUrl:
-                        'https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1730443713TN208873.jpg'),
-
-                // Add more items here
-              ],
-            ),
-          ),
-        );
       },
       child: Card(
         color: Colors.blue,
