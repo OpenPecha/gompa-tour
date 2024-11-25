@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final AutoDisposeStateNotifierProvider<BottomNavBarState, int>
     bottomNavProvider = StateNotifierProvider.autoDispose((ref) {
-  return BottomNavBarState(1);
+  return BottomNavBarState(0);
 });
 
 class BottomNavBarState extends StateNotifier<int> {
