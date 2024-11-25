@@ -15,6 +15,7 @@ class OrganizationCardItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print('OrganizationCardItem build:' + organization.pic);
     return GestureDetector(
       onTap: () {
         ref.read(selectedOrganizationProvider.notifier).state = organization;

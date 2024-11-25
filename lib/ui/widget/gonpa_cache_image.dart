@@ -24,13 +24,19 @@ class GonpaCacheImage extends StatelessWidget {
           child: SizedBox(
               width: 40, height: 40, child: CircularProgressIndicator())),
       errorWidget: (context, _, error) {
-        // If the image URL is null or error occurs, load the asset image
-        return url == null
-            ? Image.asset(
-                width: width,
-                height: height,
-                'assets/images/buddha.png') // Fallback asset image
-            : const Icon(Icons.error);
+        if (url != null && url!.contains('media/')) {
+          return Image.asset(
+            'assets/${url!}',
+            width: width,
+            height: height,
+            fit: fit,
+            errorBuilder: (context, _, __) {
+              return const Icon(Icons.error);
+            },
+          );
+        } else {
+          return const Icon(Icons.error);
+        }
       },
     );
   }

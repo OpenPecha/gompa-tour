@@ -32,7 +32,7 @@ class LocationCard extends StatelessWidget {
                 Text(
                   AppLocalizations.of(context)!.location,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

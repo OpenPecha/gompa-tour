@@ -73,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
                 _getTitle(type, context),
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
