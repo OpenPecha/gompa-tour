@@ -6,6 +6,8 @@ import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 
+import '../../config/constant.dart';
+
 class FestivalDetailScreen extends ConsumerWidget {
   static const String routeName = '/festival-detail';
   const FestivalDetailScreen({super.key});
@@ -68,7 +70,7 @@ class FestivalDetailScreen extends ConsumerWidget {
               ),
               if (selectedFestival.slug != null) ...[
                 const SizedBox(height: 16),
-                GonpaQRCard(slug: selectedFestival.slug!),
+                GonpaQRCard(qrData: kEventQrCodeUrl + selectedFestival.slug!),
                 const SizedBox(height: 16),
               ],
             ],

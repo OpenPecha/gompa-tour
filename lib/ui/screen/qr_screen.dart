@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gompa_tour/states/festival_state.dart';
 import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/ui/screen/deities_detail_screen.dart';
+import 'package:gompa_tour/ui/screen/festival_detail_screen.dart';
+import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
 import 'package:gompa_tour/util/qr_extractor.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -130,7 +133,9 @@ class _QrScreenState extends ConsumerState<QrScreen> {
       if (deity != null) {
         // Update selected deity and navigate
         ref.read(selectedDeityProvider.notifier).state = deity;
-        _navigateToDeityDetail();
+        context.push(DeityDetailScreen.routeName).then((_) {
+          _resetScanner();
+        });
       } else {
         showGonpaSnackBar(context, 'Deity not found');
         _resetScanner();
@@ -156,7 +161,9 @@ class _QrScreenState extends ConsumerState<QrScreen> {
       if (org != null) {
         // Update selected deity and navigate
         ref.read(selectedOrganizationProvider.notifier).state = org;
-        _navigateToDeityDetail();
+        context.push(OrganizationDetailScreen.routeName).then((_) {
+          _resetScanner();
+        });
       } else {
         showGonpaSnackBar(context, 'org not found');
         _resetScanner();
@@ -170,12 +177,6 @@ class _QrScreenState extends ConsumerState<QrScreen> {
     }
   }
 
-  void _navigateToDeityDetail() {
-    context.push(DeityDetailScreen.routeName).then((_) {
-      _resetScanner();
-    });
-  }
-
   void _resetScanner() {
     setState(() => isDetecting = false);
     controller.start();
@@ -187,7 +188,35 @@ class _QrScreenState extends ConsumerState<QrScreen> {
     super.dispose();
   }
 
-  void _fetchEventDetails(String s) {
-    throw UnimplementedError();
+  Future<void> _fetchEventDetails(String slug) async {
+    try {
+      final event = await ref
+          .read(festivalNotifierProvider.notifier)
+          .fetchFestivalBySlug(slug);
+
+      // Dismiss loading dialog
+      Navigator.of(context).pop();
+
+      if (event != null) {
+        // Update selected deity and navigate
+        ref.read(selectedFestivalProvider.notifier).state = event;
+        _navigateToEventDetail();
+      } else {
+        showGonpaSnackBar(context, 'Event not found');
+        _resetScanner();
+      }
+    } catch (e) {
+      // Dismiss loading dialog
+      Navigator.of(context).pop();
+
+      showGonpaSnackBar(context, 'Error fetching Event details');
+      _resetScanner();
+    }
+  }
+
+  void _navigateToEventDetail() {
+    context.push(FestivalDetailScreen.routeName).then((_) {
+      _resetScanner();
+    });
   }
 }

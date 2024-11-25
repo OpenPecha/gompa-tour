@@ -6,6 +6,7 @@ import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:gompa_tour/ui/widget/location_card.dart';
 
+import '../../config/constant.dart';
 import '../widget/address_card.dart';
 import '../widget/gonap_qr_card.dart';
 import '../widget/speaker_widget.dart';
@@ -86,7 +87,8 @@ class OrganizationDetailScreen extends ConsumerWidget {
               ),
               ...[
                 const SizedBox(height: 16),
-                GonpaQRCard(slug: selectedOrganization.slug)
+                GonpaQRCard(
+                    qrData: kOrganizationQrCodeUrl + selectedOrganization.slug)
               ],
             ],
           ),

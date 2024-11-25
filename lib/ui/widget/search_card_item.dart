@@ -3,17 +3,21 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
+import 'package:gompa_tour/models/festival_model.dart';
 
 import '../../models/deity_model.dart';
 import '../../models/organization_model.dart';
 import '../../states/deties_state.dart';
+import '../../states/festival_state.dart';
 import '../../states/organization_state.dart';
 import '../screen/deities_detail_screen.dart';
+import '../screen/festival_detail_screen.dart';
 import '../screen/organization_detail_screen.dart';
 import 'gonpa_cache_image.dart';
 
 class SearchCardItem extends ConsumerWidget {
   final dynamic searchableItem;
+
   const SearchCardItem({super.key, required this.searchableItem});
 
   @override
@@ -24,6 +28,10 @@ class SearchCardItem extends ConsumerWidget {
           ref.read(selectedDeityProvider.notifier).state =
               searchableItem as Deity;
           context.push(DeityDetailScreen.routeName);
+        } else if (searchableItem is Festival) {
+          ref.read(selectedFestivalProvider.notifier).state =
+              searchableItem as Festival;
+          context.push(FestivalDetailScreen.routeName);
         } else {
           ref.read(selectedOrganizationProvider.notifier).state =
               searchableItem as Organization;
@@ -98,9 +106,10 @@ class SearchCardItem extends ConsumerWidget {
                     ),
                   ),
                   child: Text(
-                    searchableItem is Deity
-                        ? AppLocalizations.of(context)!.deity
-                        : AppLocalizations.of(context)!.organization,
+                    _getTitle(searchableItem, context),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                 )
               ],
@@ -109,5 +118,18 @@ class SearchCardItem extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  String _getTitle(searchableItem, BuildContext context) {
+    String title = 'Unknown';
+
+    if (searchableItem is Deity) {
+      title = AppLocalizations.of(context)!.deity;
+    } else if (searchableItem is Festival) {
+      title = AppLocalizations.of(context)!.festival;
+    } else {
+      title = AppLocalizations.of(context)!.organization;
+    }
+    return title;
   }
 }

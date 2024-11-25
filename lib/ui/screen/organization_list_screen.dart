@@ -24,10 +24,10 @@ class _DetiesListScreenState extends ConsumerState<OrganizationListScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _fetchDeties();
+    _fetchOrganization();
   }
 
-  Future<void> _fetchDeties() async {
+  Future<void> _fetchOrganization() async {
     if (_isLoading) return;
     setState(() {
       _isLoading = true;
@@ -44,7 +44,7 @@ class _DetiesListScreenState extends ConsumerState<OrganizationListScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      _fetchDeties();
+      _fetchOrganization();
     }
   }
 

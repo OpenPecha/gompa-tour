@@ -5,6 +5,7 @@ import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 
+import '../../config/constant.dart';
 import '../../states/deties_state.dart';
 import '../widget/speaker_widget.dart';
 
@@ -73,7 +74,7 @@ class DeityDetailScreen extends ConsumerWidget {
               ),
               if (selectedDeity.slug != null) ...[
                 const SizedBox(height: 16),
-                GonpaQRCard(slug: selectedDeity.slug!)
+                GonpaQRCard(qrData: kDetiesQrCodeBaseUrl + selectedDeity.slug!)
               ],
             ],
           ),
