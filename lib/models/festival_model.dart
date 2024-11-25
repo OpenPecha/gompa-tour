@@ -1,12 +1,12 @@
 class Festival {
   final int id;
   final int uid;
-  final String? eventTbname;
-  final String? eventEnname;
+  final String? tbTitle;
+  final String? enTitle;
   final DateTime? startDate;
   final DateTime? endDate;
-  final String? tbDescription;
-  final String? enDescription;
+  final String? tbContent;
+  final String? enContent;
   final String categories;
   final String? location;
   final String pic;
@@ -18,12 +18,12 @@ class Festival {
   Festival({
     required this.id,
     required this.uid,
-    this.eventTbname,
-    this.eventEnname,
+    this.tbTitle,
+    this.enTitle,
     this.startDate,
     this.endDate,
-    this.tbDescription,
-    this.enDescription,
+    this.tbContent,
+    this.enContent,
     required this.categories,
     this.location,
     required this.pic,
@@ -37,12 +37,12 @@ class Festival {
     return Festival(
       id: map['id'] as int,
       uid: map['uid'] as int,
-      eventTbname: map['event_tbname'] as String?,
-      eventEnname: map['event_enname'] as String?,
+      tbTitle: map['tbtitle'] as String?,
+      enTitle: map['entitle'] as String?,
       startDate: DateTime.parse(map['start_date'] as String),
       endDate: DateTime.parse(map['end_date'] as String),
-      tbDescription: map['tb_description'] as String?,
-      enDescription: map['en_description'] as String?,
+      tbContent: map['tbcontent'] as String?,
+      enContent: map['encontent'] as String?,
       categories: map['categories'] as String,
       location: map['location'] as String?,
       pic: map['pic'] as String,
@@ -57,12 +57,12 @@ class Festival {
     return {
       'id': id,
       'uid': uid,
-      'event_tbname': eventTbname,
-      'event_enname': eventEnname,
+      'tbtitle': tbTitle,
+      'entitle': enTitle,
       'start_date': startDate.toString(),
       'end_date': endDate.toString(),
-      'tb_description': tbDescription,
-      'en_description': enDescription,
+      'tbcontent': tbContent,
+      'encontent': enContent,
       'categories': categories,
       'location': location,
       'pic': pic,
@@ -76,12 +76,12 @@ class Festival {
   Festival copyWith({
     int? id,
     int? uid,
-    String? eventTbname,
-    String? eventEnname,
+    String? tbTitle,
+    String? enTitle,
     DateTime? startDate,
     DateTime? endDate,
-    String? tbDescription,
-    String? enDescription,
+    String? tbContent,
+    String? enContent,
     String? categories,
     String? location,
     String? pic,
@@ -93,12 +93,12 @@ class Festival {
     return Festival(
       id: id ?? this.id,
       uid: uid ?? this.uid,
-      eventTbname: eventTbname ?? this.eventTbname,
-      eventEnname: eventEnname ?? this.eventEnname,
+      tbTitle: tbTitle ?? this.tbTitle,
+      enTitle: enTitle ?? this.enTitle,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      tbDescription: tbDescription ?? this.tbDescription,
-      enDescription: enDescription ?? this.enDescription,
+      tbContent: tbContent ?? this.tbContent,
+      enContent: enContent ?? this.enContent,
       categories: categories ?? this.categories,
       location: location ?? this.location,
       pic: pic ?? this.pic,
