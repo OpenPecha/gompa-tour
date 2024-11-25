@@ -62,10 +62,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ),
         Consumer(
           builder: (_, ref, __) {
-            final organization = ref.watch(organizationNotifierProvider);
-            logger.info("Organization:$organization");
+            final state = ref.watch(organizationNotifierProvider);
+            logger.info("Organization:$state");
             return MarkerLayer(
-              markers: organization
+              markers: state.organizations
                   .map((location) => _buildMarker(location))
                   .toList(),
             );
