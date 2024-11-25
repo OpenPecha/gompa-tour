@@ -28,6 +28,7 @@
     "organization": "གནས་བཤད།",
     "scanQrCode": "ཚབ་ཨང་ཕབ་སྒྱུར།",
     "address": "ཁ་བྱང་",
-    "location": "ས་གནས།"
+    "location": "ས་གནས།",
+    "noRecordFound": "གྲོས་བསྒྲིག་མི་འདུག"
 
 }

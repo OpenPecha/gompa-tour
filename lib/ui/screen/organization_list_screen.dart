@@ -15,68 +15,58 @@ class OrganizationListScreen extends ConsumerStatefulWidget {
 }
 
 class _DetiesListScreenState extends ConsumerState<OrganizationListScreen> {
-  final ScrollController _scrollController = ScrollController();
-  bool _isLoading = false;
-  int _page = 0;
-  final int _pageSize = 20;
-
+  late OrganizationNotifier organizationNotifier;
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
-    _fetchOrganization();
-  }
-
-  Future<void> _fetchOrganization() async {
-    if (_isLoading) return;
-    setState(() {
-      _isLoading = true;
+    // Fetch initial deities when the screen is first loaded
+    organizationNotifier = ref.read(organizationNotifierProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      organizationNotifier.fetchInitialOrganizations();
     });
-    await ref
-        .read(organizationNotifierProvider.notifier)
-        .fetchPaginatedOrganizations(_page, _pageSize);
-    setState(() {
-      _isLoading = false;
-      _page++;
-    });
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      _fetchOrganization();
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final organizationList = ref.watch(organizationNotifierProvider);
-
+    final organizationState = ref.watch(organizationNotifierProvider);
     return Scaffold(
-      appBar: GonpaAppBar(title: AppLocalizations.of(context)!.organizations),
-      body: organizationList.isEmpty && _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              controller: _scrollController,
-              itemCount: organizationList.length + (_isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == organizationList.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final organization = organizationList[index];
+      appBar: GonpaAppBar(title: AppLocalizations.of(context)!.organization),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+              !organizationState.isLoading &&
+              !organizationState.hasReachedMax) {
+            organizationNotifier.fetchPaginatedOrganizations();
+          }
+          return false;
+        },
+        child: organizationState.organizations.isEmpty &&
+                organizationState.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : organizationState.organizations.isEmpty
+                ? Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.noRecordFound,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  )
+                : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: organizationState.organizations.length +
+                        (organizationState.isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == organizationState.organizations.length) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final organization =
+                          organizationState.organizations[index];
 
-                return OrganizationCardItem(
-                  organization: organization,
-                );
-              },
-            ),
+                      return OrganizationCardItem(
+                        organization: organization,
+                      );
+                    },
+                  ),
+      ),
     );
   }
 }

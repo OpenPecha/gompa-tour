@@ -29,7 +29,7 @@ class BottomNavBar extends ConsumerWidget {
         ),
       ),
       child: BottomNavigationBar(
-        currentIndex: navIndex ?? 1,
+        currentIndex: navIndex ?? 0,
         onTap: (int index) {
           ref.read(bottomNavProvider.notifier).setAndPersistValue(index);
         },

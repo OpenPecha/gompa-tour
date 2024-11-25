@@ -12,72 +12,60 @@ class DeitiesListScreen extends ConsumerStatefulWidget {
   const DeitiesListScreen({super.key});
 
   @override
-  ConsumerState createState() => _DetiesListScreenState();
+  ConsumerState<DeitiesListScreen> createState() => _DeitiesListScreenState();
 }
 
-class _DetiesListScreenState extends ConsumerState<DeitiesListScreen> {
-  final ScrollController _scrollController = ScrollController();
-  bool _isLoading = false;
-  int _page = 0;
-  final int _pageSize = 20;
-
+class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
+  late DeityNotifier deityNotifier;
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
-    _fetchDeties();
-  }
-
-  Future<void> _fetchDeties() async {
-    if (_isLoading) return;
-    setState(() {
-      _isLoading = true;
+    deityNotifier = ref.read(detiesNotifierProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      deityNotifier.fetchInitialDeities();
     });
-    await ref
-        .read(detiesNotifierProvider.notifier)
-        .fetchDeties(_page, _pageSize);
-    setState(() {
-      _isLoading = false;
-      _page++;
-    });
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      _fetchDeties();
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final deties = ref.watch(detiesNotifierProvider);
+    final deityState = ref.watch(detiesNotifierProvider);
 
     return Scaffold(
       appBar: GonpaAppBar(title: AppLocalizations.of(context)!.deities),
-      body: deties.isEmpty && _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              controller: _scrollController,
-              itemCount: deties.length + (_isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == deties.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final deity = deties[index];
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+              !deityState.isLoading &&
+              !deityState.hasReachedMax) {
+            deityNotifier.fetchPaginatedDeities();
+          }
+          return false;
+        },
+        child: deityState.deities.isEmpty && deityState.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : deityState.deities.isEmpty
+                ? Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.noRecordFound,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  )
+                : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: deityState.deities.length +
+                        (deityState.isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == deityState.deities.length) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final deity = deityState.deities[index];
 
-                return DeityCardItem(
-                  deity: deity,
-                );
-              },
-            ),
+                      return DeityCardItem(
+                        deity: deity,
+                      );
+                    },
+                  ),
+      ),
     );
   }
 }

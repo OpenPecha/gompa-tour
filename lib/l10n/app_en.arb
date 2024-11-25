@@ -28,7 +28,8 @@
      "organization": "Organization",
      "scanQrCode": "Scan QR Code",
      "address": "Address",
-     "location": "Location"
+     "location": "Location",
+     "noRecordFound": "No Record Found"
 
 
 
