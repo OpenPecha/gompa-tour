@@ -33,8 +33,8 @@ class FestivalCardItem extends ConsumerWidget {
             children: [
               Text(
                 context.localizedText(
-                  enText: festival.eventEnname!,
-                  boText: festival.eventTbname!,
+                  enText: festival.enTitle!,
+                  boText: festival.tbTitle!,
                 ),
                 style: const TextStyle(
                   fontSize: 18,
@@ -58,15 +58,14 @@ class FestivalCardItem extends ConsumerWidget {
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: Text(
-                      context.localizedText(
-                        enText: festival.enDescription!,
-                        boText: festival.tbDescription!,
-                        maxLength: kDescriptionMaxLength,
-                      ),
-                      style: const TextStyle(fontSize: 16),
+                      child: Text(
+                    context.localizedText(
+                      enText: festival.enContent!,
+                      boText: festival.tbContent!,
+                      maxLength: kDescriptionMaxLength,
                     ),
-                  ),
+                    style: const TextStyle(fontSize: 16),
+                  )),
                 ],
               ),
             ],

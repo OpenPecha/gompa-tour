@@ -1,3 +1,4 @@
+import 'package:gompa_tour/models/festival_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../helper/database_helper.dart';
@@ -141,10 +142,24 @@ class SearchRepository {
     OR LOWER(enContent) LIKE LOWER('%$escapedQuery%')
   ''';
 
+    // Query festivals with score
+    final festivalQuery = '''
+    SELECT *,
+    CASE
+      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(enContent) LIKE LOWER('%$escapedQuery%') THEN 2
+      ELSE 3
+    END as match_score 
+    FROM events
+    WHERE LOWER(enTitle) LIKE LOWER('%$escapedQuery%')
+    OR LOWER(enContent) LIKE LOWER('%$escapedQuery%')
+  ''';
+
     final db = await dbHelper.database;
 
     final organizationMaps = await db.rawQuery(organizationQuery);
     final deityMaps = await db.rawQuery(deityQuery);
+    final festivalMaps = await db.rawQuery(festivalQuery);
 
     // Convert to models while preserving scores
     final organizations = organizationMaps.map((map) {
@@ -161,8 +176,15 @@ class SearchRepository {
       return (Deity.fromMap(mapWithoutScore), score);
     }).toList();
 
+    final festivals = festivalMaps.map((map) {
+      final score = map['match_score'] as int;
+      final mapWithoutScore = Map<String, dynamic>.from(map)
+        ..remove('match_score');
+      return (Festival.fromMap(mapWithoutScore), score);
+    }).toList();
+
     // Combine and sort by score
-    final combinedResults = [...organizations, ...deities];
+    final combinedResults = [...organizations, ...deities, ...festivals];
     combinedResults.sort((a, b) => a.$2.compareTo(b.$2)); // Sort by score
 
     // Return just the models in sorted order

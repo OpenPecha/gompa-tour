@@ -12,10 +12,11 @@ final router = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-        path: '/',
-        builder: (context, state) {
-          return const SkeletonScreen();
-        }),
+      path: '/',
+      builder: (context, state) {
+        return const SkeletonScreen();
+      },
+    ),
     GoRoute(
       path: DeitiesListScreen.routeName,
       builder: (context, state) {
@@ -47,9 +48,10 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-        path: FestivalDetailScreen.routeName,
-        builder: (context, state) {
-          return const FestivalDetailScreen();
-        }),
+      path: FestivalDetailScreen.routeName,
+      builder: (context, state) {
+        return const FestivalDetailScreen();
+      },
+    ),
   ],
 );
