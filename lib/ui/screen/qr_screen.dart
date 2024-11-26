@@ -138,7 +138,9 @@ class _QrScreenState extends ConsumerState<QrScreen> {
         });
       } else {
         showGonpaSnackBar(context, 'Deity not found');
-        _resetScanner();
+        Future.delayed(Duration(seconds: 2), () {
+          _resetScanner();
+        });
       }
     } catch (e) {
       // Dismiss loading dialog
