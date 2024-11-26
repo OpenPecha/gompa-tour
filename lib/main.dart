@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/states/language_state.dart';
 import 'package:gompa_tour/states/theme_mode_state.dart';
+import 'package:gompa_tour/ui/widget/persistent_audio_player.dart';
 
 import 'config/go_router.dart';
 import 'config/style.dart';
@@ -50,6 +51,19 @@ class MyApp extends ConsumerWidget {
       supportedLocales: L10n.all,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!,
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: PersistentAudioPlayer(),
+            ),
+          ],
+        );
+      },
     );
   }
 }

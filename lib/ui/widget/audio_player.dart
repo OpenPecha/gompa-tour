@@ -1,53 +1,81 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AudioPlayerWidget extends ConsumerStatefulWidget {
+import '../../states/global_audio_state.dart';
+
+class AudioPlayerWidget extends ConsumerWidget {
   final String audioUrl;
+  final String? title;
 
-  const AudioPlayerWidget({super.key, required this.audioUrl});
-
-  @override
-  ConsumerState<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
-}
-
-class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
-  late AudioPlayer _audioPlayer;
-  bool isPlaying = false;
+  const AudioPlayerWidget({
+    super.key,
+    required this.audioUrl,
+    this.title,
+  });
 
   @override
-  void initState() {
-    super.initState();
-    _audioPlayer = AudioPlayer();
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final audioState = ref.watch(globalAudioPlayerProvider);
 
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
+    // Check if this specific audio is currently playing
+    final isCurrentAudio = audioState.currentAudioUrl == audioUrl;
 
-  void _togglePlayPause() {
-    if (isPlaying) {
-      _audioPlayer.pause();
-    } else {
-      // _audioPlayer.play(widget.audioUrl);
-    }
-    setState(() {
-      isPlaying = !isPlaying;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Row(
       children: [
         IconButton.filled(
-          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-          onPressed: _togglePlayPause,
-          tooltip: isPlaying ? "Pause" : "Play",
+          icon: _buildButtonIcon(audioState, isCurrentAudio),
+          onPressed: () {
+            final notifier = ref.read(globalAudioPlayerProvider.notifier);
+
+            // If this audio is not current, play it
+            if (!isCurrentAudio) {
+              notifier.play(audioUrl);
+              return;
+            }
+
+            // If current audio is playing, pause. If paused, resume
+            if (audioState.isPlaying) {
+              notifier.pause();
+            } else {
+              notifier.resume();
+            }
+          },
+          tooltip: _getTooltip(audioState, isCurrentAudio),
         ),
       ],
     );
+  }
+
+  Widget _buildButtonIcon(GlobalAudioPlayerState state, bool isCurrentAudio) {
+    if (isCurrentAudio && state.isLoading) {
+      return const SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: Colors.white,
+        ),
+      );
+    }
+
+    // Show play or pause based on current audio state
+    if (isCurrentAudio) {
+      return Icon(state.isPlaying ? Icons.pause : Icons.play_arrow);
+    }
+
+    // Default play icon if not current audio
+    return const Icon(Icons.play_arrow);
+  }
+
+  String _getTooltip(GlobalAudioPlayerState state, bool isCurrentAudio) {
+    if (isCurrentAudio && state.isLoading) {
+      return "Loading";
+    }
+
+    if (isCurrentAudio) {
+      return state.isPlaying ? "Pause" : "Play";
+    }
+
+    return "Play";
   }
 }
