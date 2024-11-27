@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -56,6 +56,11 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
+      - name: Get PR message
+        if: github.event_name == 'pull_request'
+        id: pr_message
+        run: echo "pr_message=$(jq -r .pull_request.body < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -64,6 +69,7 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.new_version }}
           release_name: Release ${{ steps.version.outputs.new_version }}
+          body: ${{ env.pr_message || 'No changelog provided.' }}
           draft: false
           prerelease: false
 
