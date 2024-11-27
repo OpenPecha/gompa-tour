@@ -7,6 +7,7 @@ import 'package:gompa_tour/helper/database_helper.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/models/organization_model.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
+import 'package:gompa_tour/ui/widget/country_marker.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -49,6 +50,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       options: const MapOptions(
         initialCenter: LatLng(20.5937, 78.9629),
         initialZoom: 5,
+        minZoom: 4,
       ),
       children: [
         GestureDetector(
@@ -65,9 +67,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             final state = ref.watch(organizationNotifierProvider);
             logger.info("Organization:$state");
             return MarkerLayer(
-              markers: state.organizations
-                  .map((location) => _buildMarker(location))
-                  .toList(),
+              markers: [
+                ...state.organizations
+                    .where((location) => location.map.trim().isNotEmpty)
+                    .map((location) => _buildMarker(location))
+                    .toList(),
+                ..._buildCountryMarker(),
+              ],
             );
           },
         )
@@ -185,5 +191,32 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ),
       ),
     );
+  }
+
+  _buildCountryMarker() {
+    // get and return india, bhutan and nepal coordinates
+    final countries = [
+      {
+        'name': AppLocalizations.of(context)!.india,
+        'coordinates': LatLng(20.5937, 78.9629),
+      },
+      {
+        'name': AppLocalizations.of(context)!.bhutan,
+        'coordinates': LatLng(27.5142, 90.4336),
+      },
+      {
+        'name': AppLocalizations.of(context)!.nepal,
+        'coordinates': LatLng(28.3949, 84.1240),
+      },
+    ];
+
+    return countries.map((country) {
+      return Marker(
+        point: country['coordinates'] as LatLng,
+        width: 40,
+        height: 40,
+        child: CountryMarker(country: country),
+      );
+    }).toList();
   }
 }

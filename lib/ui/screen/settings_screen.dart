@@ -149,7 +149,9 @@ class SettingsScreen extends ConsumerWidget {
     String currentLanguage,
   ) {
     return ListTile(
-      title: Text(title),
+      title: Text(
+        title,
+      ),
       subtitle: Text(subtitle),
       trailing: Radio<String>(
         value: code,

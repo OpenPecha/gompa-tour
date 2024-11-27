@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/states/global_audio_state.dart';
 import 'package:gompa_tour/states/language_state.dart';
 import 'package:gompa_tour/states/theme_mode_state.dart';
 import 'package:gompa_tour/ui/widget/persistent_audio_player.dart';
@@ -52,17 +53,24 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: router,
       builder: (context, child) {
-        return Stack(
-          children: [
-            child!,
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: PersistentAudioPlayer(),
-            ),
-          ],
-        );
+        final audioState = ref.watch(globalAudioPlayerProvider);
+        if (audioState.currentAudioUrl != null) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              PersistentAudioPlayer(),
+              Expanded(
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                  ),
+                  child: child!,
+                ),
+              ),
+            ],
+          );
+        }
+        return child!;
       },
     );
   }

@@ -29,7 +29,17 @@
      "scanQrCode": "Scan QR Code",
      "address": "Address",
      "location": "Location",
-     "noRecordFound": "No Record Found"
+     "noRecordFound": "No Record Found",
+     "noRecentSearch": "No Recent Search",
+     "buddha": "Buddha",
+     "king": "King",
+     "gaden": "Gaden",
+     "arya": "Arya",
+     "acharya": "Acharya",
+     "milarepa": "Milarepa",
+     "india": "India",
+     "nepal": "Nepal",
+     "bhutan": "Bhutan"
 
 
 
