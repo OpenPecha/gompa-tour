@@ -119,9 +119,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             ),
 
             recentSearches.isEmpty
-                ? const Padding(
+                ? Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),
-                    child: Center(child: Text('No recent searches')),
+                    child: Center(
+                        child:
+                            Text(AppLocalizations.of(context)!.noRecentSearch)),
                   )
                 : SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
