@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 import '../../states/language_state.dart';
 import '../../states/theme_mode_state.dart';
@@ -18,18 +18,171 @@ class SettingsScreen extends ConsumerWidget {
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
-        _buildSectionHeader(context, AppLocalizations.of(context)!.settings),
-        _buildThemeSelector(context, ref, themeMode),
-        const SizedBox(height: 24),
-        _buildSectionHeader(context, AppLocalizations.of(context)!.language),
-        _buildLanguageSelector(context, ref, language),
-        const SizedBox(height: 24),
-        _buildSectionHeader(context, AppLocalizations.of(context)!.support),
+        const SizedBox(height: 8),
+        _buildThemeToggle(context, ref, themeMode),
+        _buildLanguageToggle(context, ref, language),
         _buildSupportSection(context),
-        const SizedBox(height: 24),
-        _buildSectionHeader(context, AppLocalizations.of(context)!.legal),
         _buildLegalSection(context),
       ],
+    );
+  }
+
+  Widget _buildThemeToggle(
+      BuildContext context, WidgetRef ref, ThemeMode currentTheme) {
+    return Card(
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(AppLocalizations.of(context)!.darkMode,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                )),
+            FlutterSwitch(
+              width: 55,
+              height: 30,
+              toggleSize: 20,
+              value: currentTheme == ThemeMode.dark,
+              activeIcon: Icon(Icons.dark_mode, size: 15),
+              inactiveIcon: Icon(Icons.light_mode, size: 15),
+              onToggle: (val) {
+                ref.read(themeProvider).themeMode =
+                    val ? ThemeMode.dark : ThemeMode.light;
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageToggle(
+      BuildContext context, WidgetRef ref, String currentLanguage) {
+    return Card(
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(AppLocalizations.of(context)!.language,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                )),
+            FlutterSwitch(
+              width: 55,
+              height: 30,
+              toggleSize: 20,
+              valueFontSize: 12.0,
+              value: currentLanguage == LanguageState.TIBETAN,
+              activeText: "བོད་",
+              inactiveText: "EN",
+              showOnOff: true,
+              onToggle: (val) {
+                ref.read(languageProvider.notifier).setLanguage(
+                    val ? LanguageState.TIBETAN : LanguageState.ENGLISH);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSupportSection(BuildContext context) {
+    return Card(
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: [
+          _buildSupportOption(
+            context,
+            AppLocalizations.of(context)!.contactUs,
+            Icons.contact_support,
+            () => _showContactDialog(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showContactDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.contactSupport),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Central Tibetan Administration"),
+              const Text("Gangchen Kyishong, Dharamshala"),
+              const Text("Kangra District, HP 176215, India"),
+              const Text("Tel: +91-1892-222685, 226737"),
+              const Text('Fax: +91-1892-228037'),
+              const Text('Email: religion@tibet.net'),
+              const SizedBox(height: 16),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.close),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLegalSection(BuildContext context) {
+    return Card(
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: [
+          _buildSupportOption(
+            context,
+            AppLocalizations.of(context)!.privacyPolicy,
+            Icons.privacy_tip_outlined,
+            () => _showPrivacyPolicyDialog(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPrivacyPolicyDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.privacyPolicy),
+          content: const SingleChildScrollView(
+            child: Text(
+              'We respect your privacy and are committed to protecting your personal data. '
+              'This Privacy Policy explains how we collect, use, and safeguard your information.',
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.close),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -168,31 +321,6 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSupportSection(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          _buildSupportOption(
-            context,
-            AppLocalizations.of(context)!.faq,
-            Icons.help_outline,
-            () => _showFAQDialog(context),
-          ),
-          const Divider(height: 1),
-          _buildSupportOption(
-            context,
-            AppLocalizations.of(context)!.contactUs,
-            Icons.contact_support,
-            () => _showContactDialog(context),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSupportOption(
     BuildContext context,
     String title,
@@ -200,122 +328,9 @@ class SettingsScreen extends ConsumerWidget {
     VoidCallback onTap,
   ) {
     return ListTile(
-      leading: Icon(icon),
       title: Text(title),
       onTap: onTap,
       trailing: const Icon(Icons.chevron_right),
-    );
-  }
-
-  Widget _buildLegalSection(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          _buildSupportOption(
-            context,
-            AppLocalizations.of(context)!.privacyPolicy,
-            Icons.privacy_tip_outlined,
-            () => _showPrivacyPolicyDialog(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showFAQDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Frequently Asked Questions'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: [
-                Text('Q1: How do I reset my password?'),
-                Text(
-                    'A1: Navigate to the login screen and tap "Forgot Password".'),
-                SizedBox(height: 16),
-                Text('Q2: How can I update my profile?'),
-                Text('A2: Go to Profile Settings in the main menu.'),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showContactDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.contactSupport),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Central Tibetan Administration"),
-              const Text("Gangchen Kyishong, Dharamshala"),
-              const Text("Kangra District, HP 176215, India"),
-              const Text("Tel: +91-1892-222685, 226737"),
-              const Text('Fax: +91-1892-228037'),
-              const Text('Email: religion@tibet.net'),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () async {
-                  final Uri emailLaunchUri = Uri(
-                    scheme: 'mailto',
-                    path: 'religion@tibet.net',
-                  );
-                  if (await canLaunchUrl(emailLaunchUri)) {
-                    await launchUrl(emailLaunchUri);
-                  }
-                },
-                child: Text(AppLocalizations.of(context)!.sendEmail),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showPrivacyPolicyDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.privacyPolicy),
-          content: const SingleChildScrollView(
-            child: Text(
-              'We respect your privacy and are committed to protecting your personal data. '
-              'This Privacy Policy explains how we collect, use, and safeguard your information.',
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
     );
   }
 }

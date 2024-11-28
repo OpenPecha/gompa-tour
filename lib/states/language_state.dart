@@ -16,11 +16,11 @@ class LanguageState extends ChangeNotifier {
 
   String? _currentLanguage;
 
-  String get currentLanguage => _currentLanguage ?? ENGLISH;
+  String get currentLanguage => _currentLanguage ?? TIBETAN;
 
   Future<void> _loadLanguage() async {
     final prefs = await SharedPreferences.getInstance();
-    _currentLanguage = prefs.getString(_languagePreferenceKey) ?? ENGLISH;
+    _currentLanguage = prefs.getString(_languagePreferenceKey) ?? TIBETAN;
     notifyListeners();
   }
 
