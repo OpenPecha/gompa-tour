@@ -54,7 +54,7 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Build APK
-        run: flutter build apk --release
+        run:  flutter build apk --debug
 
       - name: Get PR message
         if: github.event_name == 'pull_request'

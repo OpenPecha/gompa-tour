@@ -32,7 +32,12 @@ class SkeletonScreen extends ConsumerWidget {
       //extendBodyBehindAppBar: true,
       appBar: currentTab['title'] != null && currentTab['title'].isNotEmpty
           ? AppBar(
-              title: Text(currentTab['title']),
+              title: currentTab['title'] == "home"
+                  ? Image.asset(
+                      'assets/images/logo.png',
+                      height: 40,
+                    )
+                  : Text(currentTab['title']),
               centerTitle: true,
               elevation: 1,
             )
@@ -49,7 +54,7 @@ class SkeletonScreen extends ConsumerWidget {
   List<Map<String, dynamic>> _tabConfiguration(BuildContext context) {
     return [
       {
-        'title': AppLocalizations.of(context)!.appName,
+        'title': "home",
         'icon': Icons.home,
         'screen': const HomeScreen(),
       },

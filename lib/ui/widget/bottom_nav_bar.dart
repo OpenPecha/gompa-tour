@@ -29,6 +29,9 @@ class BottomNavBar extends ConsumerWidget {
         ),
       ),
       child: BottomNavigationBar(
+        iconSize: 30,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         currentIndex: navIndex ?? 0,
         onTap: (int index) {
           ref.read(bottomNavProvider.notifier).setAndPersistValue(index);
