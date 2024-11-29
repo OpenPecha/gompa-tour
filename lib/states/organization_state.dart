@@ -60,7 +60,7 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
     state = state.copyWith(isLoading: true);
     try {
       final initialOrganizations =
-          await repository.getAllPaginated(0, state.pageSize);
+          await repository.getSortedPaginatedOrganization(0, state.pageSize);
       state = state.copyWith(
         organizations: initialOrganizations,
         page: 1,
@@ -90,8 +90,8 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
     try {
       state = state.copyWith(isLoading: true);
 
-      final newOrganizations =
-          await repository.getAllPaginated(state.page, state.pageSize);
+      final newOrganizations = await repository.getSortedPaginatedOrganization(
+          state.page, state.pageSize);
 
       final hasReachedMax = newOrganizations.length < state.pageSize;
 
