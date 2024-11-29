@@ -49,7 +49,7 @@ jobs:
         id: version
         run: |
           # Get the latest tag
-          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "0.0.0")
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "1.0.0")
           
           # Extract version numbers
           MAJOR=$(echo $LATEST_TAG | cut -d. -f1)
@@ -76,7 +76,9 @@ jobs:
           esac
           
           NEW_VERSION="$NEW_MAJOR.$NEW_MINOR.$NEW_PATCH"
-          BUILD_NUMBER=$(date +"%Y%m%d%H%M")
+          
+          # Get the current number of releases as build number
+          BUILD_NUMBER=$(git tag | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | wc -l)
           
           # Set outputs
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
@@ -123,8 +125,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.version.outputs.new_version }}
-          release_name: Release v${{ steps.version.outputs.new_version }}
-          body: Manual release ${{ github.event.inputs.release_type }} version
+          tag_name: ${{ steps.version.outputs.new_version }}
+          release_name: Release ${{ steps.version.outputs.new_version }}
+          body: Manual ${{ github.event.inputs.release_type }} release to ${{ github.event.inputs.track }} track
           draft: false
           prerelease: false
