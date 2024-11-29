@@ -60,14 +60,15 @@ class OrganizationDetailScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (selectedOrganization.tbsound != null)
-                SpeakerWidget(
-                    audioUrl: context.localizedText(
-                        enText: selectedOrganization.ensound ?? '',
-                        boText: selectedOrganization.tbsound ?? ''),
-                    description: context.localizedText(
-                        enText: selectedOrganization.enContent,
-                        boText: selectedOrganization.tbContent)),
+              SpeakerWidget(
+                  audioUrl: context.localizedText(
+                      enText: selectedOrganization.sound
+                              ?.replaceFirst('GP', 'EP') ??
+                          '',
+                      boText: selectedOrganization.sound ?? ''),
+                  description: context.localizedText(
+                      enText: selectedOrganization.enContent,
+                      boText: selectedOrganization.tbContent)),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(

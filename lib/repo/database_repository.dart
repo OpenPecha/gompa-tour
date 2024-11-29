@@ -109,15 +109,12 @@ class DatabaseRepository<T> {
 
   Future<List<T>> getSortedPaginatedOrganization(int page, int pageSize) async {
     final db = await dbHelper.database;
-    final rawQuery = '''
-    SELECT organization.* FROM categories 
-    JOIN organization ON categories.title = organization.categories 
-    ORDER BY code ASC
-    LIMIT ? OFFSET ?
-  ''';
-
-    final maps = await db.rawQuery(rawQuery, [pageSize, page * pageSize]);
-
+    final maps = await db.query(
+      tableName,
+      orderBy: 'categories asc',
+      limit: pageSize,
+      offset: page * pageSize,
+    );
     return maps.map((map) => fromMap(map)).toList();
   }
 }

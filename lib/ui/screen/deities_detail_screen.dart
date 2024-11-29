@@ -59,12 +59,14 @@ class DeityDetailScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (selectedDeity.tbsound != null)
-                SpeakerWidget(
-                    audioUrl: context.localizedText(
-                        enText: selectedDeity.ensound ?? '',
-                        boText: selectedDeity.tbsound ?? ''),
-                    description: selectedDeity.enContent),
+              SpeakerWidget(
+                audioUrl: context.localizedText(
+                    enText: selectedDeity.sound?.replaceFirst('TN', 'EN') ?? '',
+                    boText: selectedDeity.sound ?? ''),
+                description: context.localizedText(
+                    enText: selectedDeity.enContent,
+                    boText: selectedDeity.tbContent),
+              ),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
