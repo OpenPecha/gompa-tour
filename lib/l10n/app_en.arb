@@ -40,5 +40,6 @@
   "india": "India",
   "nepal": "Nepal",
   "bhutan": "Bhutan",
-  "darkMode": "Dark Mode"
+  "darkMode": "Dark Mode",
+  "theme": "Theme"
 }

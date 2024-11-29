@@ -38,7 +38,7 @@ class SettingsScreen extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(AppLocalizations.of(context)!.darkMode,
+            Text(AppLocalizations.of(context)!.theme,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
