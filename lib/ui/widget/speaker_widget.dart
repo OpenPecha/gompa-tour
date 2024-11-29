@@ -17,9 +17,13 @@ class SpeakerWidget extends ConsumerWidget {
     final LanguageState currentLanguage = ref.watch(languageProvider);
 
     return currentLanguage.currentLanguage == "en"
-        ? FlutterTtsSpeaker(
-            text: description,
-          )
-        : AudioPlayerWidget(audioUrl: audioUrl);
+        ? (audioUrl.isEmpty
+            ? FlutterTtsSpeaker(
+                text: description,
+              )
+            : AudioPlayerWidget(audioUrl: audioUrl))
+        : audioUrl.isEmpty
+            ? SizedBox()
+            : AudioPlayerWidget(audioUrl: audioUrl);
   }
 }

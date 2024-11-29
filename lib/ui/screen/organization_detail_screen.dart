@@ -60,9 +60,11 @@ class OrganizationDetailScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (selectedOrganization.sound != null)
+              if (selectedOrganization.tbsound != null)
                 SpeakerWidget(
-                    audioUrl: selectedOrganization.sound!,
+                    audioUrl: context.localizedText(
+                        enText: selectedOrganization.ensound ?? '',
+                        boText: selectedOrganization.tbsound ?? ''),
                     description: context.localizedText(
                         enText: selectedOrganization.enContent,
                         boText: selectedOrganization.tbContent)),
