@@ -169,10 +169,39 @@ class SettingsScreen extends ConsumerWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.privacyPolicy),
-          content: const SingleChildScrollView(
+          content: SingleChildScrollView(
             child: Text(
-              'We respect your privacy and are committed to protecting your personal data. '
-              'This Privacy Policy explains how we collect, use, and safeguard your information.',
+              'Privacy Policy for GonpaTour\n\n'
+              'Commitment to User Privacy\n\n'
+              'GonpaTour is a informational app dedicated to sharing knowledge about Tibetan monasteries, statues, and festivals. We prioritize your privacy and transparency.\n\n'
+              'App Characteristics:\n'
+              '• No user account creation\n'
+              '• No personal data collection\n'
+              '• No tracking or analytics\n'
+              '• Purely informational content\n'
+              '• Offline-first approach\n\n'
+              'Data Usage:\n'
+              '• App content is pre-loaded and static\n'
+              '• No user interactions are tracked\n'
+              '• No personal information is stored or required\n'
+              '• Content focuses solely on cultural education about Tibetan heritage\n\n'
+              'Device Interaction:\n'
+              '• Minimal app permissions\n'
+              '• No access to personal device data\n'
+              '• No location tracking\n'
+              '• No internet connection required for most features\n\n'
+              'Content Sourcing:\n'
+              '• Cultural information curated from verified sources\n'
+              '• Multimedia content (images, descriptions, audio) is pre-compiled\n'
+              '• Respect for cultural authenticity and intellectual properties\n\n'
+              'Security:\n'
+              '• No data transmission\n'
+              '• No user data storage\n'
+              '• Completely privacy-focused design\n\n'
+              'Updates:\n'
+              '• Periodic content updates will not involve any user data\n'
+              '• App updates focus on enriching cultural content\n\n'
+              'By using GonpaTour, you agree to explore Tibetan cultural heritage with complete privacy and peace of mind.',
             ),
           ),
           actions: [
