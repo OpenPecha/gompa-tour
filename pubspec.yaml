@@ -68,7 +68,7 @@ flutter_native_splash:
   color: "#15092b"
   image: assets/images/ic_launcher.png
   color_dark: "#15092b"
-  fullscreen: true
+  fullscreen: false
   android: true
   ios: true
   android_12:
