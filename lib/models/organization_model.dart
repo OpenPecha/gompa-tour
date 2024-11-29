@@ -20,7 +20,8 @@ class Organization {
   final String callNumber;
   final String slug;
   final String pic;
-  final String? sound;
+  final String? tbsound;
+  final String? ensound;
   final DateTime created;
   final DateTime updated;
 
@@ -46,7 +47,8 @@ class Organization {
     required this.callNumber,
     required this.slug,
     required this.pic,
-    this.sound,
+    this.tbsound,
+    this.ensound,
     required this.created,
     required this.updated,
   });
@@ -74,7 +76,8 @@ class Organization {
       callNumber: map['callnumber'] as String,
       slug: map['slug'] as String,
       pic: map['pic'] as String,
-      sound: map['sound'] as String?,
+      tbsound: map['tbsound'] as String?,
+      ensound: map['ensound'] as String?,
       created: DateTime.parse(map['created'] as String),
       updated: DateTime.parse(map['updated'] as String),
     );
@@ -102,7 +105,8 @@ class Organization {
       'callnumber': callNumber,
       'slug': slug,
       'pic': pic,
-      'sound': sound,
+      'tbsound': tbsound,
+      'ensound': ensound,
       'created': created.toIso8601String(),
       'updated': updated.toIso8601String(),
     };
@@ -131,7 +135,8 @@ class Organization {
     String? callNumber,
     String? slug,
     String? pic,
-    String? sound,
+    String? tbsound,
+    String? ensound,
     DateTime? created,
     DateTime? updated,
   }) {
@@ -157,7 +162,8 @@ class Organization {
       callNumber: callNumber ?? this.callNumber,
       slug: slug ?? this.slug,
       pic: pic ?? this.pic,
-      sound: sound ?? this.sound,
+      tbsound: tbsound ?? this.tbsound,
+      ensound: ensound ?? this.ensound,
       created: created ?? this.created,
       updated: updated ?? this.updated,
     );
