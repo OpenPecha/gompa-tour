@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 
 import '../../states/language_state.dart';
 import 'audio_player.dart';
@@ -16,14 +17,42 @@ class SpeakerWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final LanguageState currentLanguage = ref.watch(languageProvider);
 
-    return currentLanguage.currentLanguage == "en"
-        ? (audioUrl.isEmpty
-            ? FlutterTtsSpeaker(
-                text: description,
-              )
-            : AudioPlayerWidget(audioUrl: audioUrl))
-        : audioUrl.isEmpty
-            ? SizedBox()
-            : AudioPlayerWidget(audioUrl: audioUrl);
+    if (audioUrl.isEmpty) {
+      return currentLanguage == "en"
+          ? FlutterTtsSpeaker(text: description)
+          : const SizedBox.shrink();
+    }
+
+    return FutureBuilder<bool>(
+      future: isAudioUrlValid(audioUrl),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return AudioPlayerWidget(audioUrl: audioUrl);
+        }
+
+        final isValidAudio = snapshot.data ?? false;
+
+        if (currentLanguage == "en") {
+          return isValidAudio
+              ? AudioPlayerWidget(audioUrl: audioUrl)
+              : FlutterTtsSpeaker(text: description);
+        } else {
+          return isValidAudio
+              ? AudioPlayerWidget(audioUrl: audioUrl)
+              : const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
+  Future<bool> isAudioUrlValid(String audioUrl) async {
+    if (audioUrl.isEmpty) return false;
+
+    try {
+      final response = await http.head(Uri.parse(audioUrl));
+      return (response.statusCode == 200 || response.statusCode == 201);
+    } catch (e) {
+      return false;
+    }
   }
 }
