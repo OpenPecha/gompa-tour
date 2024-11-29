@@ -26,14 +26,16 @@ GonpaTour enables users to discover and explore various monasteries and organiza
 
 <table>
   <tr>
-    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/1.png?raw=true" alt="Screenshot 1" width="240"></td>
-    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/2.png?raw=true" alt="Screenshot 2" width="240"></td>
-    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/3.png?raw=true" alt="Screenshot 3" width="240"></td>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/0.png?raw=true" alt="Screenshot 1" width="240"></td>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/1.png?raw=true" alt="Screenshot 2" width="240"></td>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/2.png?raw=true" alt="Screenshot 3" width="240"></td>
   </tr>
   <tr>
-    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/4.png?raw=true" alt="Screenshot 4" width="240"></td>
-    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/5.png?raw=true" alt="Screenshot 5" width="240"></td>
-  </tr>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/3.png?raw=true" alt="Screenshot 4" width="240"></td>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/4.png?raw=true" alt="Screenshot 5" width="240"></td>
+    <td><img src="https://github.com/OpenPecha/gompa-tour/blob/develop/demo/5.png?raw=true" alt="Screenshot 6" width="240"></td>
+  
+</tr>
 </table>
 
 ---
