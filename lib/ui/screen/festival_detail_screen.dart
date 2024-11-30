@@ -27,8 +27,8 @@ class FestivalDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: GonpaAppBar(
           title: context.localizedText(
-        enText: selectedFestival.enTitle!,
-        boText: selectedFestival.tbTitle!,
+        enText: selectedFestival.eventEnName!,
+        boText: selectedFestival.eventTbName!,
       )),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -40,8 +40,8 @@ class FestivalDetailScreen extends ConsumerWidget {
               Center(
                 child: Text(
                   context.localizedText(
-                    enText: selectedFestival.enTitle!,
-                    boText: selectedFestival.tbTitle!,
+                    enText: selectedFestival.eventEnName!,
+                    boText: selectedFestival.eventTbName!,
                   ),
                   style: const TextStyle(
                     fontSize: 24,
@@ -62,8 +62,8 @@ class FestivalDetailScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                  enText: selectedFestival.enContent!,
-                  boText: selectedFestival.tbContent!,
+                  enText: selectedFestival.enDescription!,
+                  boText: selectedFestival.tbDescription!,
                 ),
                 style: TextStyle(
                     fontSize: 16, height: context.getLocalizedHeight()),

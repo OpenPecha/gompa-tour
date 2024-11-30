@@ -157,13 +157,13 @@ class SearchRepository {
     final festivalQuery = '''
     SELECT *,
     CASE
-      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 1
-      WHEN LOWER(enContent) LIKE LOWER('%$escapedQuery%') THEN 2
+      WHEN LOWER(event_tbname) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(event_enname) LIKE LOWER('%$escapedQuery%') THEN 2
       ELSE 3
     END as match_score 
     FROM events
-    WHERE LOWER(enTitle) LIKE LOWER('%$escapedQuery%')
-    OR LOWER(enContent) LIKE LOWER('%$escapedQuery%')
+    WHERE LOWER(event_tbname) LIKE LOWER('%$escapedQuery%')
+    OR LOWER(event_enname) LIKE LOWER('%$escapedQuery%')
   ''';
 
     final db = await dbHelper.database;
