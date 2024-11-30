@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/models/festival_model.dart';
 
+import '../../config/constant.dart';
 import '../../models/deity_model.dart';
 import '../../models/organization_model.dart';
 import '../../states/deties_state.dart';
@@ -55,9 +56,12 @@ class SearchCardItem extends ConsumerWidget {
                     children: [
                       Text(
                         context.localizedText(
-                          enText: searchableItem.enTitle,
-                          boText: searchableItem.tbTitle,
-                        ),
+                            enText: searchableItem is Festival
+                                ? searchableItem.eventEnName
+                                : searchableItem.enTitle,
+                            boText: searchableItem is Festival
+                                ? searchableItem.eventTbName
+                                : searchableItem.tbTitle),
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -81,12 +85,15 @@ class SearchCardItem extends ConsumerWidget {
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
-                              context
-                                  .localizedText(
-                                    enText: searchableItem.enContent,
-                                    boText: searchableItem.tbContent,
-                                  )
-                                  .substring(0, 50),
+                              context.localizedText(
+                                enText: searchableItem is Festival
+                                    ? searchableItem.eventEnName
+                                    : searchableItem.enContent,
+                                boText: searchableItem is Festival
+                                    ? searchableItem.eventTbName
+                                    : searchableItem.tbContent,
+                                maxLength: kDescriptionMaxLength,
+                              ),
                               style: const TextStyle(fontSize: 16),
                             ),
                           ),
@@ -108,7 +115,7 @@ class SearchCardItem extends ConsumerWidget {
                   child: Text(
                     _getTitle(searchableItem, context),
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: Colors.white,
                     ),
                   ),
                 )
