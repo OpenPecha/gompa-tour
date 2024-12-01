@@ -61,14 +61,16 @@ class OrganizationDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               SpeakerWidget(
-                  audioUrl: context.localizedText(
-                      enText: selectedOrganization.sound
-                              ?.replaceFirst('GP', 'EP') ??
-                          '',
-                      boText: selectedOrganization.sound ?? ''),
-                  description: context.localizedText(
-                      enText: selectedOrganization.enContent,
-                      boText: selectedOrganization.tbContent)),
+                audioUrl: context.localizedText(
+                    enText:
+                        selectedOrganization.sound?.replaceFirst('GP', 'EP') ??
+                            '',
+                    boText: selectedOrganization.sound ?? ''),
+                description: context.localizedText(
+                    enText: selectedOrganization.enContent,
+                    boText: selectedOrganization.tbContent),
+                data: selectedOrganization,
+              ),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(

@@ -76,11 +76,15 @@ class GlobalAudioPlayerNotifier extends StateNotifier<GlobalAudioPlayerState> {
     });
   }
 
-  Future<void> play(String audioUrl) async {
+  Future<void> play(String audioUrl, dynamic data) async {
+    data = data;
     if (state.currentAudioUrl != audioUrl) {
       // New audio source
-      state =
-          GlobalAudioPlayerState(currentAudioUrl: audioUrl, isLoading: true);
+      state = GlobalAudioPlayerState(
+        currentAudioUrl: audioUrl,
+        isLoading: true,
+        contextData: data,
+      );
     }
 
     try {

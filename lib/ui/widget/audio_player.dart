@@ -6,11 +6,13 @@ import '../../states/global_audio_state.dart';
 class AudioPlayerWidget extends ConsumerWidget {
   final String audioUrl;
   final String? title;
+  final dynamic data;
 
   const AudioPlayerWidget({
     super.key,
     required this.audioUrl,
     this.title,
+    this.data,
   });
 
   @override
@@ -29,7 +31,7 @@ class AudioPlayerWidget extends ConsumerWidget {
 
             // If this audio is not current, play it
             if (!isCurrentAudio) {
-              notifier.play(audioUrl);
+              notifier.play(audioUrl, data);
               return;
             }
 
@@ -60,11 +62,17 @@ class AudioPlayerWidget extends ConsumerWidget {
 
     // Show play or pause based on current audio state
     if (isCurrentAudio) {
-      return Icon(state.isPlaying ? Icons.pause : Icons.play_arrow);
+      return Icon(
+        state.isPlaying ? Icons.pause : Icons.play_arrow,
+        color: Colors.white,
+      );
     }
 
     // Default play icon if not current audio
-    return const Icon(Icons.play_arrow);
+    return const Icon(
+      Icons.play_arrow,
+      color: Colors.white,
+    );
   }
 
   String _getTooltip(GlobalAudioPlayerState state, bool isCurrentAudio) {

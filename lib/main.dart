@@ -66,7 +66,7 @@ class MyApp extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                PersistentAudioPlayer(),
+                PersistentAudioPlayer(router),
                 Expanded(
                   child: MediaQuery(
                     data: MediaQuery.of(context).copyWith(

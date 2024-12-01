@@ -66,6 +66,7 @@ class DeityDetailScreen extends ConsumerWidget {
                 description: context.localizedText(
                     enText: selectedDeity.enContent,
                     boText: selectedDeity.tbContent),
+                data: selectedDeity,
               ),
               const SizedBox(height: 16),
               Text(
