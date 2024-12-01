@@ -13,60 +13,60 @@ class PersistentAudioPlayer extends ConsumerWidget {
     if (audioState.currentAudioUrl == null) {
       return const SizedBox.shrink();
     }
+    final topPadding = MediaQuery.of(context).padding.top;
 
     return Material(
       elevation: 4,
-      child: SafeArea(
-        child: Container(
-          color: Theme.of(context).colorScheme.surfaceContainer,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              // Audio details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+      child: Container(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        padding: EdgeInsets.only(
+            left: 16, right: 16, top: topPadding + 8, bottom: 8),
+        child: Row(
+          children: [
+            // Audio details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    audioState.currentAudioUrl?.split('/').last ?? 'Audio',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontFamily: 'Roboto'),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (audioState.totalDuration != null)
                     Text(
-                      audioState.currentAudioUrl?.split('/').last ?? 'Audio',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontFamily: 'Roboto'),
-                      overflow: TextOverflow.ellipsis,
+                      '${audioState.currentPosition?.toString().split('.').first ?? '0:00'} / '
+                      '${audioState.totalDuration?.toString().split('.').first ?? '0:00'}',
+                      style:
+                          const TextStyle(fontSize: 12, fontFamily: 'Roboto'),
                     ),
-                    if (audioState.totalDuration != null)
-                      Text(
-                        '${audioState.currentPosition?.toString().split('.').first ?? '0:00'} / '
-                        '${audioState.totalDuration?.toString().split('.').first ?? '0:00'}',
-                        style:
-                            const TextStyle(fontSize: 12, fontFamily: 'Roboto'),
-                      ),
-                  ],
-                ),
+                ],
               ),
+            ),
 
-              // Control Buttons
-              IconButton(
-                icon: Icon(audioState.isLoading
-                    ? Icons.autorenew
-                    : (audioState.isPlaying ? Icons.pause : Icons.play_arrow)),
-                onPressed: () {
-                  final notifier = ref.read(globalAudioPlayerProvider.notifier);
-                  if (audioState.isLoading) return;
+            // Control Buttons
+            IconButton(
+              icon: Icon(audioState.isLoading
+                  ? Icons.autorenew
+                  : (audioState.isPlaying ? Icons.pause : Icons.play_arrow)),
+              onPressed: () {
+                final notifier = ref.read(globalAudioPlayerProvider.notifier);
+                if (audioState.isLoading) return;
 
-                  audioState.isPlaying ? notifier.pause() : notifier.resume();
-                },
-              ),
+                audioState.isPlaying ? notifier.pause() : notifier.resume();
+              },
+            ),
 
-              // Close button
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  ref.read(globalAudioPlayerProvider.notifier).stop();
-                },
-              ),
-            ],
-          ),
+            // Close button
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                ref.read(globalAudioPlayerProvider.notifier).stop();
+              },
+            ),
+          ],
         ),
       ),
     );
