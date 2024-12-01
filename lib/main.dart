@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,19 +56,27 @@ class MyApp extends ConsumerWidget {
       builder: (context, child) {
         final audioState = ref.watch(globalAudioPlayerProvider);
         if (audioState.currentAudioUrl != null) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              PersistentAudioPlayer(),
-              Expanded(
-                child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    padding: EdgeInsets.symmetric(vertical: 8),
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.light.copyWith(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: currentTheme.themeMode == ThemeMode.dark
+                  ? Brightness.light
+                  : Brightness.dark, // Adjust based on your theme
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                PersistentAudioPlayer(),
+                Expanded(
+                  child: MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                    ),
+                    child: child!,
                   ),
-                  child: child!,
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
         return child!;
