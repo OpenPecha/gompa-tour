@@ -9,9 +9,13 @@ import 'flutter_tts_speaker.dart';
 class SpeakerWidget extends ConsumerWidget {
   final String audioUrl;
   final String description;
+  final dynamic data;
 
   const SpeakerWidget(
-      {super.key, required this.audioUrl, required this.description});
+      {super.key,
+      required this.audioUrl,
+      required this.description,
+      this.data});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,11 +38,17 @@ class SpeakerWidget extends ConsumerWidget {
 
         if (currentLanguage == "en") {
           return isValidAudio
-              ? AudioPlayerWidget(audioUrl: audioUrl)
+              ? AudioPlayerWidget(
+                  audioUrl: audioUrl,
+                  data: data,
+                )
               : FlutterTtsSpeaker(text: description);
         } else {
           return isValidAudio
-              ? AudioPlayerWidget(audioUrl: audioUrl)
+              ? AudioPlayerWidget(
+                  audioUrl: audioUrl,
+                  data: data,
+                )
               : const SizedBox.shrink();
         }
       },

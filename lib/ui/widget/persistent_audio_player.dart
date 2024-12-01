@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../models/deity_model.dart';
+import '../../models/organization_model.dart';
+import '../../states/deties_state.dart';
 import '../../states/global_audio_state.dart';
+import '../../states/organization_state.dart';
+import '../screen/deities_detail_screen.dart';
+import '../screen/organization_detail_screen.dart';
 
 class PersistentAudioPlayer extends ConsumerWidget {
-  const PersistentAudioPlayer({super.key});
+  final GoRouter router;
+  const PersistentAudioPlayer(this.router, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,24 +33,51 @@ class PersistentAudioPlayer extends ConsumerWidget {
           children: [
             // Audio details
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    audioState.currentAudioUrl?.split('/').last ?? 'Audio',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontFamily: 'Roboto'),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (audioState.totalDuration != null)
+              child: InkResponse(
+                onTap: () {
+                  final data = audioState.contextData;
+                  if (data != null) {
+                    final currentLocation = router.state?.path;
+                    if (data is Organization) {
+                      final currentSelectedOrg =
+                          ref.read(selectedOrganizationProvider);
+                      if (currentLocation !=
+                              OrganizationDetailScreen.routeName ||
+                          currentSelectedOrg?.id != data.id) {
+                        ref.read(selectedOrganizationProvider.notifier).state =
+                            data;
+                        router.push(OrganizationDetailScreen.routeName);
+                      }
+                    } else if (data is Deity) {
+                      final currentSelectedDeity =
+                          ref.read(selectedDeityProvider);
+                      if (currentLocation != DeityDetailScreen.routeName ||
+                          currentSelectedDeity?.id != data.id) {
+                        ref.read(selectedDeityProvider.notifier).state = data;
+                        router.push(DeityDetailScreen.routeName);
+                      }
+                    }
+                  }
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     Text(
-                      '${audioState.currentPosition?.toString().split('.').first ?? '0:00'} / '
-                      '${audioState.totalDuration?.toString().split('.').first ?? '0:00'}',
-                      style:
-                          const TextStyle(fontSize: 12, fontFamily: 'Roboto'),
+                      audioState.currentAudioUrl?.split('/').last ?? 'Audio',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontFamily: 'Roboto'),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                ],
+                    if (audioState.totalDuration != null)
+                      Text(
+                        '${audioState.currentPosition?.toString().split('.').first ?? '0:00'} / '
+                        '${audioState.totalDuration?.toString().split('.').first ?? '0:00'}',
+                        style:
+                            const TextStyle(fontSize: 12, fontFamily: 'Roboto'),
+                      ),
+                  ],
+                ),
               ),
             ),
 
