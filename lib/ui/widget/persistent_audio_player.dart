@@ -46,7 +46,13 @@ class PersistentAudioPlayer extends ConsumerWidget {
                           currentSelectedOrg?.id != data.id) {
                         ref.read(selectedOrganizationProvider.notifier).state =
                             data;
-                        router.push(OrganizationDetailScreen.routeName);
+                        if (currentLocation ==
+                            OrganizationDetailScreen.routeName) {
+                          router.pushReplacement(
+                              OrganizationDetailScreen.routeName);
+                        } else {
+                          router.push(OrganizationDetailScreen.routeName);
+                        }
                       }
                     } else if (data is Deity) {
                       final currentSelectedDeity =
@@ -54,7 +60,11 @@ class PersistentAudioPlayer extends ConsumerWidget {
                       if (currentLocation != DeityDetailScreen.routeName ||
                           currentSelectedDeity?.id != data.id) {
                         ref.read(selectedDeityProvider.notifier).state = data;
-                        router.push(DeityDetailScreen.routeName);
+                        if (currentLocation == DeityDetailScreen.routeName) {
+                          router.pushReplacement(DeityDetailScreen.routeName);
+                        } else {
+                          router.push(DeityDetailScreen.routeName);
+                        }
                       }
                     }
                   }
