@@ -140,7 +140,10 @@ final festivalRepositoryProvider = Provider<DatabaseRepository<Festival>>(
 
 final festivalNotifierProvider =
     StateNotifierProvider<FestivalNotifier, FestivalListState>(
-  (ref) => FestivalNotifier(ref.read(festivalRepositoryProvider)),
+  (ref) {
+    final repository = ref.read(festivalRepositoryProvider);
+    return FestivalNotifier(repository);
+  },
 );
 
 final selectedFestivalProvider = StateProvider<Festival?>((ref) => null);
