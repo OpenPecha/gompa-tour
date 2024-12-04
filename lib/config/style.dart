@@ -147,6 +147,6 @@ class Style {
     required ThemeData baseTheme,
   }) {
     return getThemeWithFont(
-        baseTheme: baseTheme, fontFamily: 'NotoSerifTibetan');
+        baseTheme: baseTheme, fontFamily: 'MonlamTibetan');
   }
 }
