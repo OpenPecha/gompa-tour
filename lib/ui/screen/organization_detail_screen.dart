@@ -26,10 +26,7 @@ class OrganizationDetailScreen extends ConsumerWidget {
       );
     }
     return Scaffold(
-      appBar: GonpaAppBar(
-          title: context.localizedText(
-              enText: selectedOrganization.enTitle,
-              boText: selectedOrganization.tbContent)),
+      appBar: GonpaAppBar(),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
