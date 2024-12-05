@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class GonpaAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final String? title;
   final double height; // Add height as a parameter for customization
   final List<Widget>? actions;
   final bool enableBackButton;
@@ -10,7 +10,7 @@ class GonpaAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   const GonpaAppBar({
     super.key,
-    required this.title,
+    this.title,
     this.height = kToolbarHeight, // Default to AppBar's standard height
     this.actions,
     this.enableBackButton = true,
@@ -26,7 +26,9 @@ class GonpaAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: const Icon(Icons.arrow_back_ios),
             )
           : null,
-      title: Text(title),
+      title: Text(
+        title ?? "",
+      ),
       actions: actions,
       centerTitle: centerTitle,
     );

@@ -26,9 +26,7 @@ class DeityDetailScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: GonpaAppBar(
-          title: context.localizedText(
-              enText: selectedDeity.enTitle, boText: selectedDeity.tbContent)),
+      appBar: GonpaAppBar(),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(

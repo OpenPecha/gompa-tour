@@ -25,11 +25,7 @@ class FestivalDetailScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: GonpaAppBar(
-          title: context.localizedText(
-        enText: selectedFestival.eventEnName!,
-        boText: selectedFestival.eventTbName!,
-      )),
+      appBar: GonpaAppBar(),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
