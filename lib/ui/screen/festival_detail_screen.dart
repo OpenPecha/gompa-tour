@@ -39,9 +39,10 @@ class FestivalDetailScreen extends ConsumerWidget {
                     enText: selectedFestival.eventEnName!,
                     boText: selectedFestival.eventTbName!,
                   ),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    height: context.getLocalizedHeight(),
                   ),
                 ),
               ),
@@ -62,7 +63,9 @@ class FestivalDetailScreen extends ConsumerWidget {
                   boText: selectedFestival.tbDescription!,
                 ),
                 style: TextStyle(
-                    fontSize: 16, height: context.getLocalizedHeight()),
+                  fontSize: 16,
+                  height: context.getLocalizedHeight(),
+                ),
               ),
               if (selectedFestival.slug != null) ...[
                 const SizedBox(height: 16),

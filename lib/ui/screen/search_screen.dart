@@ -73,9 +73,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: TextField(
               controller: _searchController,
               focusNode: _searchFocusNode,
-              style: const TextStyle(
-                fontFamily: 'Roboto',
-              ),
               autofocus: true,
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context)!.search,
@@ -137,7 +134,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                   label: Text(
                                     search,
                                     style: const TextStyle(
-                                      fontFamily: 'Roboto',
+                                      fontSize: 12,
                                     ),
                                   ),
                                   onDeleted: () {
@@ -195,7 +192,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           Text(
                             suggestion.keys.first,
                             style: const TextStyle(
-                                fontSize: 12, fontFamily: 'Roboto'),
+                              fontSize: 12,
+                              fontFamily: 'Roboto',
+                            ),
                           ),
                         ],
                       ),

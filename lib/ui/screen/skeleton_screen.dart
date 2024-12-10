@@ -30,7 +30,7 @@ class SkeletonScreen extends ConsumerWidget {
 
     return Scaffold(
       //extendBodyBehindAppBar: true,
-      appBar: currentTab['title'] != null && currentTab['title'].isNotEmpty
+      appBar: currentTab['title'] != null
           ? AppBar(
               title: currentTab['title'] == "home"
                   ? Image.asset(
@@ -59,12 +59,12 @@ class SkeletonScreen extends ConsumerWidget {
         'screen': const HomeScreen(),
       },
       {
-        'title': AppLocalizations.of(context)!.map,
+        'title': "",
         'icon': Icons.map,
         'screen': const MapScreen(),
       },
       {
-        'title': AppLocalizations.of(context)!.qr,
+        'title': "",
         'icon': Icons.qr_code_scanner,
         'screen': const QrScreen(),
       },

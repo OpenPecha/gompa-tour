@@ -150,9 +150,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 children: [
                   Text(
                     selectedOrganization.tbTitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      height: context.getLocalizedHeight(),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -162,6 +163,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       boText: selectedOrganization.tbContent,
                       maxLength: kDescriptionMaxLength,
                     ),
+                    style: TextStyle(
+                      height: context.getLocalizedHeight(),
+                    )
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -174,7 +178,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                               .state = selectedOrganization;
                           context.push(OrganizationDetailScreen.routeName);
                         },
-                        child: Text(AppLocalizations.of(context)!.detail),
+                        child: Text(
+                          AppLocalizations.of(context)!.detail,
+                        ),
                       ),
                       TextButton(
                         onPressed: () => ref

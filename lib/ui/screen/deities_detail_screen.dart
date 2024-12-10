@@ -17,6 +17,7 @@ class DeityDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDeity = ref.watch(selectedDeityProvider);
     final height = MediaQuery.of(context).size.height;
+    Locale locale = Localizations.localeOf(context);
 
     if (selectedDeity == null) {
       return const Scaffold(
@@ -40,9 +41,10 @@ class DeityDetailScreen extends ConsumerWidget {
                     enText: selectedDeity.enTitle,
                     boText: selectedDeity.tbTitle,
                   ),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    height: context.getLocalizedHeight(),
                   ),
                 ),
               ),
@@ -73,7 +75,9 @@ class DeityDetailScreen extends ConsumerWidget {
                   boText: selectedDeity.tbContent,
                 ),
                 style: TextStyle(
-                    fontSize: 16, height: context.getLocalizedHeight()),
+                  fontSize: 16,
+                  height: context.getLocalizedHeight(),
+                ),
               ),
               if (selectedDeity.slug != null) ...[
                 const SizedBox(height: 16),
