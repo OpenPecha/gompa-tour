@@ -36,9 +36,10 @@ class DeityCardItem extends ConsumerWidget {
                   enText: deity.enTitle,
                   boText: deity.tbTitle,
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  height: context.getLocalizedHeight(),
                 ),
               ),
               const SizedBox(height: 8),
@@ -64,7 +65,10 @@ class DeityCardItem extends ConsumerWidget {
                         boText: deity.tbContent,
                         maxLength: kDescriptionMaxLength,
                       ),
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: context.getLocalizedHeight(),
+                      ),
                     ),
                   ),
                 ],

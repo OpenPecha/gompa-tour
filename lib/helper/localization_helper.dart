@@ -23,7 +23,7 @@ class LocalizationHelper {
       return "${localizedText.substring(0, maxLength)}...";
     }
 
-    return localizedText;
+    return localizedText.replaceAll(RegExp(r'\\r\\n|\\n'), '\n');
   }
 
   static double? getLocalizedHeight(BuildContext buildContext) {

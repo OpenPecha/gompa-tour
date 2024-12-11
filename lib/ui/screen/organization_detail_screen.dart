@@ -40,9 +40,10 @@ class OrganizationDetailScreen extends ConsumerWidget {
                     enText: selectedOrganization.enTitle,
                     boText: selectedOrganization.tbTitle,
                   ),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    height: context.getLocalizedHeight(),
                   ),
                 ),
               ),
@@ -71,11 +72,12 @@ class OrganizationDetailScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                  enText: selectedOrganization.enContent,
-                  boText: selectedOrganization.tbContent,
-                ),
+                    enText: selectedOrganization.enContent,
+                    boText: selectedOrganization.tbContent),
                 style: TextStyle(
-                    fontSize: 16, height: context.getLocalizedHeight()),
+                  fontSize: 16,
+                  height: context.getLocalizedHeight(),
+                ),
               ),
               const SizedBox(height: 16),
               AddressCard(

@@ -15,7 +15,6 @@ class OrganizationCardItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('OrganizationCardItem build:' + organization.pic);
     return GestureDetector(
       onTap: () {
         ref.read(selectedOrganizationProvider.notifier).state = organization;
@@ -35,9 +34,10 @@ class OrganizationCardItem extends ConsumerWidget {
                   enText: organization.enTitle,
                   boText: organization.tbTitle,
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  height: context.getLocalizedHeight(),
                 ),
               ),
               const SizedBox(height: 8),
@@ -63,7 +63,10 @@ class OrganizationCardItem extends ConsumerWidget {
                         boText: organization.tbContent,
                         maxLength: kDescriptionMaxLength,
                       ),
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: context.getLocalizedHeight(),
+                      ),
                     ),
                   ),
                 ],

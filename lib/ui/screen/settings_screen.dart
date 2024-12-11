@@ -77,12 +77,12 @@ class SettingsScreen extends ConsumerWidget {
                   fontWeight: FontWeight.w400,
                 )),
             FlutterSwitch(
-              width: 55,
+              width: 60,
               height: 30,
               toggleSize: 20,
               valueFontSize: 12.0,
               value: currentLanguage == LanguageState.TIBETAN,
-              activeText: "བོད་",
+              activeText: "བོད།",
               inactiveText: "EN",
               showOnOff: true,
               onToggle: (val) {

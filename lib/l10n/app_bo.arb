@@ -18,8 +18,8 @@
   "contactSupport": "འབྲེལ་མཐུད།",
   "sendEmail": "གློག་འཕྲིན་",
   "close": "ཁ་རྒྱག",
-  "recentSearches": "ཉེ་ཆར་གྱི་འཚོལ་བྱེད་",
-  "suggestion": "འོས་སྦྱོར་",
+  "recentSearches": "ཉེ་ཆར་གྱི་འཚོལ་བྱེད།",
+  "suggestion": "འོས་སྦྱོར།",
   "detail": "ཞིབ་ཕྲ།",
   "deities": "རྟེན་བཤད།",
   "organizations": "ཆོས་སྡེ།",
@@ -41,5 +41,12 @@
   "nepal": "བལ་ཡུལ།",
   "bhutan": "འབྲུག་ཡུལ།",
   "darkMode": "འཆར་ངོས་ནག་པོ།",
-  "theme": "འཆར་ངོས།"
+  "theme": "འཆར་ངོས།",
+  "nyingma": "རྙིང་མ།",
+  "kagyu": "བཀའ་བརྒྱུད།",
+  "sakya": "ས་སྐྱ།",
+  "gelug": "དགེ་ལུགས།",
+  "bon": "བོན།",
+  "jonang": "ཇོ་ནང།",
+  "others": "གཞན།"
 }

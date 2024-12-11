@@ -36,9 +36,10 @@ class FestivalCardItem extends ConsumerWidget {
                   enText: festival.eventEnName!,
                   boText: festival.eventTbName!,
                 ),
-                style: const TextStyle(
+                style:  TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  height: context.getLocalizedHeight(),
                 ),
               ),
               const SizedBox(height: 8),
@@ -64,7 +65,9 @@ class FestivalCardItem extends ConsumerWidget {
                       boText: festival.tbDescription!,
                       maxLength: kDescriptionMaxLength,
                     ),
-                    style: const TextStyle(fontSize: 16),
+                    style:  TextStyle(fontSize: 16,
+                    height: context.getLocalizedHeight(),
+                    ),
                   )),
                 ],
               ),
