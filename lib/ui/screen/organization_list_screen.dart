@@ -7,8 +7,12 @@ import 'package:gompa_tour/ui/widget/organization_card_item.dart';
 
 class OrganizationListScreen extends ConsumerStatefulWidget {
   static const String routeName = '/organization-list';
+  final String? category;
 
-  const OrganizationListScreen({super.key});
+  OrganizationListScreen({
+    super.key,
+    this.category,
+  });
 
   @override
   ConsumerState createState() => _DetiesListScreenState();
@@ -22,7 +26,7 @@ class _DetiesListScreenState extends ConsumerState<OrganizationListScreen> {
     // Fetch initial deities when the screen is first loaded
     organizationNotifier = ref.read(organizationNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      organizationNotifier.fetchInitialOrganizations();
+      organizationNotifier.fetchInitialOrganizations(widget.category ?? '');
     });
   }
 
@@ -36,7 +40,8 @@ class _DetiesListScreenState extends ConsumerState<OrganizationListScreen> {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
               !organizationState.isLoading &&
               !organizationState.hasReachedMax) {
-            organizationNotifier.fetchPaginatedOrganizations();
+            organizationNotifier
+                .fetchPaginatedOrganizations(widget.category ?? '');
           }
           return false;
         },

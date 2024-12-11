@@ -4,6 +4,7 @@ import 'package:gompa_tour/ui/screen/festival_detail_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
+import 'package:gompa_tour/ui/screen/orginatzations_screen.dart';
 
 import '../ui/screen/deities_detail_screen.dart';
 import '../ui/screen/skeleton_screen.dart';
@@ -32,9 +33,14 @@ final router = GoRouter(
     GoRoute(
       path: OrganizationListScreen.routeName,
       builder: (context, state) {
-        return const OrganizationListScreen();
+        return OrganizationListScreen();
       },
     ),
+    GoRoute(
+        path: OrginatzationsScreen.routeName,
+        builder: (context, state) {
+          return const OrginatzationsScreen();
+        }),
     GoRoute(
       path: OrganizationDetailScreen.routeName,
       builder: (context, state) {

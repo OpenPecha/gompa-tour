@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
+import 'package:gompa_tour/ui/screen/orginatzations_screen.dart';
 import 'package:gompa_tour/util/enum.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -49,7 +50,7 @@ class HomeScreen extends ConsumerWidget {
             context.push(DeitiesListScreen.routeName);
             return;
           case MenuType.organization:
-            context.push(OrganizationListScreen.routeName);
+            context.push(OrginatzationsScreen.routeName);
             return;
           case MenuType.festival:
             context.push(FestivalListScreen.routeName);

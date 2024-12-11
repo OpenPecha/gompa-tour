@@ -25,7 +25,7 @@
   "organizations": "Monastery",
   "festival": "Festival",
   "deity": "Deity",
-  "organization": "Organization",
+  "organization": "Monastery",
   "scanQrCode": "Scan QR Code",
   "address": "Address",
   "location": "Location",
@@ -41,5 +41,12 @@
   "nepal": "Nepal",
   "bhutan": "Bhutan",
   "darkMode": "Dark Mode",
-  "theme": "Theme"
+  "theme": "Theme",
+  "nyingma": "Nyingma",
+  "kagyu": "Kagyu",
+  "sakya": "Sakya",
+  "gelug": "Gelug",
+  "bon": "Bon",
+  "jonang": "Jonang",
+  "others": "Others"
 }

@@ -107,11 +107,15 @@ class DatabaseRepository<T> {
     );
   }
 
-  Future<List<T>> getSortedPaginatedOrganization(int page, int pageSize) async {
+  Future<List<T>> getSortedPaginatedOrganization(
+      int page, int pageSize, String category) async {
     final db = await dbHelper.database;
+    final sanitizedCategory =
+        category.replaceAll("'", "''"); // Prevent SQL injection
     final maps = await db.query(
       tableName,
-      orderBy: 'categories asc',
+      where: 'categories LIKE ?',
+      whereArgs: ['%$sanitizedCategory%'],
       limit: pageSize,
       offset: page * pageSize,
     );

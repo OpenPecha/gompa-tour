@@ -56,11 +56,11 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
   OrganizationNotifier(this.repository)
       : super(OrganizationListState.initial());
 
-  Future<void> fetchInitialOrganizations() async {
+  Future<void> fetchInitialOrganizations(String category) async {
     state = state.copyWith(isLoading: true);
     try {
-      final initialOrganizations =
-          await repository.getSortedPaginatedOrganization(0, state.pageSize);
+      final initialOrganizations = await repository
+          .getSortedPaginatedOrganization(0, state.pageSize, category);
       state = state.copyWith(
         organizations: initialOrganizations,
         page: 1,
@@ -84,14 +84,14 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
     );
   }
 
-  Future<void> fetchPaginatedOrganizations() async {
+  Future<void> fetchPaginatedOrganizations(String category) async {
     if (state.isLoading || state.hasReachedMax) return;
 
     try {
       state = state.copyWith(isLoading: true);
 
       final newOrganizations = await repository.getSortedPaginatedOrganization(
-          state.page, state.pageSize);
+          state.page, state.pageSize, category);
 
       final hasReachedMax = newOrganizations.length < state.pageSize;
 
