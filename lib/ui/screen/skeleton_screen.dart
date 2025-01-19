@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+import 'package:gompa_tour/states/language_state.dart';
 import 'package:gompa_tour/ui/screen/qr_screen.dart';
 import 'package:gompa_tour/ui/screen/search_screen.dart';
 import 'package:gompa_tour/ui/screen/settings_screen.dart';
@@ -16,6 +18,7 @@ class SkeletonScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int? navIndex = ref.watch(bottomNavProvider) as int?;
+    final currentLanguage = ref.watch(languageProvider).currentLanguage;
 
     // Tab configuration
     List<Map<String, dynamic>> tabConfigurations = _tabConfiguration(context);
@@ -32,14 +35,46 @@ class SkeletonScreen extends ConsumerWidget {
       //extendBodyBehindAppBar: true,
       appBar: currentTab['title'] != null
           ? AppBar(
-              title: currentTab['title'] == "home"
-                  ? Image.asset(
-                      'assets/images/logo.png',
-                      height: 40,
-                    )
-                  : Text(currentTab['title']),
-              centerTitle: true,
+            backgroundColor: Colors.white,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  height: 40,
+                ),
+              ),
+              title: Text(
+                "Neykor",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              centerTitle: false,
               elevation: 1,
+              actions: [
+                currentTab["title"] == "home"
+                    ? FlutterSwitch(
+                        width: 60,
+                        height: 30,
+                        toggleSize: 20,
+                        valueFontSize: 12.0,
+                        value: currentLanguage == LanguageState.TIBETAN,
+                        activeText: "བོད།",
+                        inactiveText: "EN",
+                        showOnOff: true,
+                        onToggle: (val) {
+                          ref.read(languageProvider.notifier).setLanguage(val
+                              ? LanguageState.TIBETAN
+                              : LanguageState.ENGLISH);
+                        },
+                      )
+                    : const SizedBox(),
+                IconButton(
+                  icon: const Icon(Icons.more_vert),
+                  onPressed: () {},
+                ),
+              ],
             )
           : null,
       body: AnimatedSwitcher(
