@@ -107,6 +107,15 @@ class DatabaseRepository<T> {
     );
   }
 
+  // get to total number of items in the database
+  Future<int> getCount() async {
+    final db = await dbHelper.database;
+    final count = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM $tableName'),
+    );
+    return count ?? 0;
+  }
+
   Future<List<T>> getSortedPaginatedOrganization(
       int page, int pageSize, String category) async {
     final db = await dbHelper.database;

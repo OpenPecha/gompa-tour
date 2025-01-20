@@ -2,52 +2,76 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gompa_tour/states/bottom_nav_state.dart';
+import 'package:gompa_tour/states/deties_state.dart';
+import 'package:gompa_tour/states/festival_state.dart';
+import 'package:gompa_tour/states/organization_state.dart';
+import 'package:gompa_tour/states/recent_search.dart';
+import 'package:gompa_tour/states/search_state.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/orginatzations_screen.dart';
-import 'package:gompa_tour/ui/screen/qr_screen.dart';
 import 'package:gompa_tour/util/enum.dart';
+import 'package:gompa_tour/util/search_debouncer.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  final _searchDebouncer = SearchDebouncer();
+
+  int totalDeity = 0;
+  int totalOrganization = 0;
+  int totalFestival = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCounts();
+  }
+
+  void _loadCounts() async {
+    totalDeity =
+        await ref.read(detiesNotifierProvider.notifier).getDeitiesCount();
+    totalOrganization = await ref
+        .read(organizationNotifierProvider.notifier)
+        .getOrganizationCount();
+    totalFestival =
+        await ref.read(festivalNotifierProvider.notifier).getFestivalCount();
+  }
+
+  void _performSearch(String query) async {
+    if (query.isEmpty || query.length < 3) {
+      _clearSearchResults();
+      return;
+    }
+
+    _searchDebouncer.run(
+      query,
+      onSearch: (q) =>
+          ref.read(searchNotifierProvider.notifier).searchAcrossTables(q),
+      onSaveSearch: (q) =>
+          ref.read(recentSearchesProvider.notifier).addSearch(q),
+      onClearResults: _clearSearchResults,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final searchState = ref.watch(searchNotifierProvider);
+
     return Column(
       children: [
         _buildHeader(context),
         _buildSearchBar(context),
         const Divider(),
-        Expanded(
-          child: GridView.count(
-            crossAxisCount: 2,
-            padding: EdgeInsets.all(8),
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            children: [
-              _buildCard(
-                MenuType.deities,
-                'assets/images/buddha.png',
-                context,
-              ),
-              _buildCard(
-                MenuType.organization,
-                'assets/images/potala2.png',
-                context,
-              ),
-              _buildCard(
-                MenuType.pilgrimage,
-                'assets/images/duchen.png',
-                context,
-              ),
-              _buildCard(
-                MenuType.festival,
-                'assets/images/duchen.png',
-                context,
-              ),
-            ],
-          ),
-        ),
+        _buildCategoryCards(context),
         const SizedBox(height: 32),
       ],
     );
@@ -84,12 +108,23 @@ class HomeScreen extends ConsumerWidget {
         backgroundColor: WidgetStateProperty.resolveWith<Color>(
           (states) => Colors.white,
         ),
-        controller: TextEditingController(),
+        controller: _searchController,
+        focusNode: _searchFocusNode,
         leading: Icon(Icons.search),
         trailing: [
+          if (_searchController.text.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                _searchController.clear();
+                _clearSearchResults();
+              },
+            ),
           IconButton(
             icon: Icon(Icons.qr_code),
-            onPressed: () {},
+            onPressed: () {
+              ref.read(bottomNavProvider.notifier).setAndPersistValue(2);
+            },
           )
         ],
         hintText: 'Search here....',
@@ -97,7 +132,45 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCard(MenuType type, String imagePath, BuildContext context) {
+  Widget _buildCategoryCards(BuildContext context) {
+    return Expanded(
+      child: GridView.count(
+        crossAxisCount: 2,
+        padding: EdgeInsets.all(8),
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        children: [
+          _buildCard(
+            MenuType.deities,
+            'assets/images/buddha.png',
+            context,
+            totalDeity,
+          ),
+          _buildCard(
+            MenuType.organization,
+            'assets/images/potala2.png',
+            context,
+            totalOrganization,
+          ),
+          _buildCard(
+            MenuType.pilgrimage,
+            'assets/images/duchen.png',
+            context,
+            totalFestival,
+          ),
+          _buildCard(
+            MenuType.festival,
+            'assets/images/duchen.png',
+            context,
+            totalFestival,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(
+      MenuType type, String imagePath, BuildContext context, int count) {
     return GestureDetector(
       onTap: () {
         switch (type) {
@@ -132,7 +205,7 @@ class HomeScreen extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text("199"),
+            Text(count.toString()),
             const SizedBox(height: 8),
           ],
         ),
@@ -151,5 +224,17 @@ class HomeScreen extends ConsumerWidget {
       case MenuType.pilgrimage:
         return "Pilgrimage";
     }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    _searchDebouncer.dispose();
+    super.dispose();
+  }
+
+  void _clearSearchResults() {
+    ref.read(searchNotifierProvider.notifier).clearSearchResults();
   }
 }
