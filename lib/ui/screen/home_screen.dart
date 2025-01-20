@@ -11,6 +11,7 @@ import 'package:gompa_tour/states/search_state.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/orginatzations_screen.dart';
+import 'package:gompa_tour/ui/widget/search_card_item.dart';
 import 'package:gompa_tour/util/enum.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
 
@@ -72,7 +73,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _buildSearchBar(context),
         const Divider(),
         _buildCategoryCards(context),
-        const SizedBox(height: 32),
+        _buildSearchResults(context, searchState),
+        searchState.isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : const SizedBox(),
       ],
     );
   }
@@ -112,14 +118,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         focusNode: _searchFocusNode,
         leading: Icon(Icons.search),
         trailing: [
-          if (_searchController.text.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                _searchController.clear();
-                _clearSearchResults();
-              },
-            ),
+          _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    _clearSearchResults();
+                  },
+                )
+              : const SizedBox(),
           IconButton(
             icon: Icon(Icons.qr_code),
             onPressed: () {
@@ -128,45 +135,64 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           )
         ],
         hintText: 'Search here....',
+        onChanged: (value) {
+          _performSearch(value);
+        },
       ),
     );
   }
 
   Widget _buildCategoryCards(BuildContext context) {
-    return Expanded(
-      child: GridView.count(
-        crossAxisCount: 2,
-        padding: EdgeInsets.all(8),
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        children: [
-          _buildCard(
-            MenuType.deities,
-            'assets/images/buddha.png',
-            context,
-            totalDeity,
-          ),
-          _buildCard(
-            MenuType.organization,
-            'assets/images/potala2.png',
-            context,
-            totalOrganization,
-          ),
-          _buildCard(
-            MenuType.pilgrimage,
-            'assets/images/duchen.png',
-            context,
-            totalFestival,
-          ),
-          _buildCard(
-            MenuType.festival,
-            'assets/images/duchen.png',
-            context,
-            totalFestival,
-          ),
-        ],
-      ),
-    );
+    return _searchController.text.isEmpty
+        ? Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                    maxWidth: 600), // Optional: limits max width
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                        maxWidth: 600), // Optional: limits max width
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      padding: EdgeInsets.all(8),
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      shrinkWrap: true,
+                      childAspectRatio: 1,
+                      children: [
+                        _buildCard(
+                          MenuType.deities,
+                          'assets/images/buddha.png',
+                          context,
+                          totalDeity,
+                        ),
+                        _buildCard(
+                          MenuType.organization,
+                          'assets/images/potala2.png',
+                          context,
+                          totalOrganization,
+                        ),
+                        _buildCard(
+                          MenuType.pilgrimage,
+                          'assets/images/duchen.png',
+                          context,
+                          totalFestival,
+                        ),
+                        _buildCard(
+                          MenuType.festival,
+                          'assets/images/duchen.png',
+                          context,
+                          totalFestival,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        : const SizedBox();
   }
 
   Widget _buildCard(
@@ -211,6 +237,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildSearchResults(BuildContext context, SearchState searchState) {
+    if (searchState.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return searchState.results.isNotEmpty
+        ? Expanded(
+            child: ListView.builder(
+              itemCount: searchState.results.length,
+              itemBuilder: (context, index) {
+                final searchableItem = searchState.results[index];
+                return SearchCardItem(searchableItem: searchableItem);
+              },
+            ),
+          )
+        : const SizedBox();
   }
 
   String _getTitle(MenuType type, BuildContext context) {
