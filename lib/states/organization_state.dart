@@ -130,6 +130,11 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
     }
   }
 
+  // get total number of organizations
+  Future<int> getOrganizationCount() async {
+    return await repository.getCount();
+  }
+
   void clearSearchResults() {
     state = OrganizationListState.initial();
   }

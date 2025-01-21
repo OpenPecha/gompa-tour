@@ -1,2 +1,2 @@
 // create enum
-enum MenuType { festival, organization, deities }
+enum MenuType { festival, organization, deities, pilgrimage }

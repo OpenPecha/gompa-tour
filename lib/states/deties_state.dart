@@ -11,6 +11,7 @@ class DeityListState {
   final int page;
   final int pageSize;
   final String? error;
+  final int total;
 
   DeityListState({
     required this.deities,
@@ -19,6 +20,7 @@ class DeityListState {
     required this.page,
     required this.pageSize,
     this.error,
+    required this.total,
   });
 
   factory DeityListState.initial() {
@@ -28,6 +30,7 @@ class DeityListState {
       hasReachedMax: false,
       page: 0,
       pageSize: 20,
+      total: 0,
     );
   }
 
@@ -38,6 +41,7 @@ class DeityListState {
     int? page,
     int? pageSize,
     String? error,
+    int? total,
   }) {
     return DeityListState(
       deities: deities ?? this.deities,
@@ -46,6 +50,7 @@ class DeityListState {
       page: page ?? this.page,
       pageSize: pageSize ?? this.pageSize,
       error: error ?? this.error,
+      total: total ?? this.total,
     );
   }
 }
@@ -118,6 +123,11 @@ class DeityNotifier extends StateNotifier<DeityListState> {
         error: e.toString(),
       );
     }
+  }
+
+  // get the total number of deties in the database
+  Future<int> getDeitiesCount() async {
+    return await repository.getCount();
   }
 
   void clearSearchResults() {

@@ -74,6 +74,12 @@ class FestivalNotifier extends StateNotifier<FestivalListState> {
     }
   }
 
+  // to get the total number of festivals
+  Future<int> getFestivalCount() async {
+    final totalFestivals = await repository.getCount();
+    return totalFestivals;
+  }
+
   void clearSearchResults() {
     state = FestivalListState.initial();
   }

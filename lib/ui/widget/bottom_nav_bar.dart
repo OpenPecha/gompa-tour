@@ -53,11 +53,7 @@ class BottomNavBar extends ConsumerWidget {
             label: AppLocalizations.of(context)!.qr,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.search),
-            label: AppLocalizations.of(context)!.search,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.person),
             label: AppLocalizations.of(context)!.settings,
           ),
         ],
