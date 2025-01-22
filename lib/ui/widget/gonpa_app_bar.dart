@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:gompa_tour/states/language_state.dart';
+import 'package:gompa_tour/states/theme_mode_state.dart';
 
-class GonpaAppBar extends StatelessWidget implements PreferredSizeWidget {
+class GonpaAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String? title;
   final double height; // Add height as a parameter for customization
   final List<Widget>? actions;
@@ -18,7 +23,7 @@ class GonpaAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
       leading: enableBackButton
           ? GestureDetector(
@@ -27,10 +32,98 @@ class GonpaAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       title: Text(
-        title ?? "",
+        "Neykor",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
       ),
-      actions: actions,
+      actions: [_buildActions(context, ref)],
       centerTitle: centerTitle,
+    );
+  }
+
+  Widget _buildActions(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider).themeMode;
+
+    final currentLanguage = ref.watch(languageProvider).currentLanguage;
+
+    return MenuAnchor(
+      builder:
+          (BuildContext context, MenuController controller, Widget? child) {
+        return IconButton(
+          onPressed: () {
+            if (controller.isOpen) {
+              controller.close();
+            } else {
+              controller.open();
+            }
+          },
+          icon: const Icon(Icons.more_vert),
+          tooltip: 'Show menu',
+        );
+      },
+      style: MenuStyle(
+          padding: WidgetStateProperty.all(
+            EdgeInsets.all(12.0),
+          ),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+          minimumSize: WidgetStateProperty.all(Size(190, 48))),
+      menuChildren: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(AppLocalizations.of(context)!.theme,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                )),
+            const SizedBox(width: 20),
+            FlutterSwitch(
+              width: 55,
+              height: 30,
+              toggleSize: 20,
+              value: themeMode == ThemeMode.dark,
+              activeIcon: Icon(Icons.dark_mode, size: 15),
+              inactiveIcon: Icon(Icons.light_mode, size: 15),
+              onToggle: (val) {
+                ref.read(themeProvider).themeMode =
+                    val ? ThemeMode.dark : ThemeMode.light;
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(AppLocalizations.of(context)!.language,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                )),
+            const SizedBox(width: 20),
+            FlutterSwitch(
+              width: 55,
+              height: 30,
+              toggleSize: 20,
+              valueFontSize: 12.0,
+              value: currentLanguage == LanguageState.TIBETAN,
+              activeText: "བོད།",
+              inactiveText: "EN",
+              showOnOff: true,
+              onToggle: (val) {
+                ref.read(languageProvider.notifier).setLanguage(
+                    val ? LanguageState.TIBETAN : LanguageState.ENGLISH);
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 
