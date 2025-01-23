@@ -38,13 +38,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _loadCounts() async {
-    totalDeity =
+    final deityCount =
         await ref.read(detiesNotifierProvider.notifier).getDeitiesCount();
-    totalOrganization = await ref
+    final organizationCout = await ref
         .read(organizationNotifierProvider.notifier)
         .getOrganizationCount();
-    totalFestival =
+    final festivalCout =
         await ref.read(festivalNotifierProvider.notifier).getFestivalCount();
+    setState(() {
+      totalDeity = deityCount;
+      totalOrganization = organizationCout;
+      totalFestival = festivalCout;
+    });
   }
 
   void _performSearch(String query) async {
@@ -112,7 +117,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       child: SearchBar(
         backgroundColor: WidgetStateProperty.resolveWith<Color>(
-          (states) => Colors.white,
+          (states) => Theme.of(context).colorScheme.surfaceContainer,
         ),
         controller: _searchController,
         focusNode: _searchFocusNode,
@@ -213,7 +218,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       },
       child: Card(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         child: Column(
           children: [
             Flexible(
@@ -226,7 +231,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Text(
               _getTitle(type, context),
               style: const TextStyle(
-                color: Colors.black,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
