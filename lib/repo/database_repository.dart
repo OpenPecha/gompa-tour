@@ -64,13 +64,13 @@ class DatabaseRepository<T> {
     final rawQuery = '''
     SELECT *, 
     CASE 
-      WHEN LOWER(tbTitle) LIKE LOWER('%$escapedQuery%') THEN 1
-      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 2
+      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(enContent) LIKE LOWER('%$escapedQuery%') THEN 2
       ELSE 3
     END AS match_priority
     FROM $tableName
     WHERE 
-      LOWER(tbContent) LIKE LOWER('%$escapedQuery%') OR 
+      LOWER(enTitle) LIKE LOWER('%$escapedQuery%') OR 
       LOWER(enContent) LIKE LOWER('%$escapedQuery%')
     ORDER BY match_priority ASC
   ''';
