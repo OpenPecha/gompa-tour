@@ -189,6 +189,24 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
     }
   }
 
+  // search organizations based on category
+  Future<void> searchOrganizationsByCategory(String query, String category) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final results = await repository.searchByTitleAndContentAndCategory(query, category);
+      state = state.copyWith(
+        organizations: results,
+        isLoading: false,
+        hasReachedMax: true,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
   // get total number of organizations
   Future<int> getOrganizationCount() async {
     return await repository.getCount();

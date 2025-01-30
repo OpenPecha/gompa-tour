@@ -79,6 +79,33 @@ class DatabaseRepository<T> {
     return maps.map((map) => fromMap(map)).toList();
   }
 
+  // search by title, content and category
+  Future<List<T>> searchByTitleAndContentAndCategory(
+      String query, String category) async {
+    final db = await dbHelper.database;
+    final escapedQuery = query.replaceAll("'", "''");
+    final sanitizedCategory =
+        category.replaceAll("'", "''"); // Prevent SQL injection
+
+    final rawQuery = '''
+    SELECT *, 
+    CASE 
+      WHEN LOWER(enTitle) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(enContent) LIKE LOWER('%$escapedQuery%') THEN 2
+      ELSE 3
+    END AS match_priority
+    FROM $tableName
+    WHERE 
+      LOWER(enTitle) LIKE LOWER('%$escapedQuery%') OR 
+      LOWER(enContent) LIKE LOWER('%$escapedQuery%') AND
+      categories LIKE '%$sanitizedCategory%'
+    ORDER BY match_priority ASC
+  ''';
+
+    final maps = await db.rawQuery(rawQuery);
+    return maps.map((map) => fromMap(map)).toList();
+  }
+
   Future<int> insert(T item) async {
     final db = await dbHelper.database;
     return await db.insert(
