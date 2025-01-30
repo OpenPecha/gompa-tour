@@ -26,7 +26,12 @@ class _DetiesListScreenState extends ConsumerState<OrganizationListScreen> {
     // Fetch initial deities when the screen is first loaded
     organizationNotifier = ref.read(organizationNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      organizationNotifier.fetchInitialOrganizations(widget.category ?? '');
+      if (widget.category == "All") {
+        organizationNotifier.fetchInitialOrganizations();
+      } else {
+        organizationNotifier
+            .fetchCategorisedInitialOrganizations(widget.category ?? '');
+      }
     });
   }
 
@@ -40,8 +45,12 @@ class _DetiesListScreenState extends ConsumerState<OrganizationListScreen> {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
               !organizationState.isLoading &&
               !organizationState.hasReachedMax) {
-            organizationNotifier
-                .fetchPaginatedOrganizations(widget.category ?? '');
+            if (widget.category == "All") {
+              organizationNotifier.fetchPaginatedOrganizations();
+            } else {
+              organizationNotifier.fetchPaginatedCategorisedOrganizations(
+                  widget.category ?? '');
+            }
           }
           return false;
         },

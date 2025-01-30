@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/organization_model.dart';
 import '../repo/database_repository.dart';
 import 'database_state.dart';
+import 'package:sqflite/sqflite.dart';
 
 class OrganizationListState {
   final List<Organization> organizations;
@@ -56,7 +57,54 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
   OrganizationNotifier(this.repository)
       : super(OrganizationListState.initial());
 
-  Future<void> fetchInitialOrganizations(String category) async {
+  // Fetch initial organizations
+  Future<void> fetchInitialOrganizations() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final initialOrganizations =
+          await repository.getAllPaginated(0, state.pageSize);
+      state = state.copyWith(
+        organizations: initialOrganizations,
+        page: 1,
+        isLoading: false,
+        hasReachedMax: initialOrganizations.length < state.pageSize,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  // fetch paginated organizations
+  Future<void> fetchPaginatedOrganizations() async {
+    if (state.isLoading || state.hasReachedMax) return;
+
+    try {
+      state = state.copyWith(isLoading: true);
+
+      final newOrganizations =
+          await repository.getAllPaginated(state.page, state.pageSize);
+
+      final hasReachedMax = newOrganizations.length < state.pageSize;
+
+      state = state.copyWith(
+        organizations: [...state.organizations, ...newOrganizations],
+        page: state.page + 1,
+        isLoading: false,
+        hasReachedMax: hasReachedMax,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  // Fetch initial organizations based on category
+  Future<void> fetchCategorisedInitialOrganizations(String category) async {
     state = state.copyWith(isLoading: true);
     try {
       final initialOrganizations = await repository
@@ -75,16 +123,26 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
     }
   }
 
+  // Fetch all organizations
   Future<void> fetchOrganizations() async {
-    List<Organization> results = await repository.getAll();
-    state = state.copyWith(
-      organizations: results,
-      isLoading: false,
-      hasReachedMax: true,
-    );
+    state = state.copyWith(isLoading: true);
+    try {
+      final results = await repository.getAll();
+      state = state.copyWith(
+        organizations: results,
+        isLoading: false,
+        hasReachedMax: true,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
   }
 
-  Future<void> fetchPaginatedOrganizations(String category) async {
+  // Fetch paginated organizations based on category
+  Future<void> fetchPaginatedCategorisedOrganizations(String category) async {
     if (state.isLoading || state.hasReachedMax) return;
 
     try {
@@ -109,6 +167,7 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
     }
   }
 
+  // Fetch organization by slug
   Future<Organization?> fetchOrganizationBySlug(String slug) async {
     return await repository.getBySlug(slug);
   }
@@ -133,6 +192,19 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
   // get total number of organizations
   Future<int> getOrganizationCount() async {
     return await repository.getCount();
+  }
+
+  // get total number of organizations based on category
+  Future<List<Map<String, dynamic>>> getOrganizationCountByCategory() async {
+    final db = await repository.dbHelper.database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+    SELECT categories, COUNT(*) as count 
+    FROM organization 
+    GROUP BY categories
+  ''');
+
+    return maps;
   }
 
   void clearSearchResults() {

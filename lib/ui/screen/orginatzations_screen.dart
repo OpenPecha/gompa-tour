@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/states/bottom_nav_state.dart';
+import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,6 +22,41 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
+  final gonpaStats = [];
+  String lastFourCategory = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEachOrginazationCount();
+  }
+
+  void _loadEachOrginazationCount() async {
+    final aggCounts = await ref
+        .read(organizationNotifierProvider.notifier)
+        .getOrganizationCountByCategory();
+
+    // Create a mutable copy of the read-only list
+    final List<Map<String, dynamic>> mutableAggCounts = List.from(aggCounts);
+
+    // Calculate the total count
+    int totalCount =
+        mutableAggCounts.fold(0, (sum, item) => sum + item['count'] as int);
+
+    // total count of others category
+    final lastFour = mutableAggCounts.sublist(mutableAggCounts.length - 4);
+    int lastFourSum =
+        lastFour.fold(0, (sum, item) => sum + (item['count'] as int));
+
+    // Add a new entry for the total count
+    mutableAggCounts.insert(0, {"categories": "All", "count": totalCount});
+    mutableAggCounts.insert(7, {"categories": "Others", "count": lastFourSum});
+
+    setState(() {
+      gonpaStats.addAll(mutableAggCounts);
+      lastFourCategory = lastFourSum.toString();
+    });
+  }
 
   // list of organizations
   final organizations = [
@@ -46,16 +82,16 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
           Expanded(
             child: ListView.builder(
               physics: const BouncingScrollPhysics(),
-              itemCount: organizations.length,
+              itemCount: (gonpaStats.length - 4).abs(),
               itemBuilder: (context, index) {
-                final organization = organizations[index];
+                final organization = gonpaStats[index];
                 return GestureDetector(
                   onTap: () {
                     // Navigate to the detail screen of the item
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => OrganizationListScreen(
-                          category: organization.keys.first,
+                          category: organization.values.first,
                         ),
                       ),
                     );
@@ -98,7 +134,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                                   ),
                                 ),
                                 Text(
-                                  "56",
+                                  organization.values.last.toString(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 16,
@@ -122,24 +158,24 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
 
   String _getTitle(String category, BuildContext context) {
     switch (category) {
-      case "All Gonpa":
+      case "All":
         return AppLocalizations.of(context)!.allGonpa;
-      case "Nyingma":
+      case "CHA0 རྙིང་མ།":
         return AppLocalizations.of(context)!.nyingma;
-      case "Kagyu":
+      case "CHB0 བཀའ་བརྒྱུད།":
         return AppLocalizations.of(context)!.kagyu;
-      case "Sakya":
+      case "CHC0 ས་སྐྱ།":
         return AppLocalizations.of(context)!.sakya;
-      case "Gelug":
+      case "CHD0 དགེ་ལུགས།":
         return AppLocalizations.of(context)!.gelug;
-      case "Bon":
+      case "CHE0 བོན།":
         return AppLocalizations.of(context)!.bon;
-      case "Jonang":
+      case "CHF0 ཇོ་ནང།":
         return AppLocalizations.of(context)!.jonang;
       case "Others":
         return AppLocalizations.of(context)!.others;
       default:
-        return "";
+        return AppLocalizations.of(context)!.others;
     }
   }
 
