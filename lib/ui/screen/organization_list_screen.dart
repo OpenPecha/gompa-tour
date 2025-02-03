@@ -28,6 +28,12 @@ class _OrganizationListScreenState
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
   ViewType _currentView = ViewType.list;
+  final othersCategory = [
+    "CHG0 རེས་མེད།",
+    "CHG1 བོ་དོང་།",
+    "CHG2 ཞ་ལུ།",
+    "CHG3 རིས་མེད།",
+  ];
 
   @override
   void initState() {
@@ -42,9 +48,11 @@ class _OrganizationListScreenState
   void _loadInitialOrganizations() {
     if (widget.category == "All") {
       organizationNotifier.fetchInitialOrganizations();
+    } else if (widget.category == "Others") {
+      organizationNotifier.fetchCategorisedInitialOrganizations(othersCategory);
     } else {
       organizationNotifier
-          .fetchCategorisedInitialOrganizations(widget.category ?? '');
+          .fetchCategorisedInitialOrganizations([widget.category ?? '']);
     }
   }
 
@@ -59,9 +67,12 @@ class _OrganizationListScreenState
       onSearch: (q) {
         if (widget.category == "All") {
           return organizationNotifier.searchOrganizations(q);
-        } else {
+        } else if (widget.category == "Others") {
           return organizationNotifier.searchOrganizationsByCategory(
-              q, widget.category ?? '');
+              q, othersCategory);
+        } else {
+          return organizationNotifier
+              .searchOrganizationsByCategory(q, [widget.category ?? '']);
         }
       },
       onSaveSearch: (q) =>
@@ -82,9 +93,12 @@ class _OrganizationListScreenState
               !organizationState.hasReachedMax) {
             if (widget.category == "All") {
               organizationNotifier.fetchPaginatedOrganizations();
+            } else if (widget.category == "Others") {
+              organizationNotifier
+                  .fetchPaginatedCategorisedOrganizations(othersCategory);
             } else {
               organizationNotifier.fetchPaginatedCategorisedOrganizations(
-                  widget.category ?? '');
+                  [widget.category ?? '']);
             }
           }
           return false;

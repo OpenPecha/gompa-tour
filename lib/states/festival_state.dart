@@ -60,7 +60,7 @@ class FestivalNotifier extends StateNotifier<FestivalListState> {
   Future<void> searchFestivals(String query) async {
     state = state.copyWith(isLoading: true);
     try {
-      final results = await repository.searchByTitleAndContent(query);
+      final results = await repository.searchFestivalByTitleAndContent(query);
       state = state.copyWith(
         festivals: results,
         isLoading: false,

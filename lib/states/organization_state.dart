@@ -104,7 +104,8 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
   }
 
   // Fetch initial organizations based on category
-  Future<void> fetchCategorisedInitialOrganizations(String category) async {
+  Future<void> fetchCategorisedInitialOrganizations(
+      List<String> category) async {
     state = state.copyWith(isLoading: true);
     try {
       final initialOrganizations = await repository
@@ -142,7 +143,8 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
   }
 
   // Fetch paginated organizations based on category
-  Future<void> fetchPaginatedCategorisedOrganizations(String category) async {
+  Future<void> fetchPaginatedCategorisedOrganizations(
+      List<String> category) async {
     if (state.isLoading || state.hasReachedMax) return;
 
     try {
@@ -190,10 +192,12 @@ class OrganizationNotifier extends StateNotifier<OrganizationListState> {
   }
 
   // search organizations based on category
-  Future<void> searchOrganizationsByCategory(String query, String category) async {
+  Future<void> searchOrganizationsByCategory(
+      String query, List<String> category) async {
     state = state.copyWith(isLoading: true);
     try {
-      final results = await repository.searchByTitleAndContentAndCategory(query, category);
+      final results =
+          await repository.searchByTitleAndContentAndCategory(query, category);
       state = state.copyWith(
         organizations: results,
         isLoading: false,

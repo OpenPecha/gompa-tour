@@ -180,13 +180,6 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
                   },
                 )
               : const SizedBox(),
-          // IconButton(
-          //   icon: Icon(Icons.qr_code),
-          //   onPressed: () {
-          //     ref.read(bottomNavProvider.notifier).setAndPersistValue(2);
-          //     Navigator.pop(context);
-          //   },
-          // )
         ],
         hintText: 'Search here....',
         onChanged: (value) {

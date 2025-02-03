@@ -79,13 +79,35 @@ class DatabaseRepository<T> {
     return maps.map((map) => fromMap(map)).toList();
   }
 
-  // search by title, content and category
-  Future<List<T>> searchByTitleAndContentAndCategory(
-      String query, String category) async {
+  // search festival by title and content
+  Future<List<T>> searchFestivalByTitleAndContent(String query) async {
     final db = await dbHelper.database;
     final escapedQuery = query.replaceAll("'", "''");
-    final sanitizedCategory =
-        category.replaceAll("'", "''"); // Prevent SQL injection
+
+    final rawQuery = '''
+    SELECT *, 
+    CASE 
+      WHEN LOWER(event_enname) LIKE LOWER('%$escapedQuery%') THEN 1
+      WHEN LOWER(event_tbname) LIKE LOWER('%$escapedQuery%') THEN 2
+      ELSE 3
+    END AS match_priority
+    FROM $tableName
+    WHERE 
+      LOWER(event_enname) LIKE LOWER('%$escapedQuery%') OR 
+      LOWER(event_tbname) LIKE LOWER('%$escapedQuery%')
+    ORDER BY match_priority ASC
+  ''';
+
+    final maps = await db.rawQuery(rawQuery);
+    return maps.map((map) => fromMap(map)).toList();
+  }
+
+  // search by title, content and category
+  Future<List<T>> searchByTitleAndContentAndCategory(
+      String query, List<String> category) async {
+    final db = await dbHelper.database;
+    final escapedQuery = query.replaceAll("'", "''");
+    final sanitizedCategory = category.join("','"); // Prevent SQL injection
 
     final rawQuery = '''
     SELECT *, 
@@ -144,14 +166,16 @@ class DatabaseRepository<T> {
   }
 
   Future<List<T>> getSortedPaginatedOrganization(
-      int page, int pageSize, String category) async {
+      int page, int pageSize, List<String> categories) async {
     final db = await dbHelper.database;
-    final sanitizedCategory =
-        category.replaceAll("'", "''"); // Prevent SQL injection
+
+    // Create placeholders for the IN clause
+    final placeholders = List.filled(categories.length, '?').join(', ');
+
     final maps = await db.query(
       tableName,
-      where: 'categories LIKE ?',
-      whereArgs: ['%$sanitizedCategory%'],
+      where: 'categories IN ($placeholders)',
+      whereArgs: categories,
       limit: pageSize,
       offset: page * pageSize,
     );
