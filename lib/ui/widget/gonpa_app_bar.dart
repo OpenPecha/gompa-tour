@@ -25,6 +25,7 @@ class GonpaAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       leading: enableBackButton
           ? GestureDetector(
               onTap: context.pop,

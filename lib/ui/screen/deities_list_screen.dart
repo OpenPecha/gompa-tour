@@ -3,11 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/states/bottom_nav_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
-import 'package:gompa_tour/states/search_state.dart';
-import 'package:gompa_tour/ui/screen/home_screen.dart';
-import 'package:gompa_tour/ui/screen/skeleton_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
-import 'package:gompa_tour/ui/widget/search_card_item.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
 
 import '../../states/deties_state.dart';
@@ -184,13 +180,6 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
                   },
                 )
               : const SizedBox(),
-          IconButton(
-            icon: Icon(Icons.qr_code),
-            onPressed: () {
-              ref.read(bottomNavProvider.notifier).setAndPersistValue(2);
-              Navigator.pop(context);
-            },
-          )
         ],
         hintText: 'Search here....',
         onChanged: (value) {
@@ -202,5 +191,12 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
 
   void _clearSearchResults() {
     ref.read(detiesNotifierProvider.notifier).clearSearchResults();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 }
