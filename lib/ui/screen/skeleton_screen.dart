@@ -34,7 +34,6 @@ class SkeletonScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider).themeMode;
 
     return Scaffold(
-      //extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         leading: Padding(
@@ -45,7 +44,7 @@ class SkeletonScreen extends ConsumerWidget {
           ),
         ),
         title: Text(
-          "Neykor",
+          AppLocalizations.of(context)!.neykor,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,

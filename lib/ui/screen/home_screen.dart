@@ -11,6 +11,7 @@ import 'package:gompa_tour/states/search_state.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/orginatzations_screen.dart';
+import 'package:gompa_tour/ui/screen/pilgrimage_list_screen.dart';
 import 'package:gompa_tour/ui/widget/search_card_item.dart';
 import 'package:gompa_tour/util/enum.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
@@ -89,23 +90,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'Department of Religion and Culture',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+    Locale locale = Localizations.localeOf(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
+      ),
+      child: Column(
+        children: [
+          Text(
+            AppLocalizations.of(context)!.deptName,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
-        Text(
-          'Central Tibetan Administration',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+          locale.languageCode == 'en'
+              ? Text(
+                  'Central Tibetan Administration',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+              : SizedBox(),
+        ],
+      ),
     );
   }
 
@@ -132,14 +143,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                 )
               : const SizedBox(),
-          IconButton(
-            icon: Icon(Icons.qr_code),
-            onPressed: () {
-              ref.read(bottomNavProvider.notifier).setAndPersistValue(2);
-            },
-          )
         ],
-        hintText: 'Search here....',
+        hintText: AppLocalizations.of(context)!.search,
         onChanged: (value) {
           _performSearch(value);
         },
@@ -151,49 +156,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return _searchController.text.isEmpty
         ? Expanded(
             child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                    maxWidth: 600), // Optional: limits max width
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                        maxWidth: 600), // Optional: limits max width
-                    child: GridView.count(
-                      crossAxisCount: 2,
-                      padding: EdgeInsets.all(8),
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      shrinkWrap: true,
-                      childAspectRatio: 1,
-                      children: [
-                        _buildCard(
-                          MenuType.deities,
-                          'assets/images/buddha.png',
-                          context,
-                          totalDeity,
-                        ),
-                        _buildCard(
-                          MenuType.organization,
-                          'assets/images/potala2.png',
-                          context,
-                          totalOrganization,
-                        ),
-                        _buildCard(
-                          MenuType.pilgrimage,
-                          'assets/images/duchen.png',
-                          context,
-                          totalFestival,
-                        ),
-                        _buildCard(
-                          MenuType.festival,
-                          'assets/images/duchen.png',
-                          context,
-                          totalFestival,
-                        ),
-                      ],
-                    ),
+              child: GridView.count(
+                crossAxisCount: 2,
+                padding: EdgeInsets.all(8),
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                shrinkWrap: true,
+                childAspectRatio: 1,
+                children: [
+                  _buildCard(
+                    MenuType.deities,
+                    'assets/images/buddha.png',
+                    context,
+                    totalDeity,
                   ),
-                ),
+                  _buildCard(
+                    MenuType.organization,
+                    'assets/images/potala2.png',
+                    context,
+                    totalOrganization,
+                  ),
+                  _buildCard(
+                    MenuType.pilgrimage,
+                    'assets/images/duchen.png',
+                    context,
+                    totalFestival,
+                  ),
+                  _buildCard(
+                    MenuType.festival,
+                    'assets/images/duchen.png',
+                    context,
+                    totalFestival,
+                  ),
+                ],
               ),
             ),
           )
@@ -213,6 +208,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             return;
           case MenuType.festival:
             context.push(FestivalListScreen.routeName);
+            return;
+          case MenuType.pilgrimage:
+            context.push(PilgrimageListScreen.routeName);
+            return;
           default:
             break;
         }
@@ -224,8 +223,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Flexible(
               child: Image.asset(
                 imagePath,
-                height: 120,
-                fit: BoxFit.contain,
+                // height: 120,
+                // fit: BoxFit.contain,
               ),
             ),
             Text(
@@ -271,7 +270,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       case MenuType.festival:
         return AppLocalizations.of(context)!.festival;
       case MenuType.pilgrimage:
-        return "Pilgrimage";
+        return AppLocalizations.of(context)!.pilgrimage;
     }
   }
 

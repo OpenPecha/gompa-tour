@@ -10,291 +10,181 @@ class SettingsScreen extends ConsumerWidget {
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
-        const SizedBox(height: 8),
-        _buildSupportSection(context),
-        _buildAboutAppSection(context),
-        _buildAboutUsSection(context),
-        _buildPrayerAppSection(context),
-        _buildShareAppSection(context),
+        const SizedBox(height: 16),
+        ...buildSettingsSections(context),
       ],
     );
   }
 
-  Widget _buildSupportSection(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          _buildSupportOption(
+  List<Widget> buildSettingsSections(BuildContext context) {
+    return [
+      SettingsCard(
+        child: SettingsListTile(
+          leading: const Icon(Icons.phone),
+          title: AppLocalizations.of(context)!.contactUs,
+          onTap: () => _showDialog(
             context,
-            AppLocalizations.of(context)!.contactUs,
-            Icons.contact_support,
-            () => _showContactDialog(context),
+            DialogContent.contact,
           ),
-        ],
+        ),
       ),
-    );
+      SettingsCard(
+        child: SettingsListTile(
+          leading: Image.asset('assets/images/logo.png', width: 40),
+          title: AppLocalizations.of(context)!.aboutApp,
+          onTap: () => _showDialog(
+            context,
+            DialogContent.aboutApp,
+          ),
+        ),
+      ),
+      SettingsCard(
+        child: SettingsListTile(
+          leading: Image.asset('assets/images/cta.jpg', width: 40),
+          title: AppLocalizations.of(context)!.aboutUs,
+          onTap: () => _showDialog(
+            context,
+            DialogContent.aboutUs,
+          ),
+        ),
+      ),
+      SettingsCard(
+        child: SettingsListTile(
+          leading: Image.asset('assets/images/religion.png', width: 40),
+          title: AppLocalizations.of(context)!.prayerApp,
+          onTap: () => _showDialog(
+            context,
+            DialogContent.prayerApp,
+          ),
+        ),
+      ),
+      SettingsCard(
+        child: SettingsListTile(
+          leading: const Icon(Icons.share),
+          title: AppLocalizations.of(context)!.shareApp,
+          onTap: () => _showDialog(
+            context,
+            DialogContent.aboutUs,
+          ),
+        ),
+      ),
+    ];
   }
 
-  Widget _buildAboutAppSection(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          _buildAboutAppOption(
-            context,
-            AppLocalizations.of(context)!.aboutApp,
-            () => _showAboutAppDialog(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAboutUsSection(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          _buildAboutUsOption(
-            context,
-            AppLocalizations.of(context)!.aboutUs,
-            () => _showAboutUsDialog(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPrayerAppSection(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          _buildPrayerAppOption(
-            context,
-            AppLocalizations.of(context)!.prayerApp,
-            () => _showPrayerAppDialog(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShareAppSection(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          _buildShareAppOption(
-            context,
-            AppLocalizations.of(context)!.shareApp,
-            () => _showAboutUsDialog(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showContactDialog(BuildContext context) {
+  void _showDialog(BuildContext context, DialogContent content) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.contactSupport),
-          content: Column(
+      builder: (context) => AlertDialog(
+        title: Text(_getDialogTitle(context, content)),
+        content: SingleChildScrollView(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Central Tibetan Administration"),
-              const Text("Gangchen Kyishong, Dharamshala"),
-              const Text("Kangra District, HP 176215, India"),
-              const Text("Tel: +91-1892-222685, 226737"),
-              const Text('Fax: +91-1892-228037'),
-              const Text('Email: religion@tibet.net'),
-              const SizedBox(height: 16),
-            ],
+            children: _getDialogContent(content),
           ),
-          actions: [
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(
+            child: Text(AppLocalizations.of(context)!.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
     );
   }
 
-  void _showAboutAppDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.contactSupport),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Gompa Tour"),
-              const Text("Gangchen Kyishong, Dharamshala"),
-              const Text("Kangra District, HP 176215, India"),
-              const Text("Tel: +91-1892-222685, 226737"),
-              const Text('Fax: +91-1892-228037'),
-              const Text('Email: religion@tibet.net'),
-              const SizedBox(height: 16),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
+  String _getDialogTitle(BuildContext context, DialogContent content) {
+    switch (content) {
+      case DialogContent.contact:
+        return AppLocalizations.of(context)!.contactSupport;
+      case DialogContent.aboutApp:
+        return AppLocalizations.of(context)!.contactSupport;
+      case DialogContent.aboutUs:
+        return AppLocalizations.of(context)!.aboutUs;
+      case DialogContent.prayerApp:
+        return AppLocalizations.of(context)!.prayerApp;
+    }
   }
 
-  void _showAboutUsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.aboutUs),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                    "The Department of Religion and Culture is a ministry office established under the executive organ of Central Tibetan Administration whose function is to overlook religious and cultural affairs in Tibetan exile community. It has the responsibility of supervising works aimed at reviving, preserving, and promotion of Tibetan religious and cultural heritage that is being led to the verge of extinction in Tibet."),
-                const Text(
-                    "It began its operation in exile community as Council for Religious Affairs office on April 27, 1959, headed by a Director and constituted by the representative of the four Buddhist schools as its principal members in Mussorrie. On 30th May 1960, the Council for Religious Affairs shifted its office to Dharamsala and on September 12, 1960, it became one of the seven main departments when His Holiness the Dalai Lama formally established the Central Tibetan Administration (CTA)."),
-                const Text(
-                    "Under the affiliation of this department, there are 255 monasteries and 37 nunneries in India, Nepal and Bhutan and also five cultural institutions across India"),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
+  List<Widget> _getDialogContent(DialogContent content) {
+    const spacing = SizedBox(height: 16);
+
+    switch (content) {
+      case DialogContent.contact:
+      case DialogContent.aboutApp:
+        return [
+          const Text("Central Tibetan Administration"),
+          const Text("Gangchen Kyishong, Dharamshala"),
+          const Text("Kangra District, HP 176215, India"),
+          const Text("Tel: +91-1892-222685, 226737"),
+          const Text('Fax: +91-1892-228037'),
+          const Text('Email: religion@tibet.net'),
+          spacing,
+        ];
+      case DialogContent.aboutUs:
+        return [
+          const Text(
+              "The Department of Religion and Culture is a ministry office established under the executive organ of Central Tibetan Administration whose function is to overlook religious and cultural affairs in Tibetan exile community. It has the responsibility of supervising works aimed at reviving, preserving, and promotion of Tibetan religious and cultural heritage that is being led to the verge of extinction in Tibet."),
+          const Text(
+              "It began its operation in exile community as Council for Religious Affairs office on April 27, 1959, headed by a Director and constituted by the representative of the four Buddhist schools as its principal members in Mussorrie. On 30th May 1960, the Council for Religious Affairs shifted its office to Dharamsala and on September 12, 1960, it became one of the seven main departments when His Holiness the Dalai Lama formally established the Central Tibetan Administration (CTA)."),
+          const Text(
+              "Under the affiliation of this department, there are 255 monasteries and 37 nunneries in India, Nepal and Bhutan and also five cultural institutions across India"),
+          // Add other texts as needed
+        ];
+      case DialogContent.prayerApp:
+        return [
+          const Text(
+              "This prayer app is developed by the Dept of Religion and Culture of Central Tibetan Administration to make availability of the Tibetan prayers in digital format."),
+          const Text(
+              "The app consist of daily prayers, prayers of different Tibetan Buddhist schools, mantras and official prayers books. "),
+          const Text(
+              "It also has a facility of listening short daily prayers and mantras in audio."),
+          const Text(
+              "Apart from prayers, this app  contains a list and description of holy Buddhist pilgrimage sites and festivals of Tibet."),
+          // Add other texts as needed
+          spacing,
+        ];
+    }
+  }
+}
+
+enum DialogContent { contact, aboutApp, aboutUs, prayerApp }
+
+class SettingsCard extends StatelessWidget {
+  final Widget child;
+
+  const SettingsCard({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(children: [child]),
     );
   }
+}
 
-  void _showPrayerAppDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.prayerApp),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                  "This prayer app is developed by the Dept of Religion and Culture of Central Tibetan Administration to make availability of the Tibetan prayers in digital format."),
-              const Text(
-                  "The app consist of daily prayers, prayers of different Tibetan Buddhist schools, mantras and official prayers books. "),
-              const Text(
-                  "It also has a facility of listening short daily prayers and mantras in audio."),
-              const Text(
-                  "Apart from prayers, this app  contains a list and description of holy Buddhist pilgrimage sites and festivals of Tibet."),
-              const SizedBox(height: 16),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
+class SettingsListTile extends StatelessWidget {
+  final Widget leading;
+  final String title;
+  final VoidCallback onTap;
 
-  Widget _buildSupportOption(
-    BuildContext context,
-    String title,
-    IconData icon,
-    VoidCallback onTap,
-  ) {
+  const SettingsListTile({
+    super.key,
+    required this.leading,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(Icons.phone),
+      leading: leading,
       title: Text(title),
       onTap: onTap,
       trailing: const Icon(Icons.chevron_right),
     );
   }
-}
-
-Widget _buildAboutAppOption(
-  BuildContext context,
-  String title,
-  VoidCallback onTap,
-) {
-  return ListTile(
-    leading: Image.asset(
-        'assets/images/logo.png'), // Replace with your app logo path
-    title: Text(title),
-    onTap: onTap,
-    trailing: const Icon(Icons.chevron_right),
-  );
-}
-
-Widget _buildAboutUsOption(
-  BuildContext context,
-  String title,
-  VoidCallback onTap,
-) {
-  return ListTile(
-    leading: Image.asset(
-        'assets/images/logo.png'), // Replace with your app logo path
-    title: Text(title),
-    onTap: onTap,
-    trailing: const Icon(Icons.chevron_right),
-  );
-}
-
-Widget _buildPrayerAppOption(
-  BuildContext context,
-  String title,
-  VoidCallback onTap,
-) {
-  return ListTile(
-    leading: Image.asset(
-        'assets/images/logo.png'), // Replace with your app logo path
-    title: Text(title),
-    onTap: onTap,
-    trailing: const Icon(Icons.chevron_right),
-  );
-}
-
-Widget _buildShareAppOption(
-  BuildContext context,
-  String title,
-  VoidCallback onTap,
-) {
-  return ListTile(
-    leading: Icon(Icons.share), // Replace with your app logo path
-    title: Text(title),
-    onTap: onTap,
-    trailing: const Icon(Icons.chevron_right),
-  );
 }
