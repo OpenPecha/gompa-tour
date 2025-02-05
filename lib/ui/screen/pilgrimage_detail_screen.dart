@@ -1,28 +1,25 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/helper/localization_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/ui/widget/card_tag.dart';
 import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
+import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 
-import '../../config/constant.dart';
-import '../../states/deties_state.dart';
-import '../widget/speaker_widget.dart';
-
-class DeityDetailScreen extends ConsumerWidget {
-  static const String routeName = '/deity-detail';
-  const DeityDetailScreen({super.key});
+class PilgrimageDetailScreen extends ConsumerWidget {
+  static const String routeName = '/pilgrimage-detail';
+  const PilgrimageDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedDeity = ref.watch(selectedDeityProvider);
+    final selectedPilgrimage = ref.watch(selectedPilgrimageProvider);
     final height = MediaQuery.of(context).size.height;
-    Locale locale = Localizations.localeOf(context);
 
-    if (selectedDeity == null) {
+    if (selectedPilgrimage == null) {
       return const Scaffold(
-        appBar: GonpaAppBar(title: 'Deity Detail'),
-        body: Center(child: Text('No deity selected')),
+        appBar: GonpaAppBar(title: 'Pilgrimage Detail'),
+        body: Center(child: Text('No pilgrim selected')),
       );
     }
 
@@ -39,8 +36,8 @@ class DeityDetailScreen extends ConsumerWidget {
               Center(
                 child: Text(
                   context.localizedText(
-                    enText: selectedDeity.enTitle,
-                    boText: selectedDeity.tbTitle,
+                    enText: selectedPilgrimage.enName!,
+                    boText: selectedPilgrimage.boName!,
                   ),
                   style: TextStyle(
                     fontSize: 24,
@@ -49,41 +46,46 @@ class DeityDetailScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Hero(
-                  tag: selectedDeity.id,
+                  tag: selectedPilgrimage.id,
                   child: GonpaCacheImage(
-                    url: selectedDeity.pic,
+                    url: selectedPilgrimage.image,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              SpeakerWidget(
-                audioUrl: context.localizedText(
-                    enText: selectedDeity.sound?.replaceFirst('TN', 'EN') ?? '',
-                    boText: selectedDeity.sound ?? ''),
-                description: context.localizedText(
-                    enText: selectedDeity.enContent,
-                    boText: selectedDeity.tbContent),
-                data: selectedDeity,
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  Tag(
+                    text: selectedPilgrimage.state,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    textColor:
+                        Theme.of(context).colorScheme.onSecondaryContainer,
+                  ),
+                  Tag(
+                    text: selectedPilgrimage.country,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.tertiaryContainer,
+                    textColor:
+                        Theme.of(context).colorScheme.onTertiaryContainer,
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                  enText: selectedDeity.enContent,
-                  boText: selectedDeity.tbContent,
+                  enText: selectedPilgrimage.enDescription!,
+                  boText: selectedPilgrimage.boDescription!,
                 ),
                 style: TextStyle(
                   fontSize: 16,
                   height: context.getLocalizedHeight(),
                 ),
               ),
-              if (selectedDeity.slug != null) ...[
-                const SizedBox(height: 16),
-                GonpaQRCard(qrData: kDetiesQrCodeBaseUrl + selectedDeity.slug!)
-              ],
             ],
           ),
         ),

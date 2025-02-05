@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/states/bottom_nav_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
@@ -57,6 +56,7 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
     final deityState = ref.watch(detiesNotifierProvider);
 
     return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: GonpaAppBar(title: AppLocalizations.of(context)!.deities),
         body: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
@@ -181,7 +181,7 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
                 )
               : const SizedBox(),
         ],
-        hintText: 'Search here....',
+        hintText: AppLocalizations.of(context)!.search,
         onChanged: (value) {
           _performSearch(value);
         },

@@ -5,6 +5,8 @@ import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 import 'package:gompa_tour/ui/screen/orginatzations_screen.dart';
+import 'package:gompa_tour/ui/screen/pilgrimage_detail_screen.dart';
+import 'package:gompa_tour/ui/screen/pilgrimage_list_screen.dart';
 
 import '../ui/screen/deities_detail_screen.dart';
 import '../ui/screen/skeleton_screen.dart';
@@ -57,6 +59,18 @@ final router = GoRouter(
       path: FestivalDetailScreen.routeName,
       builder: (context, state) {
         return const FestivalDetailScreen();
+      },
+    ),
+    GoRoute(
+      path: PilgrimageListScreen.routeName,
+      builder: (context, state) {
+        return const PilgrimageListScreen();
+      },
+    ),
+    GoRoute(
+      path: PilgrimageDetailScreen.routeName,
+      builder: (context, state) {
+        return const PilgrimageDetailScreen();
       },
     ),
   ],

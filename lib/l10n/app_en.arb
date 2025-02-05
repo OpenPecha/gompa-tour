@@ -3,7 +3,7 @@
   "home": "Home",
   "map": "Map",
   "qr": "QR",
-  "search": "Search",
+  "search": "Search here...",
   "settings": "Settings",
   "appearance": "Appearance",
   "language": "Language",
@@ -43,7 +43,7 @@
   "darkMode": "Dark Mode",
   "theme": "Theme",
   "aboutUs": "About Us",
-  "aboutApp": "About  This App",
+  "aboutApp": "About This App",
   "prayerApp": "Tibetan Prayer App",
   "shareApp": "Share App",
   "nyingma": "Nyingma",
@@ -53,5 +53,8 @@
   "bon": "Bon",
   "jonang": "Jonang",
   "others": "Others",
-  "allGonpa": "All Gonpa"
+  "allGonpa": "All Gonpa",
+  "pilgrimage": "Pilgrimage",
+  "neykor": "Neykor",
+  "deptName": "Department of Religion and Culture"
 }

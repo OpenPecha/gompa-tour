@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/states/festival_state.dart';
+import 'package:gompa_tour/states/pilgrimage_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
-import 'package:gompa_tour/ui/widget/festival_card_item.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
+import 'package:gompa_tour/ui/widget/pilgrimage_card_item.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum ViewType { grid, list }
 
-class FestivalListScreen extends ConsumerStatefulWidget {
-  static const String routeName = '/festival-list';
-
-  const FestivalListScreen({super.key});
+class PilgrimageListScreen extends ConsumerStatefulWidget {
+  static const String routeName = '/pilgrimage-list';
+  const PilgrimageListScreen({super.key});
 
   @override
-  ConsumerState<FestivalListScreen> createState() => _FestivalListScreenState();
+  ConsumerState<PilgrimageListScreen> createState() =>
+      _PilgrimageListScreenState();
 }
 
-class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
-  late FestivalNotifier festivalNotifier;
+class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
+  late PilgrimageNotifier pilgrimageNotifier;
   ViewType _currentView = ViewType.list;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
+
   @override
   void initState() {
     super.initState();
-    festivalNotifier = ref.read(festivalNotifierProvider.notifier);
-
+    pilgrimageNotifier = ref.read(pilgrimageNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      festivalNotifier.fetchInitialFestivals();
+      pilgrimageNotifier.fetchInitialPilgrimages();
     });
   }
 
@@ -43,7 +43,7 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
     _searchDebouncer.run(
       query,
       onSearch: (q) =>
-          ref.read(festivalNotifierProvider.notifier).searchFestivals(q),
+          ref.read(pilgrimageNotifierProvider.notifier).searchPilgrimages(q),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
       onClearResults: _clearSearchResults,
@@ -52,17 +52,17 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final festivalState = ref.watch(festivalNotifierProvider);
+    final pilgrimState = ref.watch(pilgrimageNotifierProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: GonpaAppBar(title: AppLocalizations.of(context)!.festival),
+      appBar: GonpaAppBar(title: AppLocalizations.of(context)!.pilgrimage),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-              !festivalState.isLoading &&
-              !festivalState.hasReachedMax) {
-            festivalNotifier.fetchPaginatedFestival();
+              !pilgrimState.isLoading &&
+              !pilgrimState.hasReachedMax) {
+            pilgrimageNotifier.fetchMorePilgrimages();
           }
           return false;
         },
@@ -70,9 +70,9 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
           children: [
             _buildSearchBar(context),
             _buildToggleView(),
-            festivalState.festivals.isEmpty && festivalState.isLoading
+            pilgrimState.pilgrimages.isEmpty && pilgrimState.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : festivalState.festivals.isEmpty
+                : pilgrimState.pilgrimages.isEmpty
                     ? Center(
                         child: Text(
                           AppLocalizations.of(context)!.noRecordFound,
@@ -83,17 +83,20 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
                         child: _currentView == ViewType.list
                             ? ListView.builder(
                                 physics: const BouncingScrollPhysics(),
-                                itemCount: festivalState.festivals.length +
-                                    (festivalState.isLoading ? 1 : 0),
+                                itemCount: pilgrimState.pilgrimages.length +
+                                    (pilgrimState.isLoading ? 1 : 0),
                                 itemBuilder: (context, index) {
-                                  if (index == festivalState.festivals.length) {
+                                  if (index ==
+                                      pilgrimState.pilgrimages.length) {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
-                                  final festival =
-                                      festivalState.festivals[index];
+                                  final pilgrimage =
+                                      pilgrimState.pilgrimages[index];
 
-                                  return FestivalCardItem(festival: festival);
+                                  return PilgrimageCardItem(
+                                    pilgrimage: pilgrimage,
+                                  );
                                 },
                               )
                             : GridView.builder(
@@ -105,18 +108,19 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
                                   mainAxisSpacing: 10,
                                 ),
                                 physics: const BouncingScrollPhysics(),
-                                itemCount: festivalState.festivals.length +
-                                    (festivalState.isLoading ? 1 : 0),
+                                itemCount: pilgrimState.pilgrimages.length +
+                                    (pilgrimState.isLoading ? 1 : 0),
                                 itemBuilder: (context, index) {
-                                  if (index == festivalState.festivals.length) {
+                                  if (index ==
+                                      pilgrimState.pilgrimages.length) {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
-                                  final festival =
-                                      festivalState.festivals[index];
+                                  final pilgrimage =
+                                      pilgrimState.pilgrimages[index];
 
-                                  return FestivalCardItem(
-                                    festival: festival,
+                                  return PilgrimageCardItem(
+                                    pilgrimage: pilgrimage,
                                     isGridView: true,
                                   );
                                 },
@@ -176,7 +180,7 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    festivalNotifier.fetchInitialFestivals();
+                    pilgrimageNotifier.fetchInitialPilgrimages();
                   },
                 )
               : const SizedBox(),
@@ -190,7 +194,7 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
   }
 
   void _clearSearchResults() {
-    ref.read(festivalNotifierProvider.notifier).clearSearchResults();
+    ref.read(pilgrimageNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

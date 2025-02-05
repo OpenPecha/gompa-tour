@@ -25,9 +25,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   late final MapController mapController;
   @override
   void initState() {
-    ref.read(organizationNotifierProvider.notifier).fetchOrganizations();
-    mapController = MapController();
     super.initState();
+    mapController = MapController();
+    Future(() {
+      ref.read(organizationNotifierProvider.notifier).fetchOrganizations();
+    });
   }
 
   @override
