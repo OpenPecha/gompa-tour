@@ -85,6 +85,7 @@ class _OrganizationListScreenState
   Widget build(BuildContext context) {
     final organizationState = ref.watch(organizationNotifierProvider);
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: GonpaAppBar(title: AppLocalizations.of(context)!.organization),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
@@ -196,7 +197,7 @@ class _OrganizationListScreenState
                 )
               : const SizedBox(),
         ],
-        hintText: 'Search here....',
+        hintText: AppLocalizations.of(context)!.search,
         onChanged: (value) {
           _performSearch(value);
         },

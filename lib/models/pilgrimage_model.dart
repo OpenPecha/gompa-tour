@@ -1,4 +1,4 @@
-class Pligrimage {
+class Pilgrimage {
   final int id;
   final String image;
   final String geoLocation;
@@ -6,11 +6,13 @@ class Pligrimage {
   final String? boName;
   final String? enDescription;
   final String? boDescription;
-  final String? contact;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String address;
+  final String state;
+  final String country;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-  Pligrimage({
+  Pilgrimage({
     required this.id,
     required this.image,
     required this.geoLocation,
@@ -18,13 +20,15 @@ class Pligrimage {
     this.boName,
     this.enDescription,
     this.boDescription,
-    this.contact,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.address,
+    required this.state,
+    required this.country,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  factory Pligrimage.fromMap(Map<String, dynamic> map) {
-    return Pligrimage(
+  factory Pilgrimage.fromMap(Map<String, dynamic> map) {
+    return Pilgrimage(
       id: map['id'] as int,
       image: map['image'] as String,
       geoLocation: map['geo_location'] as String,
@@ -32,9 +36,15 @@ class Pligrimage {
       boName: map['bo_name'] as String?,
       enDescription: map['en_description'] as String?,
       boDescription: map['bo_description'] as String?,
-      contact: map['contact'] as String?,
-      createdAt: DateTime.parse(map['created_at'] as String),
-      updatedAt: DateTime.parse(map['updated_at'] as String),
+      address: map['address'] as String,
+      state: map['state'] as String,
+      country: map['country'] as String,
+      createdAt: map['created_at'] != null
+          ? DateTime.parse(map['created_at'] as String)
+          : null,
+      updatedAt: map['updated_at'] != null
+          ? DateTime.parse(map['updated_at'] as String)
+          : null,
     );
   }
 
@@ -47,9 +57,11 @@ class Pligrimage {
       'bo_name': boName,
       'en_description': enDescription,
       'bo_description': boDescription,
-      'contact': contact,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
+      'address': address,
+      'state': state,
+      'country': country,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
     };
   }
 }

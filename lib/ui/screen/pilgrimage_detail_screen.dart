@@ -1,29 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/config/constant.dart';
-import 'package:gompa_tour/states/festival_state.dart';
 import 'package:flutter/material.dart';
+import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/ui/widget/card_tag.dart';
 import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 
 class PilgrimageDetailScreen extends ConsumerWidget {
-  static const String routeName = '/festival-detail';
+  static const String routeName = '/pilgrimage-detail';
   const PilgrimageDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedFestival = ref.watch(selectedFestivalProvider);
+    final selectedPilgrimage = ref.watch(selectedPilgrimageProvider);
     final height = MediaQuery.of(context).size.height;
 
-    if (selectedFestival == null) {
+    if (selectedPilgrimage == null) {
       return const Scaffold(
-        appBar: GonpaAppBar(title: 'Festival Detail'),
-        body: Center(child: Text('No deity selected')),
+        appBar: GonpaAppBar(title: 'Pilgrimage Detail'),
+        body: Center(child: Text('No pilgrim selected')),
       );
     }
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: GonpaAppBar(),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -35,8 +36,8 @@ class PilgrimageDetailScreen extends ConsumerWidget {
               Center(
                 child: Text(
                   context.localizedText(
-                    enText: selectedFestival.eventEnName!,
-                    boText: selectedFestival.eventTbName!,
+                    enText: selectedPilgrimage.enName!,
+                    boText: selectedPilgrimage.boName!,
                   ),
                   style: TextStyle(
                     fontSize: 24,
@@ -45,32 +46,46 @@ class PilgrimageDetailScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Hero(
-                  tag: selectedFestival.id,
+                  tag: selectedPilgrimage.id,
                   child: GonpaCacheImage(
-                    url: selectedFestival.pic,
+                    url: selectedPilgrimage.image,
                   ),
                 ),
+              ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  Tag(
+                    text: selectedPilgrimage.state,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    textColor:
+                        Theme.of(context).colorScheme.onSecondaryContainer,
+                  ),
+                  Tag(
+                    text: selectedPilgrimage.country,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.tertiaryContainer,
+                    textColor:
+                        Theme.of(context).colorScheme.onTertiaryContainer,
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                  enText: selectedFestival.enDescription!,
-                  boText: selectedFestival.tbDescription!,
+                  enText: selectedPilgrimage.enDescription!,
+                  boText: selectedPilgrimage.boDescription!,
                 ),
                 style: TextStyle(
                   fontSize: 16,
                   height: context.getLocalizedHeight(),
                 ),
               ),
-              if (selectedFestival.slug != null) ...[
-                const SizedBox(height: 16),
-                GonpaQRCard(qrData: kEventQrCodeUrl + selectedFestival.slug!),
-                const SizedBox(height: 16),
-              ],
             ],
           ),
         ),

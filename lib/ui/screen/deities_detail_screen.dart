@@ -27,6 +27,7 @@ class DeityDetailScreen extends ConsumerWidget {
     }
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: GonpaAppBar(),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),

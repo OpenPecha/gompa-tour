@@ -55,6 +55,7 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
     final festivalState = ref.watch(festivalNotifierProvider);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: GonpaAppBar(title: AppLocalizations.of(context)!.festival),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
@@ -180,7 +181,7 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
                 )
               : const SizedBox(),
         ],
-        hintText: 'Search here....',
+        hintText: AppLocalizations.of(context)!.search,
         onChanged: (value) {
           _performSearch(value);
         },

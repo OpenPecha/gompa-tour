@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/config/constant.dart';
-import 'package:gompa_tour/models/festival_model.dart';
-import 'package:gompa_tour/states/festival_state.dart';
-import 'package:gompa_tour/ui/screen/festival_detail_screen.dart';
+import 'package:gompa_tour/models/pilgrimage_model.dart';
+import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/ui/screen/pilgrimage_detail_screen.dart';
+import 'package:gompa_tour/ui/widget/card_tag.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 
 class PilgrimageCardItem extends ConsumerWidget {
-  final Festival festival;
+  final Pilgrimage pilgrimage;
   final bool isGridView;
   const PilgrimageCardItem(
-      {Key? key, required this.festival, this.isGridView = false})
+      {Key? key, required this.pilgrimage, this.isGridView = false})
       : super(key: key);
 
   @override
@@ -20,8 +21,8 @@ class PilgrimageCardItem extends ConsumerWidget {
     if (isGridView) {
       return GestureDetector(
         onTap: () {
-          ref.read(selectedFestivalProvider.notifier).state = festival;
-          context.push(FestivalDetailScreen.routeName);
+          ref.read(selectedPilgrimageProvider.notifier).state = pilgrimage;
+          context.push(PilgrimageDetailScreen.routeName);
         },
         child: Card(
           shadowColor: Theme.of(context).colorScheme.shadow,
@@ -33,9 +34,9 @@ class PilgrimageCardItem extends ConsumerWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Hero(
-                    tag: festival.id,
+                    tag: pilgrimage.id,
                     child: GonpaCacheImage(
-                      url: festival.pic,
+                      url: pilgrimage.image,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -48,8 +49,8 @@ class PilgrimageCardItem extends ConsumerWidget {
                   children: [
                     Text(
                       context.localizedText(
-                        enText: festival.eventEnName!,
-                        boText: festival.eventTbName!,
+                        enText: pilgrimage.enName!,
+                        boText: pilgrimage.boName!,
                       ),
                       style: TextStyle(
                         fontSize: 16,
@@ -61,8 +62,8 @@ class PilgrimageCardItem extends ConsumerWidget {
                     ),
                     Text(
                       context.localizedText(
-                        enText: festival.enDescription!,
-                        boText: festival.tbDescription!,
+                        enText: pilgrimage.enDescription!,
+                        boText: pilgrimage.boDescription!,
                         maxLength: kDescriptionMaxLength,
                       ),
                       style: TextStyle(
@@ -71,6 +72,28 @@ class PilgrimageCardItem extends ConsumerWidget {
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        Tag(
+                          text: pilgrimage.state,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          textColor: Theme.of(context)
+                              .colorScheme
+                              .onSecondaryContainer,
+                        ),
+                        Tag(
+                          text: pilgrimage.country,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.tertiaryContainer,
+                          textColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -82,8 +105,8 @@ class PilgrimageCardItem extends ConsumerWidget {
     } else {
       return GestureDetector(
         onTap: () {
-          ref.read(selectedFestivalProvider.notifier).state = festival;
-          context.push(FestivalDetailScreen.routeName);
+          ref.read(selectedPilgrimageProvider.notifier).state = pilgrimage;
+          context.push(PilgrimageDetailScreen.routeName);
         },
         child: Card(
           shadowColor: Theme.of(context).colorScheme.shadow,
@@ -97,8 +120,8 @@ class PilgrimageCardItem extends ConsumerWidget {
               children: [
                 Text(
                   context.localizedText(
-                    enText: festival.eventEnName!,
-                    boText: festival.eventTbName!,
+                    enText: pilgrimage.enName!,
+                    boText: pilgrimage.boName!,
                   ),
                   style: TextStyle(
                     fontSize: 18,
@@ -112,9 +135,9 @@ class PilgrimageCardItem extends ConsumerWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Hero(
-                        tag: festival.id,
+                        tag: pilgrimage.id,
                         child: GonpaCacheImage(
-                          url: festival.pic,
+                          url: pilgrimage.image,
                           height: 80,
                           width: 80,
                           fit: BoxFit.cover,
@@ -123,17 +146,48 @@ class PilgrimageCardItem extends ConsumerWidget {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                        child: Text(
-                      context.localizedText(
-                        enText: festival.enDescription!,
-                        boText: festival.tbDescription!,
-                        maxLength: kDescriptionMaxLength,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            context.localizedText(
+                              enText: pilgrimage.enDescription!,
+                              boText: pilgrimage.boDescription!,
+                              maxLength: kDescriptionMaxLength,
+                            ),
+                            style: TextStyle(
+                              fontSize: 16,
+                              height: context.getLocalizedHeight(),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              Tag(
+                                text: pilgrimage.state,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
+                                textColor: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                              ),
+                              Tag(
+                                text: pilgrimage.country,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .tertiaryContainer,
+                                textColor: Theme.of(context)
+                                    .colorScheme
+                                    .onTertiaryContainer,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      style: TextStyle(
-                        fontSize: 16,
-                        height: context.getLocalizedHeight(),
-                      ),
-                    )),
+                    ),
                   ],
                 ),
               ],

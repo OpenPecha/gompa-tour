@@ -12,8 +12,10 @@ class FestivalNotifier extends StateNotifier<FestivalListState> {
   Future<void> fetchInitialFestivals() async {
     state = state.copyWith(isLoading: true);
     try {
-      final initialFestivals =
-          await repository.getAllPaginated(0, state.pageSize);
+      final initialFestivals = await repository.getAllPaginated(
+        0,
+        state.pageSize,
+      );
       state = state.copyWith(
         festivals: initialFestivals,
         page: 1,

@@ -25,13 +25,18 @@ class DatabaseRepository<T> {
   }
 
   Future<List<T>> getAllPaginated(int page, int pageSize) async {
-    final db = await dbHelper.database;
-    final maps = await db.query(
-      tableName,
-      limit: pageSize,
-      offset: page * pageSize,
-    );
-    return maps.map((map) => fromMap(map)).toList();
+    try {
+      final db = await dbHelper.database;
+      final maps = await db.query(
+        tableName,
+        limit: pageSize,
+        offset: page * pageSize,
+      );
+      return maps.map((map) => fromMap(map)).toList();
+    } catch (e) {
+      // print("Error: $e");
+      return [];
+    }
   }
 
   Future<T?> getBySlug(String slug) async {

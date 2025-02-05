@@ -99,7 +99,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
     final organisationState = ref.watch(organizationNotifierProvider);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: GonpaAppBar(title: ''),
       body: Column(
         children: [
@@ -163,7 +163,6 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
-                        // vertical: 16,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,10 +171,11 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                             _getTitle(organization.values.first, context),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          const SizedBox(height: 8),
                           Text(
                             organization.values.last.toString(),
                             textAlign: TextAlign.center,
@@ -266,7 +266,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
           //   },
           // )
         ],
-        hintText: 'Search here....',
+        hintText: AppLocalizations.of(context)!.search,
         onChanged: (value) {
           _performSearch(value);
         },
