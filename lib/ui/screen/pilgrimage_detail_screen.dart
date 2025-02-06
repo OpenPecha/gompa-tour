@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:gompa_tour/states/pilgrimage_state.dart';
 import 'package:gompa_tour/ui/widget/card_tag.dart';
-import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
+import 'package:gompa_tour/ui/widget/location_card.dart';
 
 class PilgrimageDetailScreen extends ConsumerWidget {
   static const String routeName = '/pilgrimage-detail';
@@ -85,6 +85,12 @@ class PilgrimageDetailScreen extends ConsumerWidget {
                   fontSize: 16,
                   height: context.getLocalizedHeight(),
                 ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              LocationCard(
+                address: selectedPilgrimage,
               ),
             ],
           ),

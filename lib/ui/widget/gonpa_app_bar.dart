@@ -33,7 +33,7 @@ class GonpaAppBar extends ConsumerWidget implements PreferredSizeWidget {
             )
           : null,
       title: Text(
-        "Neykor",
+        AppLocalizations.of(context)!.neykor,
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w500,
