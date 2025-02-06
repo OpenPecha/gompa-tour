@@ -99,7 +99,7 @@ class SettingsScreen extends ConsumerWidget {
       case DialogContent.contact:
         return AppLocalizations.of(context)!.contactSupport;
       case DialogContent.aboutApp:
-        return AppLocalizations.of(context)!.contactSupport;
+        return AppLocalizations.of(context)!.aboutApp;
       case DialogContent.aboutUs:
         return AppLocalizations.of(context)!.aboutUs;
       case DialogContent.prayerApp:
@@ -113,7 +113,6 @@ class SettingsScreen extends ConsumerWidget {
 
     switch (content) {
       case DialogContent.contact:
-      case DialogContent.aboutApp:
         return [
           const Text("Central Tibetan Administration"),
           const Text("Gangchen Kyishong, Dharamshala"),
@@ -121,6 +120,17 @@ class SettingsScreen extends ConsumerWidget {
           const Text("Tel: +91-1892-222685, 226737"),
           const Text('Fax: +91-1892-228037'),
           const Text('Email: religion@tibet.net'),
+          spacing,
+        ];
+      case DialogContent.aboutApp:
+        return [
+          Text(
+            AppLocalizations.of(context)!.aboutAppDescription,
+            style: TextStyle(
+              fontSize: 16,
+              height: locale.languageCode == 'bo' ? 2 : 1.5,
+            ),
+          ),
           spacing,
         ];
       case DialogContent.aboutUs:
