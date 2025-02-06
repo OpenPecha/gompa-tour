@@ -146,10 +146,6 @@ class SkeletonScreen extends ConsumerWidget {
                   ],
                 ),
               ]),
-          // IconButton(
-          //   icon: const Icon(Icons.more_vert),
-          //   onPressed: () {},
-          // ),
         ],
       ),
       body: AnimatedSwitcher(

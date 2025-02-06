@@ -165,11 +165,10 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                         horizontal: 16,
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             _getTitle(organization.values.first, context),
-                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -178,9 +177,9 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                           const SizedBox(height: 8),
                           Text(
                             organization.values.last.toString(),
-                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
+                              color: Colors.grey.shade600,
                             ),
                           ),
                         ],
@@ -258,13 +257,6 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                   },
                 )
               : const SizedBox(),
-          // IconButton(
-          //   icon: Icon(Icons.qr_code),
-          //   onPressed: () {
-          //     ref.read(bottomNavProvider.notifier).setAndPersistValue(2);
-          //     Navigator.pop(context);
-          //   },
-          // )
         ],
         hintText: AppLocalizations.of(context)!.search,
         onChanged: (value) {

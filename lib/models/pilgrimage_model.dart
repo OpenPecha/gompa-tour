@@ -9,6 +9,7 @@ class Pilgrimage {
   final String address;
   final String state;
   final String country;
+  final String map;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -23,6 +24,7 @@ class Pilgrimage {
     required this.address,
     required this.state,
     required this.country,
+    required this.map,
     this.createdAt,
     this.updatedAt,
   });
@@ -39,6 +41,7 @@ class Pilgrimage {
       address: map['address'] as String,
       state: map['state'] as String,
       country: map['country'] as String,
+      map: map['map'] as String,
       createdAt: map['created_at'] != null
           ? DateTime.parse(map['created_at'] as String)
           : null,
@@ -60,6 +63,7 @@ class Pilgrimage {
       'address': address,
       'state': state,
       'country': country,
+      'map': map,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };

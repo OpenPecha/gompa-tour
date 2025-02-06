@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -62,10 +63,10 @@ class SettingsScreen extends ConsumerWidget {
         child: SettingsListTile(
           leading: const Icon(Icons.share),
           title: AppLocalizations.of(context)!.shareApp,
-          onTap: () => _showDialog(
-            context,
-            DialogContent.aboutUs,
-          ),
+          onTap: () {
+            Share.share(
+                "https://play.google.com/store/apps/details?id=com.chorig.tibetanprayer");
+          },
         ),
       ),
     ];
@@ -80,7 +81,7 @@ class SettingsScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: _getDialogContent(content),
+            children: _getDialogContent(content, context),
           ),
         ),
         actions: [
@@ -106,8 +107,9 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  List<Widget> _getDialogContent(DialogContent content) {
+  List<Widget> _getDialogContent(DialogContent content, BuildContext context) {
     const spacing = SizedBox(height: 16);
+    Locale locale = Localizations.localeOf(context);
 
     switch (content) {
       case DialogContent.contact:
@@ -123,13 +125,14 @@ class SettingsScreen extends ConsumerWidget {
         ];
       case DialogContent.aboutUs:
         return [
-          const Text(
-              "The Department of Religion and Culture is a ministry office established under the executive organ of Central Tibetan Administration whose function is to overlook religious and cultural affairs in Tibetan exile community. It has the responsibility of supervising works aimed at reviving, preserving, and promotion of Tibetan religious and cultural heritage that is being led to the verge of extinction in Tibet."),
-          const Text(
-              "It began its operation in exile community as Council for Religious Affairs office on April 27, 1959, headed by a Director and constituted by the representative of the four Buddhist schools as its principal members in Mussorrie. On 30th May 1960, the Council for Religious Affairs shifted its office to Dharamsala and on September 12, 1960, it became one of the seven main departments when His Holiness the Dalai Lama formally established the Central Tibetan Administration (CTA)."),
-          const Text(
-              "Under the affiliation of this department, there are 255 monasteries and 37 nunneries in India, Nepal and Bhutan and also five cultural institutions across India"),
-          // Add other texts as needed
+          Text(
+            AppLocalizations.of(context)!.deptDescription,
+            style: TextStyle(
+              fontSize: 16,
+              height: locale.languageCode == 'bo' ? 2 : 1.5,
+            ),
+          ),
+          spacing,
         ];
       case DialogContent.prayerApp:
         return [

@@ -160,41 +160,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildCategoryCards(BuildContext context) {
     return _searchController.text.isEmpty
         ? Expanded(
-            child: Center(
-              child: GridView.count(
-                crossAxisCount: 2,
-                padding: EdgeInsets.all(8),
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                shrinkWrap: true,
-                childAspectRatio: 1,
-                children: [
-                  _buildCard(
-                    MenuType.deities,
-                    'assets/images/buddha.png',
-                    context,
-                    totalDeity,
-                  ),
-                  _buildCard(
-                    MenuType.organization,
-                    'assets/images/potala2.png',
-                    context,
-                    totalOrganization,
-                  ),
-                  _buildCard(
-                    MenuType.pilgrimage,
-                    'assets/images/duchen.png',
-                    context,
-                    totalPilgrimage,
-                  ),
-                  _buildCard(
-                    MenuType.festival,
-                    'assets/images/duchen.png',
-                    context,
-                    totalFestival,
-                  ),
-                ],
-              ),
+            child: GridView.count(
+              crossAxisCount: 2,
+              padding: EdgeInsets.all(8),
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 0.8,
+              children: [
+                _buildCard(
+                  MenuType.deities,
+                  'assets/images/buddha.png',
+                  context,
+                  totalDeity,
+                ),
+                _buildCard(
+                  MenuType.organization,
+                  'assets/images/potala2.png',
+                  context,
+                  totalOrganization,
+                ),
+                _buildCard(
+                  MenuType.pilgrimage,
+                  'assets/images/dorjee_den.webp',
+                  context,
+                  totalPilgrimage,
+                ),
+                _buildCard(
+                  MenuType.festival,
+                  'assets/images/duchen.png',
+                  context,
+                  totalFestival,
+                ),
+              ],
             ),
           )
         : const SizedBox();
@@ -225,22 +222,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         color: Theme.of(context).colorScheme.surfaceContainer,
         child: Column(
           children: [
-            Flexible(
-              child: Image.asset(
-                imagePath,
-                // height: 120,
-                // fit: BoxFit.contain,
+            Expanded(
+              flex: 3,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
-            Text(
-              _getTitle(type, context),
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(count.toString()),
             const SizedBox(height: 8),
+            Expanded(
+              flex: 2, // Give less space to text content
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _getTitle(type, context),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(count.toString(),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade600,
+                      )),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
           ],
         ),
       ),
