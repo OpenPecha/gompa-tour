@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
-import 'package:gompa_tour/models/festival_model.dart';
+import 'package:gompa_tour/models/festival.dart';
 import 'package:gompa_tour/states/festival_state.dart';
 import 'package:gompa_tour/ui/screen/festival_detail_screen.dart';
 
@@ -18,8 +18,6 @@ class FestivalCardItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Locale locale = Localizations.localeOf(context);
-
     if (isGridView) {
       return GestureDetector(
         onTap: () {
@@ -38,7 +36,7 @@ class FestivalCardItem extends ConsumerWidget {
                   child: Hero(
                     tag: festival.id,
                     child: GonpaCacheImage(
-                      url: festival.pic,
+                      url: festival.image,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -51,8 +49,8 @@ class FestivalCardItem extends ConsumerWidget {
                   children: [
                     Text(
                       context.localizedText(
-                        enText: festival.eventEnName!,
-                        boText: festival.eventTbName!,
+                        enText: festival.translations[1].description,
+                        boText: festival.translations[0].description,
                       ),
                       style: TextStyle(
                         fontSize: 16,
@@ -64,8 +62,8 @@ class FestivalCardItem extends ConsumerWidget {
                     ),
                     Text(
                       context.localizedText(
-                        enText: festival.enDescription!,
-                        boText: festival.tbDescription!,
+                        enText: festival.translations[1].description,
+                        boText: festival.translations[0].description,
                         maxLength: kDescriptionMaxLength,
                       ),
                       style: TextStyle(
@@ -100,8 +98,8 @@ class FestivalCardItem extends ConsumerWidget {
               children: [
                 Text(
                   context.localizedText(
-                    enText: festival.eventEnName!,
-                    boText: festival.eventTbName!,
+                    enText: festival.translations[1].name,
+                    boText: festival.translations[0].name,
                   ),
                   style: TextStyle(
                     fontSize: 18,
@@ -117,7 +115,7 @@ class FestivalCardItem extends ConsumerWidget {
                       child: Hero(
                         tag: festival.id,
                         child: GonpaCacheImage(
-                          url: festival.pic,
+                          url: festival.image,
                           height: 80,
                           width: 80,
                           fit: BoxFit.cover,
@@ -128,8 +126,8 @@ class FestivalCardItem extends ConsumerWidget {
                     Expanded(
                         child: Text(
                       context.localizedText(
-                        enText: festival.enDescription!,
-                        boText: festival.tbDescription!,
+                        enText: festival.translations[1].description,
+                        boText: festival.translations[0].description,
                         maxLength: kDescriptionMaxLength,
                       ),
                       style: TextStyle(

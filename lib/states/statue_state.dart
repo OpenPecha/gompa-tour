@@ -12,7 +12,6 @@ class StatueListState {
   final int page;
   final int pageSize;
   final String? error;
-  final int total;
 
   StatueListState({
     required this.statues,
@@ -21,7 +20,6 @@ class StatueListState {
     required this.page,
     required this.pageSize,
     this.error,
-    required this.total,
   });
 
   factory StatueListState.initial() {
@@ -31,7 +29,6 @@ class StatueListState {
       hasReachedMax: false,
       page: 0,
       pageSize: 20,
-      total: 0,
     );
   }
 
@@ -42,7 +39,6 @@ class StatueListState {
     int? page,
     int? pageSize,
     String? error,
-    int? total,
   }) {
     return StatueListState(
       statues: statues ?? this.statues,
@@ -51,7 +47,6 @@ class StatueListState {
       page: page ?? this.page,
       pageSize: pageSize ?? this.pageSize,
       error: error ?? this.error,
-      total: total ?? this.total,
     );
   }
 }
@@ -85,24 +80,16 @@ class StatueNotifier extends StateNotifier<StatueListState> {
 
     state = state.copyWith(isLoading: true);
     try {
-      final moreStatues = await repository.getAllPaginated(
-        state.page,
-        state.pageSize,
-      );
+      final moreStatues =
+          await repository.getAllPaginated(state.page, state.pageSize);
 
-      if (moreStatues.isEmpty) {
-        state = state.copyWith(
-          isLoading: false,
-          hasReachedMax: true,
-        );
-      } else {
-        state = state.copyWith(
+      final hasReachedMax = moreStatues.length < state.pageSize;
+
+      state = state.copyWith(
           statues: [...state.statues, ...moreStatues],
           page: state.page + 1,
           isLoading: false,
-          hasReachedMax: moreStatues.length < state.pageSize,
-        );
-      }
+          hasReachedMax: hasReachedMax);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,

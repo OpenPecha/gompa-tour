@@ -1,91 +1,7 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/models/festival_model.dart';
-import 'package:gompa_tour/repo/database_repository.dart';
-
-import 'database_state.dart';
-
-class FestivalNotifier extends StateNotifier<FestivalListState> {
-  final DatabaseRepository<Festival> repository;
-
-  FestivalNotifier(this.repository) : super(FestivalListState.initial());
-
-  Future<void> fetchInitialFestivals() async {
-    state = state.copyWith(isLoading: true);
-    try {
-      final initialFestivals = await repository.getAllPaginated(
-        0,
-        state.pageSize,
-      );
-      state = state.copyWith(
-        festivals: initialFestivals,
-        page: 1,
-        isLoading: false,
-        hasReachedMax: initialFestivals.length < state.pageSize,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-    }
-  }
-
-  Future<void> fetchPaginatedFestival() async {
-    if (state.isLoading || state.hasReachedMax) return;
-
-    try {
-      state = state.copyWith(isLoading: true);
-
-      final newFestivals =
-          await repository.getAllPaginated(state.page, state.pageSize);
-
-      final hasReachedMax = newFestivals.length < state.pageSize;
-
-      state = state.copyWith(
-        festivals: [...state.festivals, ...newFestivals],
-        page: state.page + 1,
-        isLoading: false,
-        hasReachedMax: hasReachedMax,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-    }
-  }
-
-  Future<Festival?> fetchFestivalBySlug(String slug) async {
-    return await repository.getBySlug(slug);
-  }
-
-  Future<void> searchFestivals(String query) async {
-    state = state.copyWith(isLoading: true);
-    try {
-      final results = await repository.searchFestivalByTitleAndContent(query);
-      state = state.copyWith(
-        festivals: results,
-        isLoading: false,
-        hasReachedMax: true,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-    }
-  }
-
-  // to get the total number of festivals
-  Future<int> getFestivalCount() async {
-    final totalFestivals = await repository.getCount();
-    return totalFestivals;
-  }
-
-  void clearSearchResults() {
-    state = FestivalListState.initial();
-  }
-}
+import 'package:gompa_tour/models/festival.dart';
+import 'package:gompa_tour/repo/api_repository.dart';
 
 class FestivalListState {
   final List<Festival> festivals;
@@ -133,17 +49,100 @@ class FestivalListState {
   }
 }
 
+class FestivalNotifier extends StateNotifier<FestivalListState> {
+  final ApiRepository<Festival> apiRepository;
+
+  FestivalNotifier(this.apiRepository) : super(FestivalListState.initial());
+
+  Future<void> fetchInitialFestivals() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final initialFestivals =
+          await apiRepository.getAllPaginated(0, state.pageSize);
+      state = state.copyWith(
+        festivals: initialFestivals,
+        page: 1,
+        isLoading: false,
+        hasReachedMax: initialFestivals.length < state.pageSize,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<void> fetchPaginatedFestival() async {
+    if (state.isLoading || state.hasReachedMax) return;
+
+    try {
+      state = state.copyWith(isLoading: true);
+
+      final newFestivals =
+          await apiRepository.getAllPaginated(state.page, state.pageSize);
+
+      final hasReachedMax = newFestivals.length < state.pageSize;
+
+      state = state.copyWith(
+        festivals: [...state.festivals, ...newFestivals],
+        page: state.page + 1,
+        isLoading: false,
+        hasReachedMax: hasReachedMax,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<void> searchFestivals(String query) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final results = await apiRepository.searchByTitleAndContent(query);
+      state = state.copyWith(
+        festivals: results.where((festival) {
+          return festival.translations.any((translation) {
+            return (translation.name
+                    .toLowerCase()
+                    .contains(query.toLowerCase())) ||
+                (translation.description
+                    .toLowerCase()
+                    .contains(query.toLowerCase()));
+          });
+        }).toList(),
+        isLoading: false,
+        hasReachedMax: true,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  // to get the total number of festivals
+  Future<int> getFestivalCount() async {
+    final totalFestivals = await apiRepository.getTotalData();
+    return totalFestivals;
+  }
+
+  void clearSearchResults() {
+    state = FestivalListState.initial();
+  }
+}
+
 // Providers remain the same
-final festivalRepositoryProvider = Provider<DatabaseRepository<Festival>>(
-  (ref) {
-    final dbHelper = ref.read(databaseHelperProvider);
-    return DatabaseRepository<Festival>(
-      dbHelper: dbHelper,
-      tableName: 'events',
-      fromMap: Festival.fromMap,
-      toMap: (festival) => festival.toMap(),
-    );
-  },
+final festivalRepositoryProvider = Provider<ApiRepository<Festival>>(
+  (ref) => ApiRepository<Festival>(
+    baseUrl: dotenv.env["BASE_URL"]!,
+    endpoint: 'festival',
+    fromJson: (json) => Festival.fromJson(json),
+    toJson: (festival) => festival.toJson(),
+  ),
 );
 
 final festivalNotifierProvider =
