@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/pilgrimage_card_item.dart';
@@ -19,7 +19,7 @@ class PilgrimageListScreen extends ConsumerStatefulWidget {
 }
 
 class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
-  late PilgrimageNotifier pilgrimageNotifier;
+  late PilgrimSiteNotifier pilgrimSiteNotifier;
   ViewType _currentView = ViewType.list;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -28,9 +28,9 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
   @override
   void initState() {
     super.initState();
-    pilgrimageNotifier = ref.read(pilgrimageNotifierProvider.notifier);
+    pilgrimSiteNotifier = ref.read(pilgrimSiteNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      pilgrimageNotifier.fetchInitialPilgrimages();
+      pilgrimSiteNotifier.fetchInitialPilgrimSites();
     });
   }
 
@@ -42,8 +42,9 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
 
     _searchDebouncer.run(
       query,
-      onSearch: (q) =>
-          ref.read(pilgrimageNotifierProvider.notifier).searchPilgrimages(q),
+      onSearch: (q) => ref
+          .read(pilgrimSiteNotifierProvider.notifier)
+          .searchPilgrimSites(query),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
       onClearResults: _clearSearchResults,
@@ -52,7 +53,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pilgrimState = ref.watch(pilgrimageNotifierProvider);
+    final pilgrimSiteState = ref.watch(pilgrimSiteNotifierProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -60,9 +61,9 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-              !pilgrimState.isLoading &&
-              !pilgrimState.hasReachedMax) {
-            pilgrimageNotifier.fetchMorePilgrimages();
+              !pilgrimSiteState.isLoading &&
+              !pilgrimSiteState.hasReachedMax) {
+            pilgrimSiteNotifier.fetchMorePilgrimSites();
           }
           return false;
         },
@@ -70,9 +71,9 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
           children: [
             _buildSearchBar(context),
             _buildToggleView(),
-            pilgrimState.pilgrimages.isEmpty && pilgrimState.isLoading
+            pilgrimSiteState.pilgrimSites.isEmpty && pilgrimSiteState.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : pilgrimState.pilgrimages.isEmpty
+                : pilgrimSiteState.pilgrimSites.isEmpty
                     ? Center(
                         child: Text(
                           AppLocalizations.of(context)!.noRecordFound,
@@ -83,19 +84,20 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                         child: _currentView == ViewType.list
                             ? ListView.builder(
                                 physics: const BouncingScrollPhysics(),
-                                itemCount: pilgrimState.pilgrimages.length +
-                                    (pilgrimState.isLoading ? 1 : 0),
+                                itemCount:
+                                    pilgrimSiteState.pilgrimSites.length +
+                                        (pilgrimSiteState.isLoading ? 1 : 0),
                                 itemBuilder: (context, index) {
                                   if (index ==
-                                      pilgrimState.pilgrimages.length) {
+                                      pilgrimSiteState.pilgrimSites.length) {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
-                                  final pilgrimage =
-                                      pilgrimState.pilgrimages[index];
+                                  final pilgrimSite =
+                                      pilgrimSiteState.pilgrimSites[index];
 
                                   return PilgrimageCardItem(
-                                    pilgrimage: pilgrimage,
+                                    pilgrimSite: pilgrimSite,
                                   );
                                 },
                               )
@@ -108,19 +110,20 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                                   mainAxisSpacing: 10,
                                 ),
                                 physics: const BouncingScrollPhysics(),
-                                itemCount: pilgrimState.pilgrimages.length +
-                                    (pilgrimState.isLoading ? 1 : 0),
+                                itemCount:
+                                    pilgrimSiteState.pilgrimSites.length +
+                                        (pilgrimSiteState.isLoading ? 1 : 0),
                                 itemBuilder: (context, index) {
                                   if (index ==
-                                      pilgrimState.pilgrimages.length) {
+                                      pilgrimSiteState.pilgrimSites.length) {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
-                                  final pilgrimage =
-                                      pilgrimState.pilgrimages[index];
+                                  final pilgrimSite =
+                                      pilgrimSiteState.pilgrimSites[index];
 
                                   return PilgrimageCardItem(
-                                    pilgrimage: pilgrimage,
+                                    pilgrimSite: pilgrimSite,
                                     isGridView: true,
                                   );
                                 },
@@ -180,7 +183,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    pilgrimageNotifier.fetchInitialPilgrimages();
+                    pilgrimSiteNotifier.fetchInitialPilgrimSites();
                   },
                 )
               : const SizedBox(),
@@ -194,7 +197,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
   }
 
   void _clearSearchResults() {
-    ref.read(pilgrimageNotifierProvider.notifier).clearSearchResults();
+    ref.read(pilgrimSiteNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

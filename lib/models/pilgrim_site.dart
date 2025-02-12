@@ -1,9 +1,11 @@
+import 'package:gompa_tour/models/contact.dart';
 import 'package:gompa_tour/models/pilgrim_site_translation.dart';
 
 class PilgrimSite {
   final String id;
   final String image;
   final String geoLocation;
+  final Contact? contact;
   final String? contactId;
   final List<PilgrimSiteTranslation> translations;
   final DateTime createdAt;
@@ -13,6 +15,7 @@ class PilgrimSite {
     required this.id,
     required this.image,
     required this.geoLocation,
+    this.contact,
     this.contactId,
     this.translations = const [],
     required this.createdAt,
@@ -23,6 +26,8 @@ class PilgrimSite {
         id: json['id'],
         image: json['image'],
         geoLocation: json['geo_location'],
+        contact:
+            json['contact'] != null ? Contact.fromJson(json['contact']) : null,
         contactId: json['contactId'],
         translations: (json['translations'] as List?)
                 ?.map((e) => PilgrimSiteTranslation.fromJson(e))

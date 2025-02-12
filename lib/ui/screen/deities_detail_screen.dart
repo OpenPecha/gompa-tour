@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/states/statue_state.dart';
-import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
 import '../widget/speaker_widget.dart';
 
@@ -36,8 +36,14 @@ class DeityDetailScreen extends ConsumerWidget {
               Center(
                 child: Text(
                   context.localizedText(
-                    enText: selectedStatue.translations[1].name,
-                    boText: selectedStatue.translations[0].name,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.name),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.name),
                   ),
                   style: TextStyle(
                     fontSize: 24,
@@ -59,18 +65,36 @@ class DeityDetailScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               SpeakerWidget(
                 audioUrl: context.localizedText(
-                    enText: selectedStatue.translations[1].descriptionAudio,
-                    boText: selectedStatue.translations[0].descriptionAudio),
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.descriptionAudio),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.descriptionAudio)),
                 description: context.localizedText(
-                    enText: selectedStatue.translations[1].description,
-                    boText: selectedStatue.translations[0].description),
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.description),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.description)),
                 data: selectedStatue,
               ),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                  enText: selectedStatue.translations[1].description,
-                  boText: selectedStatue.translations[0].description,
+                  enText: TranslationHelper.getTranslatedField(
+                      translations: selectedStatue.translations,
+                      languageCode: "en",
+                      fieldGetter: (t) => t.description),
+                  boText: TranslationHelper.getTranslatedField(
+                      translations: selectedStatue.translations,
+                      languageCode: "bo",
+                      fieldGetter: (t) => t.description),
                 ),
                 style: TextStyle(
                   fontSize: 16,

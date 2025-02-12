@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/models/statue.dart';
 import 'package:gompa_tour/states/statue_state.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
 import '../../config/constant.dart';
 import '../screen/deities_detail_screen.dart';
@@ -44,8 +45,14 @@ class DeityCardItem extends ConsumerWidget {
                   children: [
                     Text(
                       context.localizedText(
-                        enText: statue.translations[1].name,
-                        boText: statue.translations[0].name,
+                        enText: TranslationHelper.getTranslatedField(
+                            translations: statue.translations,
+                            languageCode: "en",
+                            fieldGetter: (t) => t.name),
+                        boText: TranslationHelper.getTranslatedField(
+                            translations: statue.translations,
+                            languageCode: 'bo',
+                            fieldGetter: (t) => t.name),
                       ),
                       style: TextStyle(
                         fontSize: 16,
@@ -57,8 +64,14 @@ class DeityCardItem extends ConsumerWidget {
                     ),
                     Text(
                       context.localizedText(
-                        enText: statue.translations[1].description,
-                        boText: statue.translations[0].description,
+                        enText: TranslationHelper.getTranslatedField(
+                            translations: statue.translations,
+                            languageCode: "en",
+                            fieldGetter: (t) => t.description),
+                        boText: TranslationHelper.getTranslatedField(
+                            translations: statue.translations,
+                            languageCode: 'bo',
+                            fieldGetter: (t) => t.description),
                         maxLength: kDescriptionMaxLength,
                       ),
                       style: TextStyle(
@@ -93,8 +106,14 @@ class DeityCardItem extends ConsumerWidget {
               children: [
                 Text(
                   context.localizedText(
-                    enText: statue.translations[1].name,
-                    boText: statue.translations[0].name,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: statue.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.name),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: statue.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.name),
                   ),
                   style: TextStyle(
                     fontSize: 18,
@@ -121,8 +140,14 @@ class DeityCardItem extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         context.localizedText(
-                          enText: statue.translations[1].description,
-                          boText: statue.translations[0].description,
+                          enText: TranslationHelper.getTranslatedField(
+                              translations: statue.translations,
+                              languageCode: "en",
+                              fieldGetter: (t) => t.description),
+                          boText: TranslationHelper.getTranslatedField(
+                              translations: statue.translations,
+                              languageCode: "bo",
+                              fieldGetter: (t) => t.description),
                           maxLength: kDescriptionMaxLength,
                         ),
                         style: TextStyle(

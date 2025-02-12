@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/states/deties_state.dart';
 import 'package:gompa_tour/states/festival_state.dart';
 import 'package:gompa_tour/states/organization_state.dart';
-import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/states/search_state.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
@@ -48,8 +48,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final festivalCout =
         await ref.read(festivalNotifierProvider.notifier).getFestivalCount();
     final pilgrimageCount = await ref
-        .read(pilgrimageNotifierProvider.notifier)
-        .getTotalPilgrimages();
+        .read(pilgrimSiteNotifierProvider.notifier)
+        .getTotalPilgrimSites();
     setState(() {
       totalDeity = deityCount;
       totalOrganization = organizationCout;

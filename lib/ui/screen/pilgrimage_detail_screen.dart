@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/ui/widget/card_tag.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:gompa_tour/ui/widget/location_card.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
 class PilgrimageDetailScreen extends ConsumerWidget {
   static const String routeName = '/pilgrimage-detail';
@@ -13,10 +14,10 @@ class PilgrimageDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedPilgrimage = ref.watch(selectedPilgrimageProvider);
+    final selectedPilgrimSite = ref.watch(selectedPilgrimSiteProvider);
     final height = MediaQuery.of(context).size.height;
 
-    if (selectedPilgrimage == null) {
+    if (selectedPilgrimSite == null) {
       return const Scaffold(
         appBar: GonpaAppBar(title: 'Pilgrimage Detail'),
         body: Center(child: Text('No pilgrim selected')),
@@ -36,8 +37,14 @@ class PilgrimageDetailScreen extends ConsumerWidget {
               Center(
                 child: Text(
                   context.localizedText(
-                    enText: selectedPilgrimage.enName!,
-                    boText: selectedPilgrimage.boName!,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedPilgrimSite.translations,
+                        languageCode: 'en',
+                        fieldGetter: (t) => t.name),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedPilgrimSite.translations,
+                        languageCode: 'bo',
+                        fieldGetter: (t) => t.name),
                   ),
                   style: TextStyle(
                     fontSize: 24,
@@ -49,9 +56,9 @@ class PilgrimageDetailScreen extends ConsumerWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Hero(
-                  tag: selectedPilgrimage.id,
+                  tag: selectedPilgrimSite.id,
                   child: GonpaCacheImage(
-                    url: selectedPilgrimage.image,
+                    url: selectedPilgrimSite.image,
                   ),
                 ),
               ),
@@ -60,14 +67,36 @@ class PilgrimageDetailScreen extends ConsumerWidget {
                 runSpacing: 8,
                 children: [
                   Tag(
-                    text: selectedPilgrimage.state,
+                    text: context.localizedText(
+                      enText: TranslationHelper.getTranslatedField(
+                        translations: selectedPilgrimSite.contact!.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.state,
+                      ),
+                      boText: TranslationHelper.getTranslatedField(
+                        translations: selectedPilgrimSite.contact!.translations,
+                        languageCode: 'bo',
+                        fieldGetter: (t) => t.state,
+                      ),
+                    ),
                     backgroundColor:
                         Theme.of(context).colorScheme.secondaryContainer,
                     textColor:
                         Theme.of(context).colorScheme.onSecondaryContainer,
                   ),
                   Tag(
-                    text: selectedPilgrimage.country,
+                    text: context.localizedText(
+                      enText: TranslationHelper.getTranslatedField(
+                        translations: selectedPilgrimSite.contact!.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.country,
+                      ),
+                      boText: TranslationHelper.getTranslatedField(
+                        translations: selectedPilgrimSite.contact!.translations,
+                        languageCode: 'bo',
+                        fieldGetter: (t) => t.country,
+                      ),
+                    ),
                     backgroundColor:
                         Theme.of(context).colorScheme.tertiaryContainer,
                     textColor:
@@ -78,8 +107,16 @@ class PilgrimageDetailScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                  enText: selectedPilgrimage.enDescription!,
-                  boText: selectedPilgrimage.boDescription!,
+                  enText: TranslationHelper.getTranslatedField(
+                    translations: selectedPilgrimSite.translations,
+                    languageCode: "en",
+                    fieldGetter: (t) => t.description,
+                  ),
+                  boText: TranslationHelper.getTranslatedField(
+                    translations: selectedPilgrimSite.translations,
+                    languageCode: "bo",
+                    fieldGetter: (t) => t.description,
+                  ),
                 ),
                 style: TextStyle(
                   fontSize: 16,
@@ -90,7 +127,7 @@ class PilgrimageDetailScreen extends ConsumerWidget {
                 height: 16,
               ),
               LocationCard(
-                address: selectedPilgrimage,
+                address: selectedPilgrimSite,
               ),
             ],
           ),
