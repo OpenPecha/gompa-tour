@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/states/bottom_nav_state.dart';
+import 'package:gompa_tour/models/gonpa.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
-import 'package:gompa_tour/ui/widget/organization_card_item.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
 
 class OrginatzationsScreen extends ConsumerStatefulWidget {
@@ -22,46 +22,50 @@ class OrginatzationsScreen extends ConsumerStatefulWidget {
 
 class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
   final TextEditingController _searchController = TextEditingController();
+  late GonpaNotifier gonpaNotifier;
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
   final gonpaStats = [];
+  List<Gonpa> gonpas = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // organizationNotifier = ref.read(organizationNotifierProvider.notifier);
-    _loadEachOrginazationCount();
+    gonpaNotifier = ref.read(gonpaNotifierProvider.notifier);
+    Future.delayed(Duration.zero, () {
+      fetchGonpas();
+    });
   }
 
-  void _loadEachOrginazationCount() async {
-    final aggCounts = await ref
-        .read(organizationNotifierProvider.notifier)
-        .getOrganizationCountByCategory();
-
+  Future<void> fetchGonpas() async {
     try {
-      // Create a mutable copy of the read-only list
-      final List<Map<String, dynamic>> mutableAggCounts = List.from(aggCounts);
-
-      // Calculate the total count
-      int totalCount =
-          mutableAggCounts.fold(0, (sum, item) => sum + item['count'] as int);
-      mutableAggCounts.insert(0, {"categories": "All", "count": totalCount});
-
-      // total count of others category
-      final lastFour = mutableAggCounts.sublist(mutableAggCounts.length - 4);
-      int lastFourSum =
-          lastFour.fold(0, (sum, item) => sum + (item['count'] as int));
-
-      // Add a new entry for the total count
-      mutableAggCounts
-          .insert(7, {"categories": "Others", "count": lastFourSum});
-
+      final fetchedGonpas = await gonpaNotifier.fetchAllGonpas();
       setState(() {
-        gonpaStats.addAll(mutableAggCounts);
+        gonpas = fetchedGonpas;
+        isLoading = false;
       });
     } catch (e) {
-      print("Error: $e");
+      setState(() {
+        isLoading = false;
+      });
+      print('Error fetching gonpas: $e');
     }
+  }
+
+  Map<String, List<Gonpa>> get groupedMonasteries {
+    return {
+      "NYINGMA": gonpas.where((m) => m.sect == Sect.NYINGMA).toList(),
+      "KAGYU": gonpas.where((m) => m.sect == Sect.KAGYU).toList(),
+      "SAKYA": gonpas.where((m) => m.sect == Sect.SAKYA).toList(),
+      "GELUG": gonpas.where((m) => m.sect == Sect.GELUG).toList(),
+      "BHON": gonpas.where((m) => m.sect == Sect.BHON).toList(),
+      "JONANG": gonpas.where((m) => m.sect == Sect.JONANG).toList(),
+      "REMEY": gonpas.where((m) => m.sect == Sect.REMEY).toList(),
+      "SHALU": gonpas.where((m) => m.sect == Sect.SHALU).toList(),
+      "BODONG": gonpas.where((m) => m.sect == Sect.BODONG).toList(),
+      "OTHER": gonpas.where((m) => m.sect == Sect.OTHER).toList(),
+    };
   }
 
   _performSearch(String query) async {
@@ -125,16 +129,17 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
     return Expanded(
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
-        itemCount: gonpaStats.length > 4 ? (gonpaStats.length - 4).abs() : 0,
+        itemCount: groupedMonasteries.length,
         itemBuilder: (context, index) {
-          final organization = gonpaStats[index];
+          final sect = groupedMonasteries.keys.elementAt(index);
+          final monasteries = groupedMonasteries[sect] ?? [];
           return GestureDetector(
             onTap: () {
-              // Navigate to the detail screen of the item
+              // Navigate to the gonpa list screen
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => OrganizationListScreen(
-                    category: organization.values.first,
+                    sect: sect,
                   ),
                 ),
               );
@@ -168,7 +173,8 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _getTitle(organization.values.first, context),
+                            sect.toString(),
+                            // _getTitle(organization.values.first, context),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -176,7 +182,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            organization.values.last.toString(),
+                            monasteries.length.toString(),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey.shade600,
@@ -203,9 +209,10 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
         itemCount: organizationListState.organizations.length,
         itemBuilder: (context, index) {
           final organization = organizationListState.organizations[index];
-          return OrganizationCardItem(
-            organization: organization,
-          );
+          return null;
+          // OrganizationCardItem(
+          //   organization: organization,
+          // );
         },
       ),
     );

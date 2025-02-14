@@ -1,6 +1,18 @@
+import 'package:gompa_tour/models/contact.dart';
 import 'package:gompa_tour/models/gonpa_translation.dart';
 
-enum Sect { NYINGMA, KAGYU, SAKYA, GELUG, BHON, OTHER }
+enum Sect {
+  NYINGMA,
+  KAGYU,
+  SAKYA,
+  GELUG,
+  BHON,
+  REMEY,
+  JONANG,
+  SHALU,
+  BODONG,
+  OTHER
+}
 
 enum GonpaType { MONASTERY, NUNNERY, TEMPLE, NGAKPA, OTHER }
 
@@ -11,6 +23,7 @@ class Gonpa {
   final Sect sect;
   final GonpaType type;
   final String? contactId;
+  final Contact? contact;
   final List<GonpaTranslation> translations;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -22,6 +35,7 @@ class Gonpa {
     required this.sect,
     required this.type,
     this.contactId,
+    this.contact,
     this.translations = const [],
     required this.createdAt,
     required this.updatedAt,
@@ -36,6 +50,8 @@ class Gonpa {
         type: GonpaType.values
             .firstWhere((e) => e.toString() == 'GonpaType.${json['type']}'),
         contactId: json['contactId'],
+        contact:
+            json['contact'] != null ? Contact.fromJson(json['contact']) : null,
         translations: (json['translations'] as List?)
                 ?.map((e) => GonpaTranslation.fromJson(e))
                 .toList() ??

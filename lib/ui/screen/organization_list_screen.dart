@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/organization_state.dart';
-import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/organization_card_item.dart';
@@ -10,11 +10,11 @@ import 'package:gompa_tour/util/search_debouncer.dart';
 
 class OrganizationListScreen extends ConsumerStatefulWidget {
   static const String routeName = '/organization-list';
-  final String? category;
+  final String? sect;
 
   OrganizationListScreen({
     super.key,
-    this.category,
+    this.sect,
   });
 
   @override
@@ -23,7 +23,7 @@ class OrganizationListScreen extends ConsumerStatefulWidget {
 
 class _OrganizationListScreenState
     extends ConsumerState<OrganizationListScreen> {
-  late OrganizationNotifier organizationNotifier;
+  late GonpaNotifier gonpaNotifier;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
@@ -39,21 +39,14 @@ class _OrganizationListScreenState
   void initState() {
     super.initState();
     // Fetch initial deities when the screen is first loaded
-    organizationNotifier = ref.read(organizationNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadInitialOrganizations();
+      _loadInitialGonpasByCategory();
     });
   }
 
-  void _loadInitialOrganizations() {
-    if (widget.category == "All") {
-      organizationNotifier.fetchInitialOrganizations();
-    } else if (widget.category == "Others") {
-      organizationNotifier.fetchCategorisedInitialOrganizations(othersCategory);
-    } else {
-      organizationNotifier
-          .fetchCategorisedInitialOrganizations([widget.category ?? '']);
-    }
+  void _loadInitialGonpasByCategory() {
+    gonpaNotifier = ref.read(gonpaNotifierProvider.notifier);
+    gonpaNotifier.fetchInitialGonpasByCategory(widget.sect!);
   }
 
   void _performSearch(String query) async {
@@ -62,45 +55,37 @@ class _OrganizationListScreenState
       return;
     }
 
-    _searchDebouncer.run(
-      query,
-      onSearch: (q) {
-        if (widget.category == "All") {
-          return organizationNotifier.searchOrganizations(q);
-        } else if (widget.category == "Others") {
-          return organizationNotifier.searchOrganizationsByCategory(
-              q, othersCategory);
-        } else {
-          return organizationNotifier
-              .searchOrganizationsByCategory(q, [widget.category ?? '']);
-        }
-      },
-      onSaveSearch: (q) =>
-          ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: _clearSearchResults,
-    );
+    // _searchDebouncer.run(
+    //   query,
+    //   onSearch: (q) {
+    //     if (widget.category == "All") {
+    //       return organizationNotifier.searchOrganizations(q);
+    //     } else if (widget.category == "Others") {
+    //       return organizationNotifier.searchOrganizationsByCategory(
+    //           q, othersCategory);
+    //     } else {
+    //       return organizationNotifier
+    //           .searchOrganizationsByCategory(q, [widget.category ?? '']);
+    //     }
+    //   },
+    //   onSaveSearch: (q) =>
+    //       ref.read(recentSearchesProvider.notifier).addSearch(q),
+    //   onClearResults: _clearSearchResults,
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
-    final organizationState = ref.watch(organizationNotifierProvider);
+    final gonpaState = ref.watch(gonpaNotifierProvider);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: GonpaAppBar(title: AppLocalizations.of(context)!.organization),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-              !organizationState.isLoading &&
-              !organizationState.hasReachedMax) {
-            if (widget.category == "All") {
-              organizationNotifier.fetchPaginatedOrganizations();
-            } else if (widget.category == "Others") {
-              organizationNotifier
-                  .fetchPaginatedCategorisedOrganizations(othersCategory);
-            } else {
-              organizationNotifier.fetchPaginatedCategorisedOrganizations(
-                  [widget.category ?? '']);
-            }
+              !gonpaState.isLoading &&
+              !gonpaState.hasReachedMax) {
+            gonpaNotifier.fetchMoreGonpasByCategory(widget.sect!);
           }
           return false;
         },
@@ -108,10 +93,9 @@ class _OrganizationListScreenState
           children: [
             _buildSearchBar(context),
             _buildToggleView(),
-            organizationState.organizations.isEmpty &&
-                    organizationState.isLoading
+            gonpaState.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : organizationState.organizations.isEmpty
+                : gonpaState.gonpas.isEmpty
                     ? Center(
                         child: Text(
                           AppLocalizations.of(context)!.noRecordFound,
@@ -122,20 +106,17 @@ class _OrganizationListScreenState
                         child: _currentView == ViewType.list
                             ? ListView.builder(
                                 physics: const BouncingScrollPhysics(),
-                                itemCount:
-                                    organizationState.organizations.length +
-                                        (organizationState.isLoading ? 1 : 0),
+                                itemCount: gonpaState.gonpas.length +
+                                    (gonpaState.isLoading ? 1 : 0),
                                 itemBuilder: (context, index) {
-                                  if (index ==
-                                      organizationState.organizations.length) {
+                                  if (index == gonpaState.gonpas.length) {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
-                                  final organization =
-                                      organizationState.organizations[index];
+                                  final gonpa = gonpaState.gonpas[index];
 
                                   return OrganizationCardItem(
-                                    organization: organization,
+                                    gonpa: gonpa,
                                   );
                                 },
                               )
@@ -148,20 +129,17 @@ class _OrganizationListScreenState
                                   mainAxisSpacing: 10,
                                 ),
                                 physics: const BouncingScrollPhysics(),
-                                itemCount:
-                                    organizationState.organizations.length +
-                                        (organizationState.isLoading ? 1 : 0),
+                                itemCount: gonpaState.gonpas.length +
+                                    (gonpaState.isLoading ? 1 : 0),
                                 itemBuilder: (context, index) {
-                                  if (index ==
-                                      organizationState.organizations.length) {
+                                  if (index == gonpaState.gonpas.length) {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
-                                  final organization =
-                                      organizationState.organizations[index];
+                                  final gonpa = gonpaState.gonpas[index];
 
                                   return OrganizationCardItem(
-                                    organization: organization,
+                                    gonpa: gonpa,
                                     isGridView: true,
                                   );
                                 },
@@ -192,7 +170,7 @@ class _OrganizationListScreenState
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    _loadInitialOrganizations();
+                    _loadInitialGonpasByCategory();
                   },
                 )
               : const SizedBox(),

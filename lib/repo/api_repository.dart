@@ -61,6 +61,36 @@ class ApiRepository<T> {
     }
   }
 
+  Future<List<T>> getAllPaginatedByCategory(
+    int page,
+    int pageSize,
+    String category,
+  ) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$baseUrl/$endpoint/?sect=${category}'),
+      );
+
+      if (response.statusCode == 200) {
+        final String decodedBody =
+            const Utf8Decoder().convert(response.bodyBytes);
+        final List<dynamic> responseData = json.decode(decodedBody);
+        final totalList = responseData.map((json) => fromJson(json)).toList();
+        int start = page * pageSize;
+        int end = start + pageSize;
+        if (end > totalList.length.toInt()) {
+          end = totalList.length.toInt();
+        }
+        final List<T> paginatedList = totalList.sublist(start, end);
+        return paginatedList;
+      }
+      return [];
+    } catch (e) {
+      logger.severe('Failed to get paginated data by category: $e');
+      return [];
+    }
+  }
+
   // search by title and content of the data
   Future<List<T>> searchByTitleAndContent(String query) async {
     try {

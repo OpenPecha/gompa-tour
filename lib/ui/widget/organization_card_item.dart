@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
-import 'package:gompa_tour/models/organization_model.dart';
-import 'package:gompa_tour/states/organization_state.dart';
+import 'package:gompa_tour/models/gonpa.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
 import '../../config/constant.dart';
 import 'gonpa_cache_image.dart';
 
 class OrganizationCardItem extends ConsumerWidget {
-  final Organization organization;
+  final Gonpa gonpa;
   final bool isGridView;
 
   const OrganizationCardItem(
-      {super.key, required this.organization, this.isGridView = false});
+      {super.key, required this.gonpa, this.isGridView = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (isGridView) {
       return GestureDetector(
         onTap: () {
-          ref.read(selectedOrganizationProvider.notifier).state = organization;
+          ref.read(selectedGonpaProvider.notifier).state = gonpa;
           context.push(OrganizationDetailScreen.routeName);
         },
         child: Card(
@@ -34,7 +35,7 @@ class OrganizationCardItem extends ConsumerWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: GonpaCacheImage(
-                    url: organization.pic,
+                    url: gonpa.image,
                     fit: BoxFit.cover,
                     width: double.infinity,
                   ),
@@ -47,8 +48,14 @@ class OrganizationCardItem extends ConsumerWidget {
                   children: [
                     Text(
                       context.localizedText(
-                        enText: organization.enTitle,
-                        boText: organization.tbTitle,
+                        enText: TranslationHelper.getTranslatedField(
+                            translations: gonpa.translations,
+                            languageCode: "en",
+                            fieldGetter: (t) => t.name),
+                        boText: TranslationHelper.getTranslatedField(
+                            translations: gonpa.translations,
+                            languageCode: "bo",
+                            fieldGetter: (t) => t.name),
                       ),
                       style: TextStyle(
                         fontSize: 16,
@@ -60,8 +67,14 @@ class OrganizationCardItem extends ConsumerWidget {
                     ),
                     Text(
                       context.localizedText(
-                        enText: organization.enContent,
-                        boText: organization.tbContent,
+                        enText: TranslationHelper.getTranslatedField(
+                            translations: gonpa.translations,
+                            languageCode: "en",
+                            fieldGetter: (t) => t.description),
+                        boText: TranslationHelper.getTranslatedField(
+                            translations: gonpa.translations,
+                            languageCode: "bo",
+                            fieldGetter: (t) => t.description),
                         maxLength: kDescriptionMaxLength,
                       ),
                       style: TextStyle(
@@ -81,7 +94,7 @@ class OrganizationCardItem extends ConsumerWidget {
     } else {
       return GestureDetector(
         onTap: () {
-          ref.read(selectedOrganizationProvider.notifier).state = organization;
+          ref.read(selectedGonpaProvider.notifier).state = gonpa;
           context.push(OrganizationDetailScreen.routeName);
         },
         child: Card(
@@ -96,8 +109,14 @@ class OrganizationCardItem extends ConsumerWidget {
               children: [
                 Text(
                   context.localizedText(
-                    enText: organization.enTitle,
-                    boText: organization.tbTitle,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: gonpa.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.name),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: gonpa.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.name),
                   ),
                   style: TextStyle(
                     fontSize: 18,
@@ -111,9 +130,9 @@ class OrganizationCardItem extends ConsumerWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Hero(
-                        tag: organization.id,
+                        tag: gonpa.id,
                         child: GonpaCacheImage(
-                          url: organization.pic,
+                          url: gonpa.image,
                           height: 80,
                           width: 80,
                           fit: BoxFit.cover,
@@ -124,8 +143,14 @@ class OrganizationCardItem extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         context.localizedText(
-                          enText: organization.enContent,
-                          boText: organization.tbContent,
+                          enText: TranslationHelper.getTranslatedField(
+                              translations: gonpa.translations,
+                              languageCode: "en",
+                              fieldGetter: (t) => t.description),
+                          boText: TranslationHelper.getTranslatedField(
+                              translations: gonpa.translations,
+                              languageCode: "bo",
+                              fieldGetter: (t) => t.description),
                           maxLength: kDescriptionMaxLength,
                         ),
                         style: TextStyle(
