@@ -36,18 +36,13 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
   }
 
   void _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      _clearSearchResults();
-      return;
-    }
-
     _searchDebouncer.run(
       query,
       onSearch: (q) =>
           ref.read(statueNotifierProvider.notifier).searchStatues(q),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: _clearSearchResults,
+      onClearResults: statueNotifier.fetchInitialStatues,
     );
   }
 
@@ -72,7 +67,9 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
             children: [
               _buildSearchBar(context),
               _buildToggleView(),
-              statueState.statues.isEmpty && statueState.isLoading
+              statueState.isLoading &&
+                      (statueState.statues.isEmpty ||
+                          _searchController.text.isNotEmpty)
                   ? const Center(child: CircularProgressIndicator())
                   : statueState.statues.isEmpty
                       ? Center(

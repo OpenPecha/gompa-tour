@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/models/gonpa.dart';
 import 'package:gompa_tour/states/gonpa_state.dart';
-import 'package:gompa_tour/states/organization_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
+import 'package:gompa_tour/ui/widget/organization_card_item.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
 
 class OrginatzationsScreen extends ConsumerStatefulWidget {
@@ -69,38 +69,18 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
   }
 
   _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      ref.read(organizationNotifierProvider.notifier).clearSearchResults();
-      return;
-    }
-
     _searchDebouncer.run(
       query,
-      onSearch: (q) => ref
-          .read(organizationNotifierProvider.notifier)
-          .searchOrganizations(q),
+      onSearch: (q) => ref.read(gonpaNotifierProvider.notifier).searchGonpas(q),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: () =>
-          ref.read(organizationNotifierProvider.notifier).clearSearchResults(),
+      onClearResults: _clearSearchResults,
     );
   }
 
-  // list of organizations
-  final organizations = [
-    {"All": "All Gonpa"},
-    {"CHA0": "Nyingma"},
-    {"CHB0": "Kagyu"},
-    {"CHC0": "Sakya"},
-    {"CHD0": "Gelug"},
-    {"CHE0": "Bon"},
-    {"CHF0": "Jonang"},
-    {"CHG": "Others"},
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final organisationState = ref.watch(organizationNotifierProvider);
+    final gonpaState = ref.watch(gonpaNotifierProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -108,18 +88,18 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
       body: Column(
         children: [
           _buildSearchBar(context),
-          organisationState.organizations.isEmpty && organisationState.isLoading
+          isLoading || gonpaState.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _searchController.text.length < 3
+              : _searchController.text.isEmpty
                   ? _buildSectListCard(context)
-                  : organisationState.organizations.isEmpty
+                  : gonpaState.gonpas.isEmpty
                       ? Center(
                           child: Text(
                             AppLocalizations.of(context)!.noRecordFound,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         )
-                      : _buildSearchedOrganizations(context, organisationState),
+                      : _buildSearchedOrganizations(context, gonpaState),
         ],
       ),
     );
@@ -173,8 +153,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            sect.toString(),
-                            // _getTitle(organization.values.first, context),
+                            _getTitle(sect.toString(), context),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -202,17 +181,16 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
   }
 
   Widget _buildSearchedOrganizations(
-      BuildContext context, OrganizationListState organizationListState) {
+      BuildContext context, GonpaListState gonpaState) {
     return Expanded(
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
-        itemCount: organizationListState.organizations.length,
+        itemCount: gonpaState.gonpas.length,
         itemBuilder: (context, index) {
-          final organization = organizationListState.organizations[index];
-          return null;
-          // OrganizationCardItem(
-          //   organization: organization,
-          // );
+          final gonpa = gonpaState.gonpas[index];
+          return OrganizationCardItem(
+            gonpa: gonpa,
+          );
         },
       ),
     );
@@ -222,18 +200,24 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
     switch (category) {
       case "All":
         return AppLocalizations.of(context)!.allGonpa;
-      case "CHA0 རྙིང་མ།":
+      case "NYINGMA":
         return AppLocalizations.of(context)!.nyingma;
-      case "CHB0 བཀའ་བརྒྱུད།":
+      case "KAGYU":
         return AppLocalizations.of(context)!.kagyu;
-      case "CHC0 ས་སྐྱ།":
+      case "SAKYA":
         return AppLocalizations.of(context)!.sakya;
-      case "CHD0 དགེ་ལུགས།":
+      case "GELUG":
         return AppLocalizations.of(context)!.gelug;
-      case "CHE0 བོན།":
+      case "BHON":
         return AppLocalizations.of(context)!.bon;
-      case "CHF0 ཇོ་ནང།":
+      case "JONANG":
         return AppLocalizations.of(context)!.jonang;
+      case "REMEY":
+        return AppLocalizations.of(context)!.remey;
+      case "SHALU":
+        return AppLocalizations.of(context)!.shalu;
+      case "BODONG":
+        return AppLocalizations.of(context)!.bodong;
       case "Others":
         return AppLocalizations.of(context)!.others;
       default:
@@ -274,7 +258,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
   }
 
   void _clearSearchResults() {
-    ref.read(organizationNotifierProvider.notifier).clearSearchResults();
+    ref.read(gonpaNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

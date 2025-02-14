@@ -21,21 +21,20 @@ class SearchDebouncer {
     // Cancel previous timer
     _debounceTimer?.cancel();
 
-    // If query is too short, clear results immediately
-    if (query.isEmpty || query.length < minLength) {
+    // If query is empty
+    if (query.isEmpty) {
       onClearResults();
       return;
     }
 
     // Create a new debounce timer
     _debounceTimer = Timer(delay, () async {
-      if (query.length >= minLength) {
-        // Perform search
-        await onSearch(query);
+      // Perform search
+      await onSearch(query);
 
-        // Save search
-        await onSaveSearch(query);
-      }
+      // Save search
+      await onSaveSearch(query);
+      // }
     });
   }
 

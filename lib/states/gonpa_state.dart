@@ -122,23 +122,30 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
 
   // Fetch all gonpa
   Future<List<Gonpa>> fetchAllGonpas() async {
-    state = state.copyWith(isLoading: true);
     try {
       final gonpas = await apiRepository.getAll();
       return gonpas;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
       return [];
     }
   }
 
-  // search all gonpa based on category
+  // search all gonpa
   Future<void> searchGonpas(String query) async {
     state = state.copyWith(isLoading: true);
     try {
       final gonpas = await apiRepository.searchByTitleAndContent(query);
       state = state.copyWith(
-        gonpas: gonpas,
+        gonpas: gonpas.where((gonpa) {
+          return gonpa.translations.any((translation) {
+            return (translation.name
+                    .toLowerCase()
+                    .contains(query.toLowerCase())) ||
+                (translation.description
+                    .toLowerCase()
+                    .contains(query.toLowerCase()));
+          });
+        }).toList(),
         isLoading: false,
         hasReachedMax: true,
         page: 1,
@@ -146,6 +153,46 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
+  }
+
+  // search gonpa based on category
+  Future<void> searchGonpasByCategory(String query, String category) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final gonpas = await apiRepository.searchByTitleAndContentAndCategory(
+          query, category);
+      state = state.copyWith(
+        gonpas: gonpas
+            .where((gonpa) => gonpa.translations.any((translation) =>
+                (translation.name
+                    .toLowerCase()
+                    .contains(query.toLowerCase())) ||
+                (translation.description
+                    .toLowerCase()
+                    .contains(query.toLowerCase()))))
+            .toList(),
+        isLoading: false,
+        hasReachedMax: true,
+        page: 1,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  // total number of gonpa
+  Future<int> getTotalGonpas() async {
+    try {
+      final gonpas = await apiRepository.getAll();
+      return gonpas.length;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return 0;
+    }
+  }
+
+  void clearSearchResults() {
+    state = GonpaListState.initial();
   }
 }
 

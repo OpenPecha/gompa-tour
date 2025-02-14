@@ -35,11 +35,6 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
   }
 
   void _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      _clearSearchResults();
-      return;
-    }
-
     _searchDebouncer.run(
       query,
       onSearch: (q) => ref
@@ -47,7 +42,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
           .searchPilgrimSites(query),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: _clearSearchResults,
+      onClearResults: pilgrimSiteNotifier.fetchInitialPilgrimSites,
     );
   }
 
@@ -71,7 +66,9 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
           children: [
             _buildSearchBar(context),
             _buildToggleView(),
-            pilgrimSiteState.pilgrimSites.isEmpty && pilgrimSiteState.isLoading
+            pilgrimSiteState.isLoading &&
+                    (pilgrimSiteState.pilgrimSites.isEmpty ||
+                        _searchController.text.isNotEmpty)
                 ? const Center(child: CircularProgressIndicator())
                 : pilgrimSiteState.pilgrimSites.isEmpty
                     ? Center(
@@ -194,10 +191,6 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
         },
       ),
     );
-  }
-
-  void _clearSearchResults() {
-    ref.read(pilgrimSiteNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

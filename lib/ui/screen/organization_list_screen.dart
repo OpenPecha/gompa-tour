@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/states/gonpa_state.dart';
-import 'package:gompa_tour/states/organization_state.dart';
+import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/organization_card_item.dart';
@@ -28,12 +28,6 @@ class _OrganizationListScreenState
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
   ViewType _currentView = ViewType.list;
-  final othersCategory = [
-    "CHG0 རེས་མེད།",
-    "CHG1 བོ་དོང་།",
-    "CHG2 ཞ་ལུ།",
-    "CHG3 རིས་མེད།",
-  ];
 
   @override
   void initState() {
@@ -50,28 +44,20 @@ class _OrganizationListScreenState
   }
 
   void _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      _clearSearchResults();
-      return;
-    }
-
-    // _searchDebouncer.run(
-    //   query,
-    //   onSearch: (q) {
-    //     if (widget.category == "All") {
-    //       return organizationNotifier.searchOrganizations(q);
-    //     } else if (widget.category == "Others") {
-    //       return organizationNotifier.searchOrganizationsByCategory(
-    //           q, othersCategory);
-    //     } else {
-    //       return organizationNotifier
-    //           .searchOrganizationsByCategory(q, [widget.category ?? '']);
-    //     }
-    //   },
-    //   onSaveSearch: (q) =>
-    //       ref.read(recentSearchesProvider.notifier).addSearch(q),
-    //   onClearResults: _clearSearchResults,
-    // );
+    _searchDebouncer.run(
+      query,
+      onSearch: (q) {
+        if (widget.sect == "All") {
+          return gonpaNotifier.searchGonpas(q);
+        } else {
+          return gonpaNotifier.searchGonpasByCategory(q, widget.sect!);
+        }
+      },
+      onSaveSearch: (q) =>
+          ref.read(recentSearchesProvider.notifier).addSearch(q),
+      onClearResults: () =>
+          gonpaNotifier.fetchInitialGonpasByCategory(widget.sect!),
+    );
   }
 
   @override
@@ -93,7 +79,9 @@ class _OrganizationListScreenState
           children: [
             _buildSearchBar(context),
             _buildToggleView(),
-            gonpaState.isLoading
+            gonpaState.isLoading &&
+                    (gonpaState.gonpas.isEmpty ||
+                        _searchController.text.isEmpty)
                 ? const Center(child: CircularProgressIndicator())
                 : gonpaState.gonpas.isEmpty
                     ? Center(
@@ -210,9 +198,5 @@ class _OrganizationListScreenState
         ],
       ),
     );
-  }
-
-  void _clearSearchResults() {
-    ref.read(organizationNotifierProvider.notifier).clearSearchResults();
   }
 }

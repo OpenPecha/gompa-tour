@@ -24,6 +24,7 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
+
   @override
   void initState() {
     super.initState();
@@ -35,18 +36,13 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
   }
 
   void _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      _clearSearchResults();
-      return;
-    }
-
     _searchDebouncer.run(
       query,
       onSearch: (q) =>
           ref.read(festivalNotifierProvider.notifier).searchFestivals(q),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: _clearSearchResults,
+      onClearResults: festivalNotifier.fetchInitialFestivals,
     );
   }
 
@@ -70,7 +66,9 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
           children: [
             _buildSearchBar(context),
             _buildToggleView(),
-            festivalState.festivals.isEmpty && festivalState.isLoading
+            festivalState.isLoading &&
+                    (festivalState.festivals.isEmpty ||
+                        _searchController.text.isNotEmpty)
                 ? const Center(child: CircularProgressIndicator())
                 : festivalState.festivals.isEmpty
                     ? Center(
@@ -187,10 +185,6 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
         },
       ),
     );
-  }
-
-  void _clearSearchResults() {
-    ref.read(festivalNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

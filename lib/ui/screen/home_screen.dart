@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gompa_tour/states/deties_state.dart';
 import 'package:gompa_tour/states/festival_state.dart';
-import 'package:gompa_tour/states/organization_state.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/states/search_state.dart';
+import 'package:gompa_tour/states/statue_state.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/orginatzations_screen.dart';
@@ -28,10 +28,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
 
-  int totalDeity = 0;
-  int totalOrganization = 0;
+  int totalStatue = 0;
+  int totalGonpa = 0;
   int totalFestival = 0;
-  int totalPilgrimage = 0;
+  int totalPilgrimSite = 0;
 
   @override
   void initState() {
@@ -40,21 +40,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _loadCounts() async {
-    final deityCount =
-        await ref.read(detiesNotifierProvider.notifier).getDeitiesCount();
-    final organizationCout = await ref
-        .read(organizationNotifierProvider.notifier)
-        .getOrganizationCount();
+    final statueCount =
+        await ref.read(statueNotifierProvider.notifier).getTotalStatues();
+    final gonpaCount =
+        await ref.read(gonpaNotifierProvider.notifier).getTotalGonpas();
     final festivalCout =
         await ref.read(festivalNotifierProvider.notifier).getFestivalCount();
-    final pilgrimageCount = await ref
+    final pilgrimSiteCount = await ref
         .read(pilgrimSiteNotifierProvider.notifier)
         .getTotalPilgrimSites();
     setState(() {
-      totalDeity = deityCount;
-      totalOrganization = organizationCout;
+      totalStatue = statueCount;
+      totalGonpa = gonpaCount;
       totalFestival = festivalCout;
-      totalPilgrimage = pilgrimageCount;
+      totalPilgrimSite = pilgrimSiteCount;
     });
   }
 
@@ -171,19 +170,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   MenuType.deities,
                   'assets/images/buddha.png',
                   context,
-                  totalDeity,
+                  totalStatue,
                 ),
                 _buildCard(
                   MenuType.organization,
                   'assets/images/potala2.png',
                   context,
-                  totalOrganization,
+                  totalGonpa,
                 ),
                 _buildCard(
                   MenuType.pilgrimage,
                   'assets/images/dorjee_den.webp',
                   context,
-                  totalPilgrimage,
+                  totalPilgrimSite,
                 ),
                 _buildCard(
                   MenuType.festival,

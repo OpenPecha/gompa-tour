@@ -111,6 +111,28 @@ class ApiRepository<T> {
     }
   }
 
+  // search by title and content of the data based on category
+  Future<List<T>> searchByTitleAndContentAndCategory(
+    String query,
+    String category,
+  ) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$baseUrl/$endpoint/?sect=${category}'),
+      );
+
+      if (response.statusCode == 200) {
+        final String decodedBody =
+            const Utf8Decoder().convert(response.bodyBytes);
+        final List<dynamic> data = json.decode(decodedBody);
+        return data.map((json) => fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      logger.severe('Failed to search data by category: $e');
+      return [];
+    }
+  }
   // get total number of data
   Future<int> getTotalData() async {
     try {

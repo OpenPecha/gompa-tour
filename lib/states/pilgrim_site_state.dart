@@ -105,7 +105,16 @@ class PilgrimSiteNotifier extends StateNotifier<PilgrimSiteState> {
     try {
       final results = await apiRepository.searchByTitleAndContent(query);
       state = state.copyWith(
-        pilgrimSites: results,
+        pilgrimSites: results.where((pilgrimSite) {
+          return pilgrimSite.translations.any((translation) {
+            return (translation.name
+                    .toLowerCase()
+                    .contains(query.toLowerCase())) ||
+                (translation.description
+                    .toLowerCase()
+                    .contains(query.toLowerCase()));
+          });
+        }).toList(),
         isLoading: false,
         hasReachedMax: true,
       );
