@@ -105,7 +105,9 @@ class OrganizationDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               AddressCard(
-                address: selectedGonpa,
+                contact: selectedGonpa.contact!,
+                translations: selectedGonpa.translations,
+                geoLocation: selectedGonpa.geoLocation,
               ),
               const SizedBox(
                 height: 16,

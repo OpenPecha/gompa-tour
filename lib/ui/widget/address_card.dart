@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
-import 'package:gompa_tour/models/organization_model.dart';
+import 'package:gompa_tour/models/contact.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
 class AddressCard extends StatelessWidget {
-  final Organization address;
-  const AddressCard({super.key, required this.address});
+  final List<dynamic> translations;
+  final Contact? contact;
+  final String geoLocation;
+  const AddressCard(
+      {super.key,
+      required this.translations,
+      this.contact,
+      required this.geoLocation});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,11 +44,17 @@ class AddressCard extends StatelessWidget {
                   ],
                 ),
                 const Divider(height: 24),
-                if (address.enTitle.isNotEmpty) ...[
+                if (translations.isNotEmpty) ...[
                   Text(
                     'Name: ${context.localizedText(
-                      enText: address.enTitle,
-                      boText: address.tbTitle,
+                      enText: TranslationHelper.getTranslatedField(
+                          translations: translations,
+                          languageCode: "en",
+                          fieldGetter: (t) => t.name),
+                      boText: TranslationHelper.getTranslatedField(
+                          translations: translations,
+                          languageCode: "bo",
+                          fieldGetter: (t) => t.name),
                     )}',
                     style: const TextStyle(
                       fontSize: 16,
@@ -49,86 +63,79 @@ class AddressCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                 ],
-                if (address.street.isNotEmpty) ...[
+                if (contact!.translations.isNotEmpty) ...[
                   Text(
-                    'Street: ${context.localizedText(
-                      enText: address.street,
-                      boText: address.street,
+                    'Address: ${context.localizedText(
+                      enText: TranslationHelper.getTranslatedField(
+                          translations: contact!.translations,
+                          languageCode: "en",
+                          fieldGetter: (t) => t.address),
+                      boText: TranslationHelper.getTranslatedField(
+                          translations: contact!.translations,
+                          languageCode: "bo",
+                          fieldGetter: (t) => t.address),
                     )}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 8),
-                ],
-                if (address.address2.isNotEmpty) ...[
-                  Text(
-                    'Address 2: ${context.localizedText(
-                      enText: address.address2,
-                      boText: address.address2,
-                    )}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-                if (address.state.isNotEmpty) ...[
                   Text(
                     'State: ${context.localizedText(
-                      enText: address.state,
-                      boText: address.state,
+                      enText: TranslationHelper.getTranslatedField(
+                          translations: contact!.translations,
+                          languageCode: "en",
+                          fieldGetter: (t) => t.state),
+                      boText: TranslationHelper.getTranslatedField(
+                          translations: contact!.translations,
+                          languageCode: "bo",
+                          fieldGetter: (t) => t.state),
                     )}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 8),
-                ],
-                if (address.postalCode.isNotEmpty) ...[
                   Text(
                     'Postal Code: ${context.localizedText(
-                      enText: address.postalCode,
-                      boText: address.postalCode,
+                      enText: TranslationHelper.getTranslatedField(
+                          translations: contact!.translations,
+                          languageCode: "en",
+                          fieldGetter: (t) => t.postalCode!),
+                      boText: TranslationHelper.getTranslatedField(
+                          translations: contact!.translations,
+                          languageCode: "bo",
+                          fieldGetter: (t) => t.postalCode!),
                     )}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 8),
-                ],
-                if (address.country.isNotEmpty) ...[
                   Text(
                     'Country: ${context.localizedText(
-                      enText: address.country,
-                      boText: address.country,
+                      enText: TranslationHelper.getTranslatedField(
+                          translations: contact!.translations,
+                          languageCode: "en",
+                          fieldGetter: (t) => t.country),
+                      boText: TranslationHelper.getTranslatedField(
+                          translations: contact!.translations,
+                          languageCode: "bo",
+                          fieldGetter: (t) => t.country),
                     )}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                 ],
-                if (address.phone.isNotEmpty) ...[
+                if (contact != null) ...[
                   Text(
-                    'Phone: ${context.localizedText(
-                      enText: address.phone,
-                      boText: address.phone,
-                    )}',
+                    'Phone: ${contact!.phoneNumber}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Email: ${contact!.email}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                 ],
-                if (address.email.isNotEmpty) ...[
+                if (geoLocation == true) ...[
                   Text(
-                    'Email: ${context.localizedText(
-                      enText: address.email,
-                      boText: address.email,
-                    )}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-                if (address.web.isNotEmpty) ...[
-                  Text(
-                    'Web: ${address.web}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-                if (address.map.isNotEmpty) ...[
-                  Text(
-                    'Map: ${address.map}',
+                    'Map: ${geoLocation}',
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],

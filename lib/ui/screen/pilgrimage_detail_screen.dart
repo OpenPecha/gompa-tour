@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:gompa_tour/states/pilgrim_site_state.dart';
+import 'package:gompa_tour/ui/widget/address_card.dart';
 import 'package:gompa_tour/ui/widget/card_tag.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
@@ -15,7 +16,6 @@ class PilgrimageDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedPilgrimSite = ref.watch(selectedPilgrimSiteProvider);
-    final height = MediaQuery.of(context).size.height;
 
     if (selectedPilgrimSite == null) {
       return const Scaffold(
@@ -122,6 +122,14 @@ class PilgrimageDetailScreen extends ConsumerWidget {
                   fontSize: 16,
                   height: context.getLocalizedHeight(),
                 ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              AddressCard(
+                contact: selectedPilgrimSite.contact!,
+                translations: selectedPilgrimSite.translations,
+                geoLocation: selectedPilgrimSite.geoLocation,
               ),
               const SizedBox(
                 height: 16,
