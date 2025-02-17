@@ -98,6 +98,16 @@ class StatueNotifier extends StateNotifier<StatueListState> {
     }
   }
 
+  // get all the statues
+  Future<List<Statue>> fetchAllStatues() async {
+    try {
+      final allStatues = await repository.getAll();
+      return allStatues;
+    } catch (e) {
+      return [];
+    }
+  }
+
   // search status by title and content
   Future<void> searchStatues(String query) async {
     state = state.copyWith(isLoading: true);

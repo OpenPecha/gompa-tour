@@ -84,11 +84,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         const Divider(),
         _buildCategoryCards(context),
         _buildSearchResults(context, searchState),
-        searchState.isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : const SizedBox(),
       ],
     );
   }
@@ -272,6 +267,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               itemCount: searchState.results.length,
               itemBuilder: (context, index) {
                 final searchableItem = searchState.results[index];
+                final translation = searchableItem.translations;
                 return SearchCardItem(searchableItem: searchableItem);
               },
             ),

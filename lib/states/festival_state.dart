@@ -124,6 +124,16 @@ class FestivalNotifier extends StateNotifier<FestivalListState> {
     }
   }
 
+  // get all the festivals
+  Future<List<Festival>> fetchAllFestivals() async {
+    try {
+      final allFestivals = await apiRepository.getAll();
+      return allFestivals;
+    } catch (e) {
+      return [];
+    }
+  }
+
   // to get the total number of festivals
   Future<int> getFestivalCount() async {
     final totalFestivals = await apiRepository.getTotalData();

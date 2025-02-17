@@ -126,6 +126,16 @@ class PilgrimSiteNotifier extends StateNotifier<PilgrimSiteState> {
     }
   }
 
+  // get all the pilgrimSites
+  Future<List<PilgrimSite>> fetchAllPilgrimSites() async {
+    try {
+      final allPilgrimSites = await apiRepository.getAll();
+      return allPilgrimSites;
+    } catch (e) {
+      return [];
+    }
+  }
+
   // get total number of pilgrimSites
   Future<int> getTotalPilgrimSites() async {
     final totalPilgrimSites = await apiRepository.getTotalData();

@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'package:gompa_tour/helper/database_helper.dart';
+import 'package:gompa_tour/states/festival_state.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
+import 'package:gompa_tour/states/statue_state.dart';
 import 'package:http/http.dart' as http;
 
 class ApiRepository<T> {
@@ -133,6 +137,7 @@ class ApiRepository<T> {
       return [];
     }
   }
+
   // get total number of data
   Future<int> getTotalData() async {
     try {
@@ -149,5 +154,80 @@ class ApiRepository<T> {
       logger.severe('Failed to get total data: $e');
       return 0;
     }
+  }
+}
+
+class SearchRepository {
+  final StatueNotifier statueNotifier;
+  final GonpaNotifier gonpaNotifier;
+  final PilgrimSiteNotifier pilgrimSiteNotifier;
+  final FestivalNotifier festivalNotifier;
+
+  SearchRepository(
+    this.statueNotifier,
+    this.gonpaNotifier,
+    this.pilgrimSiteNotifier,
+    this.festivalNotifier,
+  );
+
+  Future<List<dynamic>> searchAcrossTables(String queryText) async {
+    final query = queryText.replaceAll("'", "''");
+
+    // get all the statues
+    final statues = await statueNotifier.fetchAllStatues();
+
+    final stateQuery = statues.where((statue) {
+      return statue.translations.any((translation) {
+        return (translation.name.toLowerCase().contains(query.toLowerCase())) ||
+            (translation.description
+                .toLowerCase()
+                .contains(query.toLowerCase()));
+      });
+    }).toList();
+
+    // get all the gonpas
+    final gonpas = await gonpaNotifier.fetchAllGonpas();
+
+    final gonpaQuery = gonpas.where((gonpa) {
+      return gonpa.translations.any((translation) {
+        return (translation.name.toLowerCase().contains(query.toLowerCase())) ||
+            (translation.description
+                .toLowerCase()
+                .contains(query.toLowerCase()));
+      });
+    }).toList();
+
+    // get all the pilgrim sites
+    final pilgrimSites = await pilgrimSiteNotifier.fetchAllPilgrimSites();
+
+    final pilgrimSiteQuery = pilgrimSites.where((pilgrimSite) {
+      return pilgrimSite.translations.any((translation) {
+        return (translation.name.toLowerCase().contains(query.toLowerCase())) ||
+            (translation.description
+                .toLowerCase()
+                .contains(query.toLowerCase()));
+      });
+    }).toList();
+
+    // get all the festivals
+    final festivals = await festivalNotifier.fetchAllFestivals();
+
+    final festivalQuery = festivals.where((festival) {
+      return festival.translations.any((translation) {
+        return (translation.name.toLowerCase().contains(query.toLowerCase())) ||
+            (translation.description
+                .toLowerCase()
+                .contains(query.toLowerCase()));
+      });
+    }).toList();
+
+    final combineResults = [
+      ...stateQuery,
+      ...gonpaQuery,
+      ...pilgrimSiteQuery,
+      ...festivalQuery,
+    ];
+
+    return combineResults;
   }
 }
