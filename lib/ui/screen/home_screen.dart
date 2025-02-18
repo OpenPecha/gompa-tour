@@ -163,25 +163,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 _buildCard(
                   MenuType.deities,
-                  'assets/images/buddha.png',
+                  'assets/images/statues.jpg',
                   context,
                   totalStatue,
                 ),
                 _buildCard(
                   MenuType.organization,
-                  'assets/images/potala2.png',
+                  'assets/images/monsatery.jpeg',
                   context,
                   totalGonpa,
                 ),
                 _buildCard(
                   MenuType.pilgrimage,
-                  'assets/images/dorjee_den.webp',
+                  'assets/images/pilgrimage.jpg',
                   context,
                   totalPilgrimSite,
                 ),
                 _buildCard(
                   MenuType.festival,
-                  'assets/images/duchen.png',
+                  'assets/images/Festivals.jpeg',
                   context,
                   totalFestival,
                 ),
@@ -218,17 +218,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             Expanded(
               flex: 3,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.contain,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
             Expanded(
-              flex: 2, // Give less space to text content
+              flex: 2,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

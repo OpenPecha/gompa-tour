@@ -122,10 +122,20 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
 
   // Fetch all gonpa
   Future<List<Gonpa>> fetchAllGonpas() async {
+    state = state.copyWith(isLoading: true);
     try {
       final gonpas = await apiRepository.getAll();
+      state = state.copyWith(
+        gonpas: gonpas,
+        isLoading: false,
+        hasReachedMax: true,
+      );
       return gonpas;
     } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
       return [];
     }
   }

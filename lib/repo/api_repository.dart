@@ -27,7 +27,9 @@ class ApiRepository<T> {
         Uri.parse('$baseUrl/$endpoint'),
       );
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final String decodedBody =
+            const Utf8Decoder().convert(response.bodyBytes);
+        final List<dynamic> data = json.decode(decodedBody);
         return data.map((json) => fromJson(json)).toList();
       }
       throw Exception('Failed to load data');
