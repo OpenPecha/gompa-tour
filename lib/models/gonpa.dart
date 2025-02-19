@@ -20,8 +20,8 @@ class Gonpa {
   final String id;
   final String image;
   final String geoLocation;
-  final Sect sect;
-  final GonpaType type;
+  final String sect;
+  final String type;
   final String? contactId;
   final Contact? contact;
   final List<GonpaTranslation> translations;
@@ -45,10 +45,8 @@ class Gonpa {
         id: json['id'],
         image: json['image'],
         geoLocation: json['geo_location'],
-        sect: Sect.values
-            .firstWhere((e) => e.toString() == 'Sect.${json['sect']}'),
-        type: GonpaType.values
-            .firstWhere((e) => e.toString() == 'GonpaType.${json['type']}'),
+        sect: json['sect'],
+        type: json['type'],
         contactId: json['contactId'],
         contact:
             json['contact'] != null ? Contact.fromJson(json['contact']) : null,

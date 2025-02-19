@@ -157,6 +157,25 @@ class ApiRepository<T> {
       return 0;
     }
   }
+
+  // get data by id
+  Future<T?> getById(String id) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$baseUrl/$endpoint/$id'),
+      );
+      if (response.statusCode == 200) {
+        final String decodedBody =
+            const Utf8Decoder().convert(response.bodyBytes);
+        final Map<String, dynamic> data = json.decode(decodedBody);
+        return fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      logger.severe('Failed to get data by id: $e');
+      return null;
+    }
+  }
 }
 
 class SearchRepository {

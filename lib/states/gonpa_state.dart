@@ -190,6 +190,17 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
     }
   }
 
+  // get gonpa by id
+  Future<Gonpa?> getGonpaById(String id) async {
+    try {
+      final gonpa = await apiRepository.getById(id);
+      return gonpa;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return null;
+    }
+  }
+
   // total number of gonpa
   Future<int> getTotalGonpas() async {
     try {

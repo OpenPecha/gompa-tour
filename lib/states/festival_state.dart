@@ -143,6 +143,16 @@ class FestivalNotifier extends StateNotifier<FestivalListState> {
   void clearSearchResults() {
     state = FestivalListState.initial();
   }
+
+  // get festival by id
+  Future<Festival?> fetchFestivalById(String id) async {
+    try {
+      final festival = await apiRepository.getById(id);
+      return festival;
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 // Providers remain the same

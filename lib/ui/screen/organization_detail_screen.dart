@@ -19,6 +19,8 @@ class OrganizationDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedGonpa = ref.watch(selectedGonpaProvider);
+    Locale locale = Localizations.localeOf(context);
+    String langBase = locale.languageCode == "bo" ? "bod" : "en";
 
     if (selectedGonpa == null) {
       return const Scaffold(
@@ -117,8 +119,10 @@ class OrganizationDetailScreen extends ConsumerWidget {
               ),
               ...[
                 const SizedBox(height: 16),
-                //   GonpaQRCard(
-                //       qrData: kOrganizationQrCodeUrl + selectedOrganization.slug)
+                GonpaQRCard(
+                    qrData: KBaseUrl +
+                        langBase +
+                        "/Monastary/${selectedGonpa.sect}/${selectedGonpa.id}"),
               ],
             ],
           ),

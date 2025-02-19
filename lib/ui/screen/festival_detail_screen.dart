@@ -15,7 +15,8 @@ class FestivalDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedFestival = ref.watch(selectedFestivalProvider);
-    final height = MediaQuery.of(context).size.height;
+    Locale locale = Localizations.localeOf(context);
+    String langBase = locale.languageCode == "bo" ? "bod" : "en";
 
     if (selectedFestival == null) {
       return const Scaffold(
@@ -68,11 +69,11 @@ class FestivalDetailScreen extends ConsumerWidget {
                   height: context.getLocalizedHeight(),
                 ),
               ),
-              // if (selectedFestival.slug != null) ...[
-              //   const SizedBox(height: 16),
-              //   GonpaQRCard(qrData: kEventQrCodeUrl + selectedFestival.slug!),
-              //   const SizedBox(height: 16),
-              // ],
+              const SizedBox(height: 16),
+              GonpaQRCard(
+                  qrData:
+                      KBaseUrl + langBase + "/Festival/${selectedFestival.id}"),
+              const SizedBox(height: 16),
             ],
           ),
         ),

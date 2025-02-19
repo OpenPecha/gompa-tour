@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/config/constant.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
 import 'package:gompa_tour/states/statue_state.dart';
+import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:gompa_tour/util/translation_helper.dart';
@@ -15,6 +17,8 @@ class DeityDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedStatue = ref.watch(selectedStatueProvider);
+    Locale locale = Localizations.localeOf(context);
+    String langBase = locale.languageCode == "bo" ? "bod" : "en";
 
     if (selectedStatue == null) {
       return const Scaffold(
@@ -101,10 +105,9 @@ class DeityDetailScreen extends ConsumerWidget {
                   height: context.getLocalizedHeight(),
                 ),
               ),
-              // if (selectedDeity.slug != null) ...[
-              //   const SizedBox(height: 16),
-              //   GonpaQRCard(qrData: kDetiesQrCodeBaseUrl + selectedDeity.slug!)
-              // ],
+              const SizedBox(height: 16),
+              GonpaQRCard(
+                  qrData: KBaseUrl + langBase + "/Statue/${selectedStatue.id}"),
             ],
           ),
         ),

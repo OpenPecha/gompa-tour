@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/states/festival_state.dart';
-import 'package:gompa_tour/states/organization_state.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
+import 'package:gompa_tour/states/statue_state.dart';
 import 'package:gompa_tour/ui/screen/deities_detail_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_detail_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
@@ -10,7 +11,6 @@ import 'package:gompa_tour/util/qr_extractor.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../helper/database_helper.dart';
-import '../../states/deties_state.dart';
 import '../../util/util.dart';
 import '../widget/scanner_overlay.dart';
 
@@ -105,14 +105,19 @@ class _QrScreenState extends ConsumerState<QrScreen> {
       ),
     );
     switch (qrCodeValidator.type) {
-      case QrType.tensum:
-        _fetchDeityDetails(qrCodeValidator.urlValue!);
+      case QrType.statue:
+        _fetchStatueDetails(qrCodeValidator.idValue!);
         return;
-      case QrType.organization:
-        _fetchOrganizationDetails(qrCodeValidator.urlValue!);
+      case QrType.gonpa:
+        _fetchOrganizationDetails(qrCodeValidator.idValue!);
         return;
-      case QrType.event:
-        _fetchEventDetails(qrCodeValidator.urlValue!);
+      case QrType.festival:
+        _fetchEventDetails(qrCodeValidator.idValue!);
+      case QrType.site:
+        showGonpaSnackBar(context, 'Site not found');
+        Navigator.pop(context);
+        _resetScanner();
+        break;
       default:
         showGonpaSnackBar(context, 'Invalid QR Code');
         Navigator.pop(context);
@@ -121,18 +126,17 @@ class _QrScreenState extends ConsumerState<QrScreen> {
     }
   }
 
-  Future<void> _fetchDeityDetails(String slug) async {
+  Future<void> _fetchStatueDetails(String id) async {
     try {
-      final deity = await ref
-          .read(detiesNotifierProvider.notifier)
-          .fetchDeityBySlug(slug);
+      final statue =
+          await ref.read(statueNotifierProvider.notifier).fetchStatueById(id);
 
       // Dismiss loading dialog
       Navigator.of(context).pop();
 
-      if (deity != null) {
+      if (statue != null) {
         // Update selected deity and navigate
-        ref.read(selectedDeityProvider.notifier).state = deity;
+        ref.read(selectedStatueProvider.notifier).state = statue;
         context.push(DeityDetailScreen.routeName).then((_) {
           _resetScanner();
         });
@@ -151,30 +155,29 @@ class _QrScreenState extends ConsumerState<QrScreen> {
     }
   }
 
-  Future<void> _fetchOrganizationDetails(String slug) async {
+  Future<void> _fetchOrganizationDetails(String id) async {
     try {
-      final org = await ref
-          .read(organizationNotifierProvider.notifier)
-          .fetchOrganizationBySlug(slug);
+      final gonpa =
+          await ref.read(gonpaNotifierProvider.notifier).getGonpaById(id);
 
       // Dismiss loading dialog
       Navigator.of(context).pop();
 
-      if (org != null) {
+      if (gonpa != null) {
         // Update selected deity and navigate
-        ref.read(selectedOrganizationProvider.notifier).state = org;
+        ref.read(selectedGonpaProvider.notifier).state = gonpa;
         context.push(OrganizationDetailScreen.routeName).then((_) {
           _resetScanner();
         });
       } else {
-        showGonpaSnackBar(context, 'org not found');
+        showGonpaSnackBar(context, 'Gonpa not found');
         _resetScanner();
       }
     } catch (e) {
       // Dismiss loading dialog
       Navigator.of(context).pop();
 
-      showGonpaSnackBar(context, 'Error fetching org details');
+      showGonpaSnackBar(context, 'Error fetching gonpa details');
       _resetScanner();
     }
   }
@@ -190,11 +193,10 @@ class _QrScreenState extends ConsumerState<QrScreen> {
     super.dispose();
   }
 
-  Future<void> _fetchEventDetails(String slug) async {
+  Future<void> _fetchEventDetails(String id) async {
     try {
-      final event = await ref
-          .read(festivalNotifierProvider.notifier)
-          .fetchFestivalBySlug(slug);
+      final event = null;
+      await ref.read(festivalNotifierProvider.notifier).fetchFestivalById(id);
 
       // Dismiss loading dialog
       Navigator.of(context).pop();
@@ -202,7 +204,9 @@ class _QrScreenState extends ConsumerState<QrScreen> {
       if (event != null) {
         // Update selected deity and navigate
         ref.read(selectedFestivalProvider.notifier).state = event;
-        _navigateToEventDetail();
+        context.push(FestivalDetailScreen.routeName).then((_) {
+          _resetScanner();
+        });
       } else {
         showGonpaSnackBar(context, 'Event not found');
         _resetScanner();

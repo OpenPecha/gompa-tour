@@ -6,3 +6,5 @@ const String kDetiesQrCodeBaseUrl = 'https://gompatour.com/tensum.php?url=';
 const String kOrganizationQrCodeUrl =
     'https://gompatour.com/organization.php?url=';
 const String kEventQrCodeUrl = 'https://gompatour.com/event.php?url=';
+
+const String KBaseUrl = "https://neykorweb.onrender.com/";

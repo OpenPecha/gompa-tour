@@ -98,6 +98,16 @@ class StatueNotifier extends StateNotifier<StatueListState> {
     }
   }
 
+  // get statue by id
+  Future<Statue?> fetchStatueById(String id) async {
+    try {
+      final statue = await repository.getById(id);
+      return statue;
+    } catch (e) {
+      return null;
+    }
+  }
+
   // get all the statues
   Future<List<Statue>> fetchAllStatues() async {
     try {

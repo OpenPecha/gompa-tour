@@ -49,22 +49,21 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
       setState(() {
         isLoading = false;
       });
-      print('Error fetching gonpas: $e');
     }
   }
 
   Map<String, List<Gonpa>> get groupedMonasteries {
     return {
-      "NYINGMA": gonpas.where((m) => m.sect == Sect.NYINGMA).toList(),
-      "KAGYU": gonpas.where((m) => m.sect == Sect.KAGYU).toList(),
-      "SAKYA": gonpas.where((m) => m.sect == Sect.SAKYA).toList(),
-      "GELUG": gonpas.where((m) => m.sect == Sect.GELUG).toList(),
-      "BHON": gonpas.where((m) => m.sect == Sect.BHON).toList(),
-      "JONANG": gonpas.where((m) => m.sect == Sect.JONANG).toList(),
-      "REMEY": gonpas.where((m) => m.sect == Sect.REMEY).toList(),
-      "SHALU": gonpas.where((m) => m.sect == Sect.SHALU).toList(),
-      "BODONG": gonpas.where((m) => m.sect == Sect.BODONG).toList(),
-      "OTHER": gonpas.where((m) => m.sect == Sect.OTHER).toList(),
+      "NYINGMA": gonpas.where((m) => m.sect == "NYINGMA").toList(),
+      "KAGYU": gonpas.where((m) => m.sect == "KAGYU").toList(),
+      "SAKYA": gonpas.where((m) => m.sect == "SAKYA").toList(),
+      "GELUG": gonpas.where((m) => m.sect == "GELUG").toList(),
+      "BHON": gonpas.where((m) => m.sect == "BHON").toList(),
+      "JONANG": gonpas.where((m) => m.sect == "JONANG").toList(),
+      "REMEY": gonpas.where((m) => m.sect == "REMEY").toList(),
+      "SHALU": gonpas.where((m) => m.sect == "SHALU").toList(),
+      "BODONG": gonpas.where((m) => m.sect == "BODONG").toList(),
+      "OTHER": gonpas.where((m) => m.sect == "OTHER").toList(),
     };
   }
 
