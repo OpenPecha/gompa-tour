@@ -10,6 +10,7 @@ class GonpaListState {
   final int page;
   final int pageSize;
   final String? error;
+  final List<String> types;
 
   GonpaListState({
     required this.gonpas,
@@ -18,6 +19,7 @@ class GonpaListState {
     required this.page,
     required this.pageSize,
     this.error,
+    required this.types,
   });
 
   factory GonpaListState.initial() {
@@ -27,6 +29,7 @@ class GonpaListState {
       hasReachedMax: false,
       page: 0,
       pageSize: 20,
+      types: [],
     );
   }
 
@@ -37,6 +40,7 @@ class GonpaListState {
     int? page,
     int? pageSize,
     String? error,
+    List<String>? types,
   }) {
     return GonpaListState(
       gonpas: gonpas ?? this.gonpas,
@@ -45,6 +49,7 @@ class GonpaListState {
       page: page ?? this.page,
       pageSize: pageSize ?? this.pageSize,
       error: error ?? this.error,
+      types: types ?? this.types,
     );
   }
 }
@@ -140,6 +145,16 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
     }
   }
 
+  // fetch all gonpa types
+  Future<void> fetchAllGonpaTypes() async {
+    try {
+      final gonpas = await apiRepository.getTypes();
+      state = state.copyWith(types: gonpas);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
   // search all gonpa
   Future<void> searchGonpas(String query) async {
     state = state.copyWith(isLoading: true);
@@ -209,6 +224,23 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       return 0;
+    }
+  }
+
+  // filte gonpa by type and category
+  Future<void> filterGonpas(String type, String category) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final gonpas =
+          await apiRepository.filterByTypeAndCategory(type, category);
+      state = state.copyWith(
+        gonpas: gonpas,
+        isLoading: false,
+        hasReachedMax: true,
+        page: 1,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 

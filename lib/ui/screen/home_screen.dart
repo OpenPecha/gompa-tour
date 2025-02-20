@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gompa_tour/states/bottom_nav_state.dart';
 import 'package:gompa_tour/states/festival_state.dart';
 import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/pilgrim_site_state.dart';
@@ -126,6 +127,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         vertical: 16,
       ),
       child: SearchBar(
+        padding: WidgetStateProperty.all<EdgeInsets>(
+          EdgeInsets.symmetric(
+            horizontal: 16,
+          ),
+        ),
         backgroundColor: WidgetStateProperty.resolveWith<Color>(
           (states) => Theme.of(context).colorScheme.surfaceContainer,
         ),
@@ -142,6 +148,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                 )
               : const SizedBox(),
+          IconButton(
+            icon: Icon(Icons.qr_code),
+            onPressed: () {
+              ref.read(bottomNavProvider.notifier).setAndPersistValue(2);
+            },
+          )
         ],
         hintText: AppLocalizations.of(context)!.search,
         onChanged: (value) {

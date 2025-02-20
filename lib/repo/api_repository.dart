@@ -176,6 +176,46 @@ class ApiRepository<T> {
       return null;
     }
   }
+
+  // get types
+  Future<List<String>> getTypes() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/$endpoint/types'),
+      );
+
+      if (response.statusCode == 200) {
+        // convert the response body to a List of strings and return
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((type) => type.toString()).toList();
+      }
+      return [];
+    } catch (e) {
+      logger.severe('Failed to get types: $e');
+      return [];
+    }
+  }
+
+  // filter data by type and category
+  Future<List<T>> filterByTypeAndCategory(String type, String category) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$baseUrl/$endpoint/?sect=$category&type=$type'),
+      );
+      if (response.statusCode == 200) {
+        final String decodedBody =
+            const Utf8Decoder().convert(response.bodyBytes);
+        print("Decoded Body: $decodedBody");
+        final List<dynamic> data = json.decode(decodedBody);
+        print("Data: $data");
+        return data.map((json) => fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      logger.severe('Failed to filter data: $e');
+      return [];
+    }
+  }
 }
 
 class SearchRepository {

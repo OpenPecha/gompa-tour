@@ -32,10 +32,15 @@ class DeityCardItem extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Image.network(
-                  statue.image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Hero(
+                    tag: statue.id,
+                    child: GonpaCacheImage(
+                      url: statue.image,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
               Padding(

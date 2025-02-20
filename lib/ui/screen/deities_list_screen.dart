@@ -20,7 +20,7 @@ class DeitiesListScreen extends ConsumerStatefulWidget {
 }
 
 class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
-  ViewType _currentView = ViewType.list;
+  ViewType _currentView = ViewType.grid;
   late StatueNotifier statueNotifier;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -129,25 +129,41 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: Icon(
-              Icons.list_alt,
-            ),
-            onPressed: () {
-              setState(() {
-                _currentView = ViewType.list;
-              });
-            },
+          Text(
+            AppLocalizations.of(context)!.deities,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-          IconButton(
-            icon: Icon(Icons.grid_view),
-            onPressed: () {
-              setState(() {
-                _currentView = ViewType.grid;
-              });
-            },
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.list_alt,
+                  color: _currentView == ViewType.list
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.list;
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.grid_view,
+                  color: _currentView == ViewType.grid
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.grid;
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),

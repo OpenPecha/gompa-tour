@@ -1,7 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/config/constant.dart';
+import 'package:path/path.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -21,6 +27,16 @@ class SettingsScreen extends ConsumerWidget {
     return [
       SettingsCard(
         child: SettingsListTile(
+          leading: Image.asset('assets/images/cta.jpg', width: 40),
+          title: AppLocalizations.of(context)!.aboutUs,
+          onTap: () => _showDialog(
+            context,
+            DialogContent.aboutUs,
+          ),
+        ),
+      ),
+      SettingsCard(
+        child: SettingsListTile(
           leading: const Icon(Icons.phone),
           title: AppLocalizations.of(context)!.contactUs,
           onTap: () => _showDialog(
@@ -36,16 +52,6 @@ class SettingsScreen extends ConsumerWidget {
           onTap: () => _showDialog(
             context,
             DialogContent.aboutApp,
-          ),
-        ),
-      ),
-      SettingsCard(
-        child: SettingsListTile(
-          leading: Image.asset('assets/images/cta.jpg', width: 40),
-          title: AppLocalizations.of(context)!.aboutUs,
-          onTap: () => _showDialog(
-            context,
-            DialogContent.aboutUs,
           ),
         ),
       ),
@@ -154,9 +160,34 @@ class SettingsScreen extends ConsumerWidget {
               "It also has a facility of listening short daily prayers and mantras in audio."),
           const Text(
               "Apart from prayers, this app  contains a list and description of holy Buddhist pilgrimage sites and festivals of Tibet."),
-          // Add other texts as needed
+          const SizedBox(height: 12),
+          // add a download link based on the platform
+          Text.rich(
+            TextSpan(
+              text: "Download the app",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                decoration: TextDecoration.underline,
+              ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  // open the app store link
+                  final String downloadUrl = Platform.isIOS
+                      ? KIosTibetanPrayerAppUrl
+                      : kAndriodTibetanPrayerAppUrl;
+                  _launchUrl(downloadUrl);
+                },
+            ),
+          ),
           spacing,
         ];
+    }
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     }
   }
 }

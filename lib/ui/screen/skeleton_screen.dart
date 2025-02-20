@@ -58,10 +58,11 @@ class SkeletonScreen extends ConsumerWidget {
                   width: 60,
                   height: 30,
                   toggleSize: 20,
-                  valueFontSize: 12.0,
+                  valueFontSize:
+                      currentLanguage == LanguageState.ENGLISH ? 16.0 : 12.0,
                   value: currentLanguage == LanguageState.TIBETAN,
-                  activeText: "བོད།",
-                  inactiveText: "EN",
+                  activeText: "EN",
+                  inactiveText: "བོད།",
                   showOnOff: true,
                   onToggle: (val) {
                     ref.read(languageProvider.notifier).setLanguage(

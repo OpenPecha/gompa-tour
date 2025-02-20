@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +28,10 @@ class _OrganizationListScreenState
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
-  ViewType _currentView = ViewType.list;
+  ViewType _currentView = ViewType.grid;
+  String? _selectedType;
+
+  List<String> types = ["MONASTERY", "NUNNERY", "TEMPLE", "NGAKPA", "OTHER"];
 
   @override
   void initState() {
@@ -41,6 +45,7 @@ class _OrganizationListScreenState
   void _loadInitialGonpasByCategory() {
     gonpaNotifier = ref.read(gonpaNotifierProvider.notifier);
     gonpaNotifier.fetchInitialGonpasByCategory(widget.sect!);
+    gonpaNotifier.fetchAllGonpaTypes();
   }
 
   void _performSearch(String query) async {
@@ -63,6 +68,8 @@ class _OrganizationListScreenState
   @override
   Widget build(BuildContext context) {
     final gonpaState = ref.watch(gonpaNotifierProvider);
+
+    print("Gonpa types: ${gonpaState.types}");
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: GonpaAppBar(title: AppLocalizations.of(context)!.organization),
@@ -78,7 +85,7 @@ class _OrganizationListScreenState
         child: Column(
           children: [
             _buildSearchBar(context),
-            _buildToggleView(),
+            _buildToggleView(gonpaState),
             gonpaState.isLoading &&
                     (gonpaState.gonpas.isEmpty ||
                         _searchController.text.isEmpty)
@@ -171,29 +178,104 @@ class _OrganizationListScreenState
     );
   }
 
-  Widget _buildToggleView() {
+  Widget _buildToggleView(GonpaListState gonpaState) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: Icon(
-              Icons.list_alt,
+          // Dropdown for gonpa types
+          DropdownButton2<String>(
+            value: _selectedType,
+            hint: Text(
+              'Select Types',
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
             ),
-            onPressed: () {
+            items: [
+              DropdownMenuItem<String>(
+                value: null,
+                child: Text(
+                  'All Types',
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+              ...gonpaState.types.map(
+                (type) => DropdownMenuItem<String>(
+                  value: type,
+                  child: Text(
+                    type,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ),
+            ],
+            onChanged: (String? value) {
               setState(() {
-                _currentView = ViewType.list;
+                _selectedType = value;
               });
+              value == "All Types"
+                  ? _loadInitialGonpasByCategory()
+                  : gonpaNotifier.filterGonpas(value!, widget.sect!);
             },
+            buttonStyleData: ButtonStyleData(
+              height: 40,
+              width: 140,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+            ),
+            iconStyleData: IconStyleData(
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
           ),
-          IconButton(
-            icon: Icon(Icons.grid_view),
-            onPressed: () {
-              setState(() {
-                _currentView = ViewType.grid;
-              });
-            },
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.list_alt,
+                  color: _currentView == ViewType.list
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.list;
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.grid_view,
+                  color: _currentView == ViewType.grid
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.grid;
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),
