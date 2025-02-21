@@ -1,6 +1,6 @@
 // lib/states/Statue_state.dart
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/config/constant.dart';
 import 'package:gompa_tour/helper/database_helper.dart';
 import 'package:gompa_tour/models/statue.dart';
 import 'package:gompa_tour/repo/api_repository.dart';
@@ -157,7 +157,7 @@ class StatueNotifier extends StateNotifier<StatueListState> {
 
 final StatueApiRepositoryProvider = Provider<ApiRepository<Statue>>(
   (ref) => ApiRepository<Statue>(
-    baseUrl: dotenv.env["BASE_URL"]!,
+    baseUrl: kBaseAPIUrl,
     endpoint: 'statue',
     fromJson: Statue.fromJson,
     toJson: (Statue) => Statue.toJson(),
