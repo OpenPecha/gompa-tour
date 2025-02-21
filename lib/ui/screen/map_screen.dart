@@ -5,14 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/database_helper.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
-import 'package:gompa_tour/models/organization_model.dart';
+import 'package:gompa_tour/models/gonpa.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
 import 'package:gompa_tour/ui/widget/country_marker.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../config/constant.dart';
-import '../../states/organization_state.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
@@ -28,7 +29,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     super.initState();
     mapController = MapController();
     Future(() {
-      ref.read(organizationNotifierProvider.notifier).fetchOrganizations();
+      ref.read(gonpaNotifierProvider.notifier).fetchAllGonpas();
     });
   }
 
@@ -57,7 +58,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            ref.read(selectedOrganizationProvider.notifier).state = null;
+            ref.read(selectedGonpaProvider.notifier).state = null;
           },
           child: TileLayer(
             urlTemplate: kEsriMapUrl,
@@ -66,13 +67,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ),
         Consumer(
           builder: (_, ref, __) {
-            final state = ref.watch(organizationNotifierProvider);
-            logger.info("Organization:$state");
+            final state = ref.watch(gonpaNotifierProvider);
+            logger.info("Gonpa:$state ${state.gonpas.length}");
             return MarkerLayer(
               markers: [
-                ...state.organizations
-                    .where((location) => location.map.trim().isNotEmpty)
-                    .map((location) => _buildMarker(location))
+                ...state.gonpas
+                    .where((gonpa) => gonpa.geoLocation.trim().isNotEmpty)
+                    .map((gonpa) => _buildMarker(gonpa))
                     .toList(),
                 ..._buildCountryMarker(),
               ],
@@ -84,11 +85,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   Marker _buildMarker(
-    Organization organization,
+    Gonpa gonpa,
   ) {
     double lang = 0.0;
     double lat = 0.0;
-    List<String> coordinates = organization.map.split(',');
+    List<String> coordinates = gonpa.geoLocation.split(',');
     if (coordinates.length == 2) {
       double? latitude = double.tryParse(coordinates[0].trim());
       double? longitude = double.tryParse(coordinates[1].trim());
@@ -102,17 +103,16 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       width: 50,
       height: 50,
       child: GestureDetector(
-        onTap: () => ref.read(selectedOrganizationProvider.notifier).state =
-            organization,
+        onTap: () => ref.read(selectedGonpaProvider.notifier).state = gonpa,
         child: Image.asset('assets/images/marker-icon.png'),
       ),
     );
   }
 
   Widget _buildLocationPopup() {
-    final selectedOrganization = ref.watch(selectedOrganizationProvider);
+    final selectedGonpa = ref.watch(selectedGonpaProvider);
 
-    if (selectedOrganization == null) return const SizedBox.shrink();
+    if (selectedGonpa == null) return const SizedBox.shrink();
 
     return Positioned(
       bottom: 20,
@@ -137,9 +137,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(15)),
               child: Hero(
-                tag: selectedOrganization.id,
+                tag: selectedGonpa.id,
                 child: GonpaCacheImage(
-                  url: selectedOrganization.pic,
+                  url: selectedGonpa.image,
                   height: 120,
                   fit: BoxFit.cover,
                 ),
@@ -151,7 +151,16 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    selectedOrganization.tbTitle,
+                    context.localizedText(
+                      enText: TranslationHelper.getTranslatedField(
+                          translations: selectedGonpa.translations,
+                          languageCode: "en",
+                          fieldGetter: (t) => t.name),
+                      boText: TranslationHelper.getTranslatedField(
+                          translations: selectedGonpa.translations,
+                          languageCode: "bo",
+                          fieldGetter: (t) => t.name),
+                    ),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -160,24 +169,28 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    context.localizedText(
-                      enText: selectedOrganization.enContent,
-                      boText: selectedOrganization.tbContent,
-                      maxLength: kDescriptionMaxLength,
-                    ),
-                    style: TextStyle(
-                      height: context.getLocalizedHeight(),
-                    )
-                  ),
+                      context.localizedText(
+                        enText: TranslationHelper.getTranslatedField(
+                            translations: selectedGonpa.translations,
+                            languageCode: "en",
+                            fieldGetter: (t) => t.description),
+                        boText: TranslationHelper.getTranslatedField(
+                            translations: selectedGonpa.translations,
+                            languageCode: "bo",
+                            fieldGetter: (t) => t.description),
+                        maxLength: kDescriptionMaxLength,
+                      ),
+                      style: TextStyle(
+                        height: context.getLocalizedHeight(),
+                      )),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
                         onPressed: () {
-                          ref
-                              .read(selectedOrganizationProvider.notifier)
-                              .state = selectedOrganization;
+                          ref.read(selectedGonpaProvider.notifier).state =
+                              selectedGonpa;
                           context.push(OrganizationDetailScreen.routeName);
                         },
                         child: Text(
@@ -186,7 +199,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       ),
                       TextButton(
                         onPressed: () => ref
-                            .read(selectedOrganizationProvider.notifier)
+                            .read(selectedGonpaProvider.notifier)
                             .state = null,
                         child: Text(AppLocalizations.of(context)!.close),
                       ),

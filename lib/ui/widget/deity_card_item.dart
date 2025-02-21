@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
+import 'package:gompa_tour/models/statue.dart';
+import 'package:gompa_tour/states/statue_state.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
 import '../../config/constant.dart';
-import '../../models/deity_model.dart';
-import '../../states/deties_state.dart';
 import '../screen/deities_detail_screen.dart';
 import 'gonpa_cache_image.dart';
 
 class DeityCardItem extends ConsumerWidget {
-  final Deity deity;
+  // final Deity deity;
+  final Statue statue;
   final bool isGridView;
   const DeityCardItem(
-      {super.key, required this.deity, this.isGridView = false});
+      {super.key, required this.statue, this.isGridView = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Locale locale = Localizations.localeOf(context);
-
     if (isGridView) {
       return GestureDetector(
         onTap: () {
-          ref.read(selectedDeityProvider.notifier).state = deity;
+          ref.read(selectedStatueProvider.notifier).state = statue;
           context.push(DeityDetailScreen.routeName);
         },
         child: Card(
@@ -32,10 +32,15 @@ class DeityCardItem extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Image.network(
-                  deity.pic!,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Hero(
+                    tag: statue.id,
+                    child: GonpaCacheImage(
+                      url: statue.image,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -45,8 +50,14 @@ class DeityCardItem extends ConsumerWidget {
                   children: [
                     Text(
                       context.localizedText(
-                        enText: deity.enTitle,
-                        boText: deity.tbTitle,
+                        enText: TranslationHelper.getTranslatedField(
+                            translations: statue.translations,
+                            languageCode: "en",
+                            fieldGetter: (t) => t.name),
+                        boText: TranslationHelper.getTranslatedField(
+                            translations: statue.translations,
+                            languageCode: 'bo',
+                            fieldGetter: (t) => t.name),
                       ),
                       style: TextStyle(
                         fontSize: 16,
@@ -58,8 +69,14 @@ class DeityCardItem extends ConsumerWidget {
                     ),
                     Text(
                       context.localizedText(
-                        enText: deity.enContent,
-                        boText: deity.tbContent,
+                        enText: TranslationHelper.getTranslatedField(
+                            translations: statue.translations,
+                            languageCode: "en",
+                            fieldGetter: (t) => t.description),
+                        boText: TranslationHelper.getTranslatedField(
+                            translations: statue.translations,
+                            languageCode: 'bo',
+                            fieldGetter: (t) => t.description),
                         maxLength: kDescriptionMaxLength,
                       ),
                       style: TextStyle(
@@ -79,7 +96,7 @@ class DeityCardItem extends ConsumerWidget {
     } else {
       return GestureDetector(
         onTap: () {
-          ref.read(selectedDeityProvider.notifier).state = deity;
+          ref.read(selectedStatueProvider.notifier).state = statue;
           context.push(DeityDetailScreen.routeName);
         },
         child: Card(
@@ -94,8 +111,14 @@ class DeityCardItem extends ConsumerWidget {
               children: [
                 Text(
                   context.localizedText(
-                    enText: deity.enTitle,
-                    boText: deity.tbTitle,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: statue.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.name),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: statue.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.name),
                   ),
                   style: TextStyle(
                     fontSize: 18,
@@ -109,9 +132,9 @@ class DeityCardItem extends ConsumerWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Hero(
-                        tag: deity.id,
+                        tag: statue.id,
                         child: GonpaCacheImage(
-                          url: deity.pic,
+                          url: statue.image,
                           height: 80,
                           width: 80,
                           fit: BoxFit.cover,
@@ -122,8 +145,14 @@ class DeityCardItem extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         context.localizedText(
-                          enText: deity.enContent,
-                          boText: deity.tbContent,
+                          enText: TranslationHelper.getTranslatedField(
+                              translations: statue.translations,
+                              languageCode: "en",
+                              fieldGetter: (t) => t.description),
+                          boText: TranslationHelper.getTranslatedField(
+                              translations: statue.translations,
+                              languageCode: "bo",
+                              fieldGetter: (t) => t.description),
                           maxLength: kDescriptionMaxLength,
                         ),
                         style: TextStyle(

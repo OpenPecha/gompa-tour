@@ -3,14 +3,17 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
-import 'package:gompa_tour/models/festival_model.dart';
+import 'package:gompa_tour/models/festival.dart';
+import 'package:gompa_tour/models/gonpa.dart';
+import 'package:gompa_tour/models/pilgrim_site.dart';
+import 'package:gompa_tour/models/statue.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
+import 'package:gompa_tour/states/statue_state.dart';
+import 'package:gompa_tour/ui/screen/pilgrimage_detail_screen.dart';
 
 import '../../config/constant.dart';
-import '../../models/deity_model.dart';
-import '../../models/organization_model.dart';
-import '../../states/deties_state.dart';
 import '../../states/festival_state.dart';
-import '../../states/organization_state.dart';
 import '../screen/deities_detail_screen.dart';
 import '../screen/festival_detail_screen.dart';
 import '../screen/organization_detail_screen.dart';
@@ -19,26 +22,37 @@ import 'gonpa_cache_image.dart';
 class SearchCardItem extends ConsumerWidget {
   final dynamic searchableItem;
 
-  const SearchCardItem({super.key, required this.searchableItem});
+  const SearchCardItem({super.key, required this.searchableItem})
+      : assert(searchableItem is Statue ||
+            searchableItem is Festival ||
+            searchableItem is PilgrimSite ||
+            searchableItem is Gonpa);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void navigateToDetail() {
+      if (searchableItem is Statue) {
+        ref.read(selectedStatueProvider.notifier).state =
+            searchableItem as Statue;
+        context.push(DeityDetailScreen.routeName);
+      } else if (searchableItem is Festival) {
+        ref.read(selectedFestivalProvider.notifier).state =
+            searchableItem as Festival;
+        context.push(FestivalDetailScreen.routeName);
+      } else if (searchableItem is PilgrimSite) {
+        ref.read(selectedPilgrimSiteProvider.notifier).state =
+            searchableItem as PilgrimSite;
+        context.push(PilgrimageDetailScreen.routeName);
+      } else if (searchableItem is Gonpa) {
+        // Added explicit check
+        ref.read(selectedGonpaProvider.notifier).state =
+            searchableItem as Gonpa;
+        context.push(OrganizationDetailScreen.routeName);
+      }
+    }
+
     return GestureDetector(
-      onTap: () {
-        if (searchableItem is Deity) {
-          ref.read(selectedDeityProvider.notifier).state =
-              searchableItem as Deity;
-          context.push(DeityDetailScreen.routeName);
-        } else if (searchableItem is Festival) {
-          ref.read(selectedFestivalProvider.notifier).state =
-              searchableItem as Festival;
-          context.push(FestivalDetailScreen.routeName);
-        } else {
-          ref.read(selectedOrganizationProvider.notifier).state =
-              searchableItem as Organization;
-          context.push(OrganizationDetailScreen.routeName);
-        }
-      },
+      onTap: navigateToDetail,
       child: Stack(
         children: [
           Card(
@@ -56,12 +70,9 @@ class SearchCardItem extends ConsumerWidget {
                     children: [
                       Text(
                         context.localizedText(
-                            enText: searchableItem is Festival
-                                ? searchableItem.eventEnName
-                                : searchableItem.enTitle,
-                            boText: searchableItem is Festival
-                                ? searchableItem.eventTbName
-                                : searchableItem.tbTitle),
+                          enText: searchableItem!.translations[1]!.name ?? '',
+                          boText: searchableItem!.translations[0]!.name ?? '',
+                        ),
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -75,7 +86,7 @@ class SearchCardItem extends ConsumerWidget {
                             child: Hero(
                               tag: searchableItem.id,
                               child: GonpaCacheImage(
-                                url: searchableItem.pic,
+                                url: searchableItem.image,
                                 height: 80,
                                 width: 80,
                                 fit: BoxFit.cover,
@@ -86,12 +97,12 @@ class SearchCardItem extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               context.localizedText(
-                                enText: searchableItem is Festival
-                                    ? searchableItem.eventEnName
-                                    : searchableItem.enContent,
-                                boText: searchableItem is Festival
-                                    ? searchableItem.eventTbName
-                                    : searchableItem.tbContent,
+                                enText: searchableItem!
+                                        .translations[1]!.description ??
+                                    '',
+                                boText: searchableItem!
+                                        .translations[0]!.description ??
+                                    '',
                                 maxLength: kDescriptionMaxLength,
                               ),
                               style: const TextStyle(fontSize: 16),
@@ -130,10 +141,12 @@ class SearchCardItem extends ConsumerWidget {
   String _getTitle(searchableItem, BuildContext context) {
     String title = 'Unknown';
 
-    if (searchableItem is Deity) {
+    if (searchableItem is Statue) {
       title = AppLocalizations.of(context)!.deity;
     } else if (searchableItem is Festival) {
       title = AppLocalizations.of(context)!.festival;
+    } else if (searchableItem is PilgrimSite) {
+      title = AppLocalizations.of(context)!.pilgrimage;
     } else {
       title = AppLocalizations.of(context)!.organization;
     }

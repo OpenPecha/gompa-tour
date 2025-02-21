@@ -1,6 +1,7 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/pilgrimage_card_item.dart';
@@ -19,40 +20,49 @@ class PilgrimageListScreen extends ConsumerStatefulWidget {
 }
 
 class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
-  late PilgrimageNotifier pilgrimageNotifier;
-  ViewType _currentView = ViewType.list;
+  late PilgrimSiteNotifier pilgrimSiteNotifier;
+  ViewType _currentView = ViewType.grid;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
+  var _allStates = [];
+  String? _selectedState;
 
   @override
   void initState() {
     super.initState();
-    pilgrimageNotifier = ref.read(pilgrimageNotifierProvider.notifier);
+    pilgrimSiteNotifier = ref.read(pilgrimSiteNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      pilgrimageNotifier.fetchInitialPilgrimages();
+      _loadInitialPilgrimSites();
+    });
+  }
+
+  Future<void> _loadInitialPilgrimSites() async {
+    pilgrimSiteNotifier.fetchInitialPilgrimSites();
+    final allStates = await pilgrimSiteNotifier.getUniqueStates();
+    setState(() {
+      _allStates = allStates;
     });
   }
 
   void _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      _clearSearchResults();
-      return;
-    }
-
     _searchDebouncer.run(
       query,
-      onSearch: (q) =>
-          ref.read(pilgrimageNotifierProvider.notifier).searchPilgrimages(q),
+      onSearch: (q) {
+        _selectedState = null;
+        return ref
+            .read(pilgrimSiteNotifierProvider.notifier)
+            .searchPilgrimSites(query);
+      },
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: _clearSearchResults,
+      onClearResults: pilgrimSiteNotifier.fetchInitialPilgrimSites,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final pilgrimState = ref.watch(pilgrimageNotifierProvider);
+    final pilgrimSiteState = ref.watch(pilgrimSiteNotifierProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -60,9 +70,9 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-              !pilgrimState.isLoading &&
-              !pilgrimState.hasReachedMax) {
-            pilgrimageNotifier.fetchMorePilgrimages();
+              !pilgrimSiteState.isLoading &&
+              !pilgrimSiteState.hasReachedMax) {
+            pilgrimSiteNotifier.fetchMorePilgrimSites();
           }
           return false;
         },
@@ -70,9 +80,11 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
           children: [
             _buildSearchBar(context),
             _buildToggleView(),
-            pilgrimState.pilgrimages.isEmpty && pilgrimState.isLoading
+            pilgrimSiteState.isLoading &&
+                    (pilgrimSiteState.pilgrimSites.isEmpty ||
+                        _searchController.text.isNotEmpty)
                 ? const Center(child: CircularProgressIndicator())
-                : pilgrimState.pilgrimages.isEmpty
+                : pilgrimSiteState.pilgrimSites.isEmpty
                     ? Center(
                         child: Text(
                           AppLocalizations.of(context)!.noRecordFound,
@@ -83,19 +95,20 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                         child: _currentView == ViewType.list
                             ? ListView.builder(
                                 physics: const BouncingScrollPhysics(),
-                                itemCount: pilgrimState.pilgrimages.length +
-                                    (pilgrimState.isLoading ? 1 : 0),
+                                itemCount:
+                                    pilgrimSiteState.pilgrimSites.length +
+                                        (pilgrimSiteState.isLoading ? 1 : 0),
                                 itemBuilder: (context, index) {
                                   if (index ==
-                                      pilgrimState.pilgrimages.length) {
+                                      pilgrimSiteState.pilgrimSites.length) {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
-                                  final pilgrimage =
-                                      pilgrimState.pilgrimages[index];
+                                  final pilgrimSite =
+                                      pilgrimSiteState.pilgrimSites[index];
 
                                   return PilgrimageCardItem(
-                                    pilgrimage: pilgrimage,
+                                    pilgrimSite: pilgrimSite,
                                   );
                                 },
                               )
@@ -108,19 +121,20 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                                   mainAxisSpacing: 10,
                                 ),
                                 physics: const BouncingScrollPhysics(),
-                                itemCount: pilgrimState.pilgrimages.length +
-                                    (pilgrimState.isLoading ? 1 : 0),
+                                itemCount:
+                                    pilgrimSiteState.pilgrimSites.length +
+                                        (pilgrimSiteState.isLoading ? 1 : 0),
                                 itemBuilder: (context, index) {
                                   if (index ==
-                                      pilgrimState.pilgrimages.length) {
+                                      pilgrimSiteState.pilgrimSites.length) {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
-                                  final pilgrimage =
-                                      pilgrimState.pilgrimages[index];
+                                  final pilgrimSite =
+                                      pilgrimSiteState.pilgrimSites[index];
 
                                   return PilgrimageCardItem(
-                                    pilgrimage: pilgrimage,
+                                    pilgrimSite: pilgrimSite,
                                     isGridView: true,
                                   );
                                 },
@@ -136,25 +150,106 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: Icon(
-              Icons.list_alt,
-            ),
-            onPressed: () {
-              setState(() {
-                _currentView = ViewType.list;
-              });
-            },
+          Text(
+            AppLocalizations.of(context)!.pilgrimage,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-          IconButton(
-            icon: Icon(Icons.grid_view),
-            onPressed: () {
+          // dropdown for unqiue states
+          DropdownButton2<String>(
+            isExpanded: true,
+            value: _selectedState,
+            hint: Text(
+              'Select State',
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            items: [
+              DropdownMenuItem<String>(
+                value: null,
+                child: Text(
+                  'All States',
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+              ..._allStates.map(
+                (state) => DropdownMenuItem<String>(
+                  value: state,
+                  child: Text(
+                    state.toUpperCase(),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+            ],
+            onChanged: (String? value) {
               setState(() {
-                _currentView = ViewType.grid;
+                _selectedState = value;
               });
+              value == null
+                  ? _loadInitialPilgrimSites()
+                  : pilgrimSiteNotifier.filterPilgrimSites(value);
             },
+            buttonStyleData: ButtonStyleData(
+              height: 40,
+              width: 120,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+            ),
+            iconStyleData: IconStyleData(
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.list_alt,
+                  color: _currentView == ViewType.list
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.list;
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.grid_view,
+                  color: _currentView == ViewType.grid
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.grid;
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -180,7 +275,8 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    pilgrimageNotifier.fetchInitialPilgrimages();
+                    _selectedState = null;
+                    pilgrimSiteNotifier.fetchInitialPilgrimSites();
                   },
                 )
               : const SizedBox(),
@@ -191,10 +287,6 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
         },
       ),
     );
-  }
-
-  void _clearSearchResults() {
-    ref.read(pilgrimageNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

@@ -20,10 +20,11 @@ class FestivalListScreen extends ConsumerStatefulWidget {
 
 class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
   late FestivalNotifier festivalNotifier;
-  ViewType _currentView = ViewType.list;
+  ViewType _currentView = ViewType.grid;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
+
   @override
   void initState() {
     super.initState();
@@ -35,18 +36,13 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
   }
 
   void _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      _clearSearchResults();
-      return;
-    }
-
     _searchDebouncer.run(
       query,
       onSearch: (q) =>
           ref.read(festivalNotifierProvider.notifier).searchFestivals(q),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: _clearSearchResults,
+      onClearResults: festivalNotifier.fetchInitialFestivals,
     );
   }
 
@@ -70,7 +66,9 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
           children: [
             _buildSearchBar(context),
             _buildToggleView(),
-            festivalState.festivals.isEmpty && festivalState.isLoading
+            festivalState.isLoading &&
+                    (festivalState.festivals.isEmpty ||
+                        _searchController.text.isNotEmpty)
                 ? const Center(child: CircularProgressIndicator())
                 : festivalState.festivals.isEmpty
                     ? Center(
@@ -132,25 +130,41 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: Icon(
-              Icons.list_alt,
-            ),
-            onPressed: () {
-              setState(() {
-                _currentView = ViewType.list;
-              });
-            },
+          Text(
+            AppLocalizations.of(context)!.festival,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-          IconButton(
-            icon: Icon(Icons.grid_view),
-            onPressed: () {
-              setState(() {
-                _currentView = ViewType.grid;
-              });
-            },
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.list_alt,
+                  color: _currentView == ViewType.list
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.list;
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.grid_view,
+                  color: _currentView == ViewType.grid
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.grid;
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -187,10 +201,6 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
         },
       ),
     );
-  }
-
-  void _clearSearchResults() {
-    ref.read(festivalNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

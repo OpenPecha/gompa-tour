@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gompa_tour/states/deties_state.dart';
+import 'package:gompa_tour/states/bottom_nav_state.dart';
 import 'package:gompa_tour/states/festival_state.dart';
-import 'package:gompa_tour/states/organization_state.dart';
-import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/states/search_state.dart';
+import 'package:gompa_tour/states/statue_state.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_list_screen.dart';
 import 'package:gompa_tour/ui/screen/orginatzations_screen.dart';
@@ -28,10 +29,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
 
-  int totalDeity = 0;
-  int totalOrganization = 0;
+  int totalStatue = 0;
+  int totalGonpa = 0;
   int totalFestival = 0;
-  int totalPilgrimage = 0;
+  int totalPilgrimSite = 0;
 
   @override
   void initState() {
@@ -40,21 +41,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _loadCounts() async {
-    final deityCount =
-        await ref.read(detiesNotifierProvider.notifier).getDeitiesCount();
-    final organizationCout = await ref
-        .read(organizationNotifierProvider.notifier)
-        .getOrganizationCount();
+    final statueCount =
+        await ref.read(statueNotifierProvider.notifier).getTotalStatues();
+    final gonpaCount =
+        await ref.read(gonpaNotifierProvider.notifier).getTotalGonpas();
     final festivalCout =
         await ref.read(festivalNotifierProvider.notifier).getFestivalCount();
-    final pilgrimageCount = await ref
-        .read(pilgrimageNotifierProvider.notifier)
-        .getTotalPilgrimages();
+    final pilgrimSiteCount = await ref
+        .read(pilgrimSiteNotifierProvider.notifier)
+        .getTotalPilgrimSites();
     setState(() {
-      totalDeity = deityCount;
-      totalOrganization = organizationCout;
+      totalStatue = statueCount;
+      totalGonpa = gonpaCount;
       totalFestival = festivalCout;
-      totalPilgrimage = pilgrimageCount;
+      totalPilgrimSite = pilgrimSiteCount;
     });
   }
 
@@ -85,11 +85,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         const Divider(),
         _buildCategoryCards(context),
         _buildSearchResults(context, searchState),
-        searchState.isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : const SizedBox(),
       ],
     );
   }
@@ -98,17 +93,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Locale locale = Localizations.localeOf(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
+      padding: EdgeInsets.symmetric(
+        horizontal: 28,
+        vertical: 12,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
+          locale.languageCode == 'bo'
+              ? SizedBox(width: double.infinity, height: 4)
+              : const SizedBox(),
           Text(
             AppLocalizations.of(context)!.deptName,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: locale.languageCode == "bo" ? 16 : 16,
               fontWeight: FontWeight.w500,
+              height: locale.languageCode == "bo" ? 2 : 1.5,
             ),
           ),
           locale.languageCode == 'en'
@@ -119,7 +119,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     fontWeight: FontWeight.w500,
                   ),
                 )
-              : SizedBox(),
+              : SizedBox(width: double.infinity, height: 4),
         ],
       ),
     );
@@ -129,9 +129,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 28,
-        vertical: 16,
+        vertical: 12,
       ),
       child: SearchBar(
+        padding: WidgetStateProperty.all<EdgeInsets>(
+          EdgeInsets.symmetric(
+            horizontal: 16,
+          ),
+        ),
         backgroundColor: WidgetStateProperty.resolveWith<Color>(
           (states) => Theme.of(context).colorScheme.surfaceContainer,
         ),
@@ -148,8 +153,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                 )
               : const SizedBox(),
+          IconButton(
+            icon: Icon(Icons.qr_code),
+            onPressed: () {
+              ref.read(bottomNavProvider.notifier).setAndPersistValue(2);
+            },
+          )
         ],
         hintText: AppLocalizations.of(context)!.search,
+        hintStyle: WidgetStatePropertyAll<TextStyle>(
+          TextStyle(
+            color: Colors.grey.shade700,
+          ),
+        ),
         onChanged: (value) {
           _performSearch(value);
         },
@@ -169,25 +185,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 _buildCard(
                   MenuType.deities,
-                  'assets/images/buddha.png',
+                  'assets/images/statues.jpg',
                   context,
-                  totalDeity,
+                  totalStatue,
                 ),
                 _buildCard(
                   MenuType.organization,
-                  'assets/images/potala2.png',
+                  'assets/images/monsatery.jpeg',
                   context,
-                  totalOrganization,
+                  totalGonpa,
                 ),
                 _buildCard(
                   MenuType.pilgrimage,
-                  'assets/images/dorjee_den.webp',
+                  'assets/images/pilgrimage.jpg',
                   context,
-                  totalPilgrimage,
+                  totalPilgrimSite,
                 ),
                 _buildCard(
                   MenuType.festival,
-                  'assets/images/duchen.png',
+                  'assets/images/Festivals.jpeg',
                   context,
                   totalFestival,
                 ),
@@ -199,6 +215,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildCard(
       MenuType type, String imagePath, BuildContext context, int count) {
+    Locale locale = Localizations.localeOf(context);
+
     return GestureDetector(
       onTap: () {
         switch (type) {
@@ -224,24 +242,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             Expanded(
               flex: 3,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.contain,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
             Expanded(
-              flex: 2, // Give less space to text content
+              flex: 2,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     _getTitle(type, context),
-                    style: const TextStyle(
-                      fontSize: 22,
+                    style: TextStyle(
+                      fontSize: locale.languageCode == 'bo' ? 20 : 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -272,7 +292,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: ListView.builder(
               itemCount: searchState.results.length,
               itemBuilder: (context, index) {
-                final searchableItem = searchState.results[index];
+                var searchableItem = searchState.results[index];
                 return SearchCardItem(searchableItem: searchableItem);
               },
             ),

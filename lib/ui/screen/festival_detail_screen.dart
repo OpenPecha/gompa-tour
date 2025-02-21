@@ -15,7 +15,8 @@ class FestivalDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedFestival = ref.watch(selectedFestivalProvider);
-    final height = MediaQuery.of(context).size.height;
+    Locale locale = Localizations.localeOf(context);
+    String langBase = locale.languageCode == "bo" ? "bod" : "en";
 
     if (selectedFestival == null) {
       return const Scaffold(
@@ -37,8 +38,8 @@ class FestivalDetailScreen extends ConsumerWidget {
               Center(
                 child: Text(
                   context.localizedText(
-                    enText: selectedFestival.eventEnName!,
-                    boText: selectedFestival.eventTbName!,
+                    enText: selectedFestival.translations[1].name,
+                    boText: selectedFestival.translations[0].name,
                   ),
                   style: TextStyle(
                     fontSize: 24,
@@ -53,26 +54,26 @@ class FestivalDetailScreen extends ConsumerWidget {
                 child: Hero(
                   tag: selectedFestival.id,
                   child: GonpaCacheImage(
-                    url: selectedFestival.pic,
+                    url: selectedFestival.image,
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                  enText: selectedFestival.enDescription!,
-                  boText: selectedFestival.tbDescription!,
+                  enText: selectedFestival.translations[1].description,
+                  boText: selectedFestival.translations[0].description,
                 ),
                 style: TextStyle(
                   fontSize: 16,
                   height: context.getLocalizedHeight(),
                 ),
               ),
-              if (selectedFestival.slug != null) ...[
-                const SizedBox(height: 16),
-                GonpaQRCard(qrData: kEventQrCodeUrl + selectedFestival.slug!),
-                const SizedBox(height: 16),
-              ],
+              const SizedBox(height: 16),
+              GonpaQRCard(
+                  qrData:
+                      KBaseUrl + langBase + "/Festival/${selectedFestival.id}"),
+              const SizedBox(height: 16),
             ],
           ),
         ),

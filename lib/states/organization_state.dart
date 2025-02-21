@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/organization_model.dart';
 import '../repo/database_repository.dart';
 import 'database_state.dart';
-import 'package:sqflite/sqflite.dart';
 
 class OrganizationListState {
   final List<Organization> organizations;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/states/statue_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
 
-import '../../states/deties_state.dart';
 import '../widget/deity_card_item.dart';
 
 enum ViewType { grid, list }
@@ -20,8 +20,8 @@ class DeitiesListScreen extends ConsumerStatefulWidget {
 }
 
 class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
-  ViewType _currentView = ViewType.list;
-  late DeityNotifier deityNotifier;
+  ViewType _currentView = ViewType.grid;
+  late StatueNotifier statueNotifier;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
@@ -29,31 +29,26 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
   @override
   void initState() {
     super.initState();
-    deityNotifier = ref.read(detiesNotifierProvider.notifier);
+    statueNotifier = ref.read(statueNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      deityNotifier.fetchInitialDeities();
+      statueNotifier.fetchInitialStatues();
     });
   }
 
   void _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      _clearSearchResults();
-      return;
-    }
-
     _searchDebouncer.run(
       query,
       onSearch: (q) =>
-          ref.read(detiesNotifierProvider.notifier).searchDeities(q),
+          ref.read(statueNotifierProvider.notifier).searchStatues(q),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: _clearSearchResults,
+      onClearResults: statueNotifier.fetchInitialStatues,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final deityState = ref.watch(detiesNotifierProvider);
+    final statueState = ref.watch(statueNotifierProvider);
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -62,9 +57,9 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
           onNotification: (ScrollNotification scrollInfo) {
             if (scrollInfo.metrics.pixels ==
                     scrollInfo.metrics.maxScrollExtent &&
-                !deityState.isLoading &&
-                !deityState.hasReachedMax) {
-              deityNotifier.fetchPaginatedDeities();
+                !statueState.isLoading &&
+                !statueState.hasReachedMax) {
+              statueNotifier.fetchMoreStatues();
             }
             return false;
           },
@@ -72,9 +67,11 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
             children: [
               _buildSearchBar(context),
               _buildToggleView(),
-              deityState.deities.isEmpty && deityState.isLoading
+              statueState.isLoading &&
+                      (statueState.statues.isEmpty ||
+                          _searchController.text.isNotEmpty)
                   ? const Center(child: CircularProgressIndicator())
-                  : deityState.deities.isEmpty
+                  : statueState.statues.isEmpty
                       ? Center(
                           child: Text(
                             AppLocalizations.of(context)!.noRecordFound,
@@ -85,17 +82,17 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
                           child: _currentView == ViewType.list
                               ? ListView.builder(
                                   physics: const BouncingScrollPhysics(),
-                                  itemCount: deityState.deities.length +
-                                      (deityState.isLoading ? 1 : 0),
+                                  itemCount: statueState.statues.length +
+                                      (statueState.isLoading ? 1 : 0),
                                   itemBuilder: (context, index) {
-                                    if (index == deityState.deities.length) {
+                                    if (index == statueState.statues.length) {
                                       return const Center(
                                           child: CircularProgressIndicator());
                                     }
-                                    final deity = deityState.deities[index];
+                                    final statue = statueState.statues[index];
 
                                     return DeityCardItem(
-                                      deity: deity,
+                                      statue: statue,
                                     );
                                   },
                                 )
@@ -108,16 +105,16 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
                                     crossAxisSpacing: 10,
                                     mainAxisSpacing: 10,
                                   ),
-                                  itemCount: deityState.deities.length +
-                                      (deityState.isLoading ? 1 : 0),
+                                  itemCount: statueState.statues.length +
+                                      (statueState.isLoading ? 1 : 0),
                                   itemBuilder: (context, index) {
-                                    if (index == deityState.deities.length) {
+                                    if (index == statueState.statues.length) {
                                       return const Center(
                                           child: CircularProgressIndicator());
                                     }
-                                    final deity = deityState.deities[index];
+                                    final statue = statueState.statues[index];
                                     return DeityCardItem(
-                                      deity: deity,
+                                      statue: statue,
                                       isGridView: true,
                                     );
                                   },
@@ -132,25 +129,41 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: Icon(
-              Icons.list_alt,
-            ),
-            onPressed: () {
-              setState(() {
-                _currentView = ViewType.list;
-              });
-            },
+          Text(
+            AppLocalizations.of(context)!.deities,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-          IconButton(
-            icon: Icon(Icons.grid_view),
-            onPressed: () {
-              setState(() {
-                _currentView = ViewType.grid;
-              });
-            },
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.list_alt,
+                  color: _currentView == ViewType.list
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.list;
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.grid_view,
+                  color: _currentView == ViewType.grid
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _currentView = ViewType.grid;
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -176,7 +189,7 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    deityNotifier.fetchInitialDeities();
+                    statueNotifier.fetchInitialStatues();
                   },
                 )
               : const SizedBox(),
@@ -187,10 +200,6 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
         },
       ),
     );
-  }
-
-  void _clearSearchResults() {
-    ref.read(detiesNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

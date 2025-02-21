@@ -24,6 +24,7 @@ class GonpaAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentLanguage = ref.watch(languageProvider).currentLanguage;
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       leading: enableBackButton
@@ -35,8 +36,11 @@ class GonpaAppBar extends ConsumerWidget implements PreferredSizeWidget {
       title: Text(
         AppLocalizations.of(context)!.neykor,
         style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          fontFamily: currentLanguage == LanguageState.TIBETAN
+              ? "TsumachuTibetan"
+              : "Roboto",
         ),
       ),
       actions: [_buildActions(context, ref)],

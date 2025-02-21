@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/config/constant.dart';
-import 'package:gompa_tour/models/pilgrimage_model.dart';
-import 'package:gompa_tour/states/pilgrimage_state.dart';
+import 'package:gompa_tour/models/pilgrim_site.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/ui/screen/pilgrimage_detail_screen.dart';
 import 'package:gompa_tour/ui/widget/card_tag.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
 class PilgrimageCardItem extends ConsumerWidget {
-  final Pilgrimage pilgrimage;
+  final PilgrimSite pilgrimSite;
   final bool isGridView;
   const PilgrimageCardItem(
-      {Key? key, required this.pilgrimage, this.isGridView = false})
+      {Key? key, required this.pilgrimSite, this.isGridView = false})
       : super(key: key);
 
   @override
@@ -21,7 +22,7 @@ class PilgrimageCardItem extends ConsumerWidget {
     if (isGridView) {
       return GestureDetector(
         onTap: () {
-          ref.read(selectedPilgrimageProvider.notifier).state = pilgrimage;
+          ref.read(selectedPilgrimSiteProvider.notifier).state = pilgrimSite;
           context.push(PilgrimageDetailScreen.routeName);
         },
         child: Card(
@@ -34,9 +35,9 @@ class PilgrimageCardItem extends ConsumerWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Hero(
-                    tag: pilgrimage.id,
+                    tag: pilgrimSite.id,
                     child: GonpaCacheImage(
-                      url: pilgrimage.image,
+                      url: pilgrimSite.image,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -49,8 +50,16 @@ class PilgrimageCardItem extends ConsumerWidget {
                   children: [
                     Text(
                       context.localizedText(
-                        enText: pilgrimage.enName!,
-                        boText: pilgrimage.boName!,
+                        enText: TranslationHelper.getTranslatedField(
+                          translations: pilgrimSite.translations,
+                          languageCode: "en",
+                          fieldGetter: (t) => t.name,
+                        ),
+                        boText: TranslationHelper.getTranslatedField(
+                          translations: pilgrimSite.translations,
+                          languageCode: 'bo',
+                          fieldGetter: (t) => t.name,
+                        ),
                       ),
                       style: TextStyle(
                         fontSize: 16,
@@ -62,8 +71,16 @@ class PilgrimageCardItem extends ConsumerWidget {
                     ),
                     Text(
                       context.localizedText(
-                        enText: pilgrimage.enDescription!,
-                        boText: pilgrimage.boDescription!,
+                        enText: TranslationHelper.getTranslatedField(
+                          translations: pilgrimSite.translations,
+                          languageCode: "en",
+                          fieldGetter: (t) => t.description,
+                        ),
+                        boText: TranslationHelper.getTranslatedField(
+                          translations: pilgrimSite.translations,
+                          languageCode: 'bo',
+                          fieldGetter: (t) => t.description,
+                        ),
                         maxLength: kDescriptionMaxLength,
                       ),
                       style: TextStyle(
@@ -79,7 +96,7 @@ class PilgrimageCardItem extends ConsumerWidget {
                       runSpacing: 8,
                       children: [
                         Tag(
-                          text: pilgrimage.state,
+                          text: pilgrimSite.contact!.translations[0].state,
                           backgroundColor:
                               Theme.of(context).colorScheme.secondaryContainer,
                           textColor: Theme.of(context)
@@ -87,7 +104,7 @@ class PilgrimageCardItem extends ConsumerWidget {
                               .onSecondaryContainer,
                         ),
                         Tag(
-                          text: pilgrimage.country,
+                          text: pilgrimSite.contact!.translations[0].country,
                           backgroundColor:
                               Theme.of(context).colorScheme.tertiaryContainer,
                           textColor:
@@ -105,7 +122,7 @@ class PilgrimageCardItem extends ConsumerWidget {
     } else {
       return GestureDetector(
         onTap: () {
-          ref.read(selectedPilgrimageProvider.notifier).state = pilgrimage;
+          ref.read(selectedPilgrimSiteProvider.notifier).state = pilgrimSite;
           context.push(PilgrimageDetailScreen.routeName);
         },
         child: Card(
@@ -120,8 +137,16 @@ class PilgrimageCardItem extends ConsumerWidget {
               children: [
                 Text(
                   context.localizedText(
-                    enText: pilgrimage.enName!,
-                    boText: pilgrimage.boName!,
+                    enText: TranslationHelper.getTranslatedField(
+                      translations: pilgrimSite.translations,
+                      languageCode: "en",
+                      fieldGetter: (t) => t.name,
+                    ),
+                    boText: TranslationHelper.getTranslatedField(
+                      translations: pilgrimSite.translations,
+                      languageCode: 'bo',
+                      fieldGetter: (t) => t.name,
+                    ),
                   ),
                   style: TextStyle(
                     fontSize: 18,
@@ -135,9 +160,9 @@ class PilgrimageCardItem extends ConsumerWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Hero(
-                        tag: pilgrimage.id,
+                        tag: pilgrimSite.id,
                         child: GonpaCacheImage(
-                          url: pilgrimage.image,
+                          url: pilgrimSite.image,
                           height: 80,
                           width: 80,
                           fit: BoxFit.cover,
@@ -151,8 +176,16 @@ class PilgrimageCardItem extends ConsumerWidget {
                         children: [
                           Text(
                             context.localizedText(
-                              enText: pilgrimage.enDescription!,
-                              boText: pilgrimage.boDescription!,
+                              enText: TranslationHelper.getTranslatedField(
+                                translations: pilgrimSite.translations,
+                                languageCode: "en",
+                                fieldGetter: (t) => t.description,
+                              ),
+                              boText: TranslationHelper.getTranslatedField(
+                                translations: pilgrimSite.translations,
+                                languageCode: 'bo',
+                                fieldGetter: (t) => t.description,
+                              ),
                               maxLength: kDescriptionMaxLength,
                             ),
                             style: TextStyle(
@@ -166,7 +199,20 @@ class PilgrimageCardItem extends ConsumerWidget {
                             runSpacing: 8,
                             children: [
                               Tag(
-                                text: pilgrimage.state,
+                                text: context.localizedText(
+                                  enText: TranslationHelper.getTranslatedField(
+                                    translations:
+                                        pilgrimSite.contact!.translations,
+                                    languageCode: "en",
+                                    fieldGetter: (t) => t.state,
+                                  ),
+                                  boText: TranslationHelper.getTranslatedField(
+                                    translations:
+                                        pilgrimSite.contact!.translations,
+                                    languageCode: 'bo',
+                                    fieldGetter: (t) => t.state,
+                                  ),
+                                ),
                                 backgroundColor: Theme.of(context)
                                     .colorScheme
                                     .secondaryContainer,
@@ -175,7 +221,20 @@ class PilgrimageCardItem extends ConsumerWidget {
                                     .onSecondaryContainer,
                               ),
                               Tag(
-                                text: pilgrimage.country,
+                                text: context.localizedText(
+                                  enText: TranslationHelper.getTranslatedField(
+                                    translations:
+                                        pilgrimSite.contact!.translations,
+                                    languageCode: "en",
+                                    fieldGetter: (t) => t.country,
+                                  ),
+                                  boText: TranslationHelper.getTranslatedField(
+                                    translations:
+                                        pilgrimSite.contact!.translations,
+                                    languageCode: 'bo',
+                                    fieldGetter: (t) => t.country,
+                                  ),
+                                ),
                                 backgroundColor: Theme.of(context)
                                     .colorScheme
                                     .tertiaryContainer,

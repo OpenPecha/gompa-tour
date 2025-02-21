@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/config/constant.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
+import 'package:gompa_tour/states/statue_state.dart';
 import 'package:gompa_tour/ui/widget/gonap_qr_card.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
-import '../../config/constant.dart';
-import '../../states/deties_state.dart';
 import '../widget/speaker_widget.dart';
 
 class DeityDetailScreen extends ConsumerWidget {
@@ -15,11 +16,11 @@ class DeityDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedDeity = ref.watch(selectedDeityProvider);
-    final height = MediaQuery.of(context).size.height;
+    final selectedStatue = ref.watch(selectedStatueProvider);
     Locale locale = Localizations.localeOf(context);
+    String langBase = locale.languageCode == "bo" ? "bod" : "en";
 
-    if (selectedDeity == null) {
+    if (selectedStatue == null) {
       return const Scaffold(
         appBar: GonpaAppBar(title: 'Deity Detail'),
         body: Center(child: Text('No deity selected')),
@@ -39,8 +40,14 @@ class DeityDetailScreen extends ConsumerWidget {
               Center(
                 child: Text(
                   context.localizedText(
-                    enText: selectedDeity.enTitle,
-                    boText: selectedDeity.tbTitle,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.name),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.name),
                   ),
                   style: TextStyle(
                     fontSize: 24,
@@ -53,37 +60,56 @@ class DeityDetailScreen extends ConsumerWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Hero(
-                  tag: selectedDeity.id,
+                  tag: selectedStatue.id,
                   child: GonpaCacheImage(
-                    url: selectedDeity.pic,
+                    url: selectedStatue.image,
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               SpeakerWidget(
                 audioUrl: context.localizedText(
-                    enText: selectedDeity.sound?.replaceFirst('TN', 'EN') ?? '',
-                    boText: selectedDeity.sound ?? ''),
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.descriptionAudio),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.descriptionAudio)),
                 description: context.localizedText(
-                    enText: selectedDeity.enContent,
-                    boText: selectedDeity.tbContent),
-                data: selectedDeity,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.description),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedStatue.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.description)),
+                data: selectedStatue,
               ),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                  enText: selectedDeity.enContent,
-                  boText: selectedDeity.tbContent,
+                  enText: TranslationHelper.getTranslatedField(
+                      translations: selectedStatue.translations,
+                      languageCode: "en",
+                      fieldGetter: (t) => t.description),
+                  boText: TranslationHelper.getTranslatedField(
+                      translations: selectedStatue.translations,
+                      languageCode: "bo",
+                      fieldGetter: (t) => t.description),
                 ),
                 style: TextStyle(
                   fontSize: 16,
                   height: context.getLocalizedHeight(),
                 ),
               ),
-              if (selectedDeity.slug != null) ...[
-                const SizedBox(height: 16),
-                GonpaQRCard(qrData: kDetiesQrCodeBaseUrl + selectedDeity.slug!)
-              ],
+              const SizedBox(height: 16),
+              GonpaQRCard(
+                qrData: KBaseUrl + langBase + "/Statue/${selectedStatue.id}",
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),

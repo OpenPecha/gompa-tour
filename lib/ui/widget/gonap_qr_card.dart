@@ -20,29 +20,34 @@ class GonpaQRCard extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
+            child: Column(
               children: [
-                const Icon(Icons.qr_code_scanner, color: Colors.blue),
-                const SizedBox(width: 8),
-                Text(
-                  AppLocalizations.of(context)!.scanQrCode,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Row(
+                  children: [
+                    const Icon(Icons.qr_code_scanner, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Text(
+                      AppLocalizations.of(context)!.scanQrCode,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    child: QrImageView(
+                      backgroundColor: Colors.white,
+                      data: qrData,
+                      version: QrVersions.auto,
+                      size: height / 6,
+                    ),
                   ),
                 ),
               ],
-            ),
-          ),
-          SizedBox(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              child: QrImageView(
-                backgroundColor: Colors.white,
-                data: qrData,
-                version: QrVersions.auto,
-                size: height / 6,
-              ),
             ),
           ),
         ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/states/bottom_nav_state.dart';
-import 'package:gompa_tour/states/organization_state.dart';
+import 'package:gompa_tour/models/gonpa.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
@@ -22,81 +22,65 @@ class OrginatzationsScreen extends ConsumerStatefulWidget {
 
 class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
   final TextEditingController _searchController = TextEditingController();
+  late GonpaNotifier gonpaNotifier;
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
   final gonpaStats = [];
+  List<Gonpa> gonpas = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // organizationNotifier = ref.read(organizationNotifierProvider.notifier);
-    _loadEachOrginazationCount();
+    gonpaNotifier = ref.read(gonpaNotifierProvider.notifier);
+    Future.delayed(Duration.zero, () {
+      fetchGonpas();
+    });
   }
 
-  void _loadEachOrginazationCount() async {
-    final aggCounts = await ref
-        .read(organizationNotifierProvider.notifier)
-        .getOrganizationCountByCategory();
-
+  Future<void> fetchGonpas() async {
     try {
-      // Create a mutable copy of the read-only list
-      final List<Map<String, dynamic>> mutableAggCounts = List.from(aggCounts);
-
-      // Calculate the total count
-      int totalCount =
-          mutableAggCounts.fold(0, (sum, item) => sum + item['count'] as int);
-      mutableAggCounts.insert(0, {"categories": "All", "count": totalCount});
-
-      // total count of others category
-      final lastFour = mutableAggCounts.sublist(mutableAggCounts.length - 4);
-      int lastFourSum =
-          lastFour.fold(0, (sum, item) => sum + (item['count'] as int));
-
-      // Add a new entry for the total count
-      mutableAggCounts
-          .insert(7, {"categories": "Others", "count": lastFourSum});
-
+      final fetchedGonpas = await gonpaNotifier.fetchAllGonpas();
       setState(() {
-        gonpaStats.addAll(mutableAggCounts);
+        gonpas = fetchedGonpas;
+        isLoading = false;
       });
     } catch (e) {
-      print("Error: $e");
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
+
+  Map<String, List<Gonpa>> get groupedGonpas {
+    return {
+      "ALL": gonpas,
+      "NYINGMA": gonpas.where((m) => m.sect == "NYINGMA").toList(),
+      "KAGYU": gonpas.where((m) => m.sect == "KAGYU").toList(),
+      "SAKYA": gonpas.where((m) => m.sect == "SAKYA").toList(),
+      "GELUG": gonpas.where((m) => m.sect == "GELUG").toList(),
+      "BHON": gonpas.where((m) => m.sect == "BHON").toList(),
+      "JONANG": gonpas.where((m) => m.sect == "JONANG").toList(),
+      "REMEY": gonpas.where((m) => m.sect == "REMEY").toList(),
+      "SHALU": gonpas.where((m) => m.sect == "SHALU").toList(),
+      "BODONG": gonpas.where((m) => m.sect == "BODONG").toList(),
+      "OTHER": gonpas.where((m) => m.sect == "OTHER").toList(),
+    };
   }
 
   _performSearch(String query) async {
-    if (query.isEmpty || query.length < 3) {
-      ref.read(organizationNotifierProvider.notifier).clearSearchResults();
-      return;
-    }
-
     _searchDebouncer.run(
       query,
-      onSearch: (q) => ref
-          .read(organizationNotifierProvider.notifier)
-          .searchOrganizations(q),
+      onSearch: (q) => ref.read(gonpaNotifierProvider.notifier).searchGonpas(q),
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
-      onClearResults: () =>
-          ref.read(organizationNotifierProvider.notifier).clearSearchResults(),
+      onClearResults: _clearSearchResults,
     );
   }
 
-  // list of organizations
-  final organizations = [
-    {"All": "All Gonpa"},
-    {"CHA0": "Nyingma"},
-    {"CHB0": "Kagyu"},
-    {"CHC0": "Sakya"},
-    {"CHD0": "Gelug"},
-    {"CHE0": "Bon"},
-    {"CHF0": "Jonang"},
-    {"CHG": "Others"},
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final organisationState = ref.watch(organizationNotifierProvider);
+    final gonpaState = ref.watch(gonpaNotifierProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -104,18 +88,18 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
       body: Column(
         children: [
           _buildSearchBar(context),
-          organisationState.organizations.isEmpty && organisationState.isLoading
+          isLoading || gonpaState.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _searchController.text.length < 3
+              : _searchController.text.isEmpty
                   ? _buildSectListCard(context)
-                  : organisationState.organizations.isEmpty
+                  : gonpaState.gonpas.isEmpty
                       ? Center(
                           child: Text(
                             AppLocalizations.of(context)!.noRecordFound,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         )
-                      : _buildSearchedOrganizations(context, organisationState),
+                      : _buildSearchedOrganizations(context, gonpaState),
         ],
       ),
     );
@@ -125,16 +109,18 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
     return Expanded(
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
-        itemCount: gonpaStats.length > 4 ? (gonpaStats.length - 4).abs() : 0,
+        itemCount: groupedGonpas.length,
         itemBuilder: (context, index) {
-          final organization = gonpaStats[index];
+          final sect = groupedGonpas.keys.elementAt(index);
+          final gonpas = groupedGonpas[sect] ?? [];
           return GestureDetector(
             onTap: () {
-              // Navigate to the detail screen of the item
+              // Navigate to the gonpa list screen
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => OrganizationListScreen(
-                    category: organization.values.first,
+                    sect: sect,
+                    gonpas: gonpas,
                   ),
                 ),
               );
@@ -168,7 +154,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _getTitle(organization.values.first, context),
+                            _getTitle(sect.toString(), context),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -176,7 +162,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            organization.values.last.toString(),
+                            gonpas.length.toString(),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey.shade600,
@@ -196,15 +182,15 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
   }
 
   Widget _buildSearchedOrganizations(
-      BuildContext context, OrganizationListState organizationListState) {
+      BuildContext context, GonpaListState gonpaState) {
     return Expanded(
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
-        itemCount: organizationListState.organizations.length,
+        itemCount: gonpaState.gonpas.length,
         itemBuilder: (context, index) {
-          final organization = organizationListState.organizations[index];
+          final gonpa = gonpaState.gonpas[index];
           return OrganizationCardItem(
-            organization: organization,
+            gonpa: gonpa,
           );
         },
       ),
@@ -213,20 +199,26 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
 
   String _getTitle(String category, BuildContext context) {
     switch (category) {
-      case "All":
+      case "ALL":
         return AppLocalizations.of(context)!.allGonpa;
-      case "CHA0 རྙིང་མ།":
+      case "NYINGMA":
         return AppLocalizations.of(context)!.nyingma;
-      case "CHB0 བཀའ་བརྒྱུད།":
+      case "KAGYU":
         return AppLocalizations.of(context)!.kagyu;
-      case "CHC0 ས་སྐྱ།":
+      case "SAKYA":
         return AppLocalizations.of(context)!.sakya;
-      case "CHD0 དགེ་ལུགས།":
+      case "GELUG":
         return AppLocalizations.of(context)!.gelug;
-      case "CHE0 བོན།":
+      case "BHON":
         return AppLocalizations.of(context)!.bon;
-      case "CHF0 ཇོ་ནང།":
+      case "JONANG":
         return AppLocalizations.of(context)!.jonang;
+      case "REMEY":
+        return AppLocalizations.of(context)!.remey;
+      case "SHALU":
+        return AppLocalizations.of(context)!.shalu;
+      case "BODONG":
+        return AppLocalizations.of(context)!.bodong;
       case "Others":
         return AppLocalizations.of(context)!.others;
       default:
@@ -267,7 +259,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
   }
 
   void _clearSearchResults() {
-    ref.read(organizationNotifierProvider.notifier).clearSearchResults();
+    ref.read(gonpaNotifierProvider.notifier).clearSearchResults();
   }
 
   @override

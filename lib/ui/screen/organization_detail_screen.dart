@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/helper/localization_helper.dart';
-import 'package:gompa_tour/states/organization_state.dart';
+import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:gompa_tour/ui/widget/location_card.dart';
+import 'package:gompa_tour/util/translation_helper.dart';
 
 import '../../config/constant.dart';
 import '../widget/address_card.dart';
@@ -17,12 +18,14 @@ class OrganizationDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedOrganization = ref.watch(selectedOrganizationProvider);
+    final selectedGonpa = ref.watch(selectedGonpaProvider);
+    Locale locale = Localizations.localeOf(context);
+    String langBase = locale.languageCode == "bo" ? "bod" : "en";
 
-    if (selectedOrganization == null) {
+    if (selectedGonpa == null) {
       return const Scaffold(
-        appBar: GonpaAppBar(title: 'Organization Detail'),
-        body: Center(child: Text('No organization selected')),
+        appBar: GonpaAppBar(title: 'Gonpa Detail'),
+        body: Center(child: Text('No Gonpa selected')),
       );
     }
     return Scaffold(
@@ -38,8 +41,14 @@ class OrganizationDetailScreen extends ConsumerWidget {
               Center(
                 child: Text(
                   context.localizedText(
-                    enText: selectedOrganization.enTitle,
-                    boText: selectedOrganization.tbTitle,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedGonpa.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.name),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedGonpa.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.name),
                   ),
                   style: TextStyle(
                     fontSize: 24,
@@ -52,29 +61,45 @@ class OrganizationDetailScreen extends ConsumerWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Hero(
-                  tag: selectedOrganization.id,
+                  tag: selectedGonpa.id,
                   child: GonpaCacheImage(
-                    url: selectedOrganization.pic,
+                    url: selectedGonpa.image,
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               SpeakerWidget(
                 audioUrl: context.localizedText(
-                    enText:
-                        selectedOrganization.sound?.replaceFirst('GP', 'EP') ??
-                            '',
-                    boText: selectedOrganization.sound ?? ''),
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedGonpa.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.descriptionAudio),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedGonpa.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.descriptionAudio)),
                 description: context.localizedText(
-                    enText: selectedOrganization.enContent,
-                    boText: selectedOrganization.tbContent),
-                data: selectedOrganization,
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedGonpa.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.description),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedGonpa.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.description)),
+                data: selectedGonpa,
               ),
               const SizedBox(height: 16),
               Text(
                 context.localizedText(
-                    enText: selectedOrganization.enContent,
-                    boText: selectedOrganization.tbContent),
+                    enText: TranslationHelper.getTranslatedField(
+                        translations: selectedGonpa.translations,
+                        languageCode: "en",
+                        fieldGetter: (t) => t.description),
+                    boText: TranslationHelper.getTranslatedField(
+                        translations: selectedGonpa.translations,
+                        languageCode: "bo",
+                        fieldGetter: (t) => t.description)),
                 style: TextStyle(
                   fontSize: 16,
                   height: context.getLocalizedHeight(),
@@ -82,18 +107,24 @@ class OrganizationDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               AddressCard(
-                address: selectedOrganization,
+                contact: selectedGonpa.contact!,
+                translations: selectedGonpa.translations,
+                geoLocation: selectedGonpa.geoLocation,
               ),
               const SizedBox(
                 height: 16,
               ),
               LocationCard(
-                address: selectedOrganization,
+                address: selectedGonpa,
               ),
               ...[
                 const SizedBox(height: 16),
                 GonpaQRCard(
-                    qrData: kOrganizationQrCodeUrl + selectedOrganization.slug)
+                  qrData: KBaseUrl +
+                      langBase +
+                      "/Monastary/${selectedGonpa.sect}/${selectedGonpa.id}",
+                ),
+                const SizedBox(height: 16),
               ],
             ],
           ),
