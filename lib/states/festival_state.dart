@@ -106,11 +106,8 @@ class FestivalNotifier extends StateNotifier<FestivalListState> {
         festivals: results.where((festival) {
           return festival.translations.any((translation) {
             return (translation.name
-                    .toLowerCase()
-                    .contains(query.toLowerCase())) ||
-                (translation.description
-                    .toLowerCase()
-                    .contains(query.toLowerCase()));
+                .toLowerCase()
+                .contains(query.toLowerCase()));
           });
         }).toList(),
         isLoading: false,

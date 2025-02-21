@@ -137,6 +137,7 @@ class PilgrimageDetailScreen extends ConsumerWidget {
               LocationCard(
                 address: selectedPilgrimSite,
               ),
+              const SizedBox(height: 16),
             ],
           ),
         ),

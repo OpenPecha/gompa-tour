@@ -127,11 +127,8 @@ class StatueNotifier extends StateNotifier<StatueListState> {
         statues: searchResults.where((statue) {
           return statue.translations.any((translation) {
             return (translation.name
-                    .toLowerCase()
-                    .contains(query.toLowerCase())) ||
-                (translation.description
-                    .toLowerCase()
-                    .contains(query.toLowerCase()));
+                .toLowerCase()
+                .contains(query.toLowerCase()));
           });
         }).toList(),
         isLoading: false,

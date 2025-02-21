@@ -108,11 +108,8 @@ class PilgrimSiteNotifier extends StateNotifier<PilgrimSiteState> {
         pilgrimSites: results.where((pilgrimSite) {
           return pilgrimSite.translations.any((translation) {
             return (translation.name
-                    .toLowerCase()
-                    .contains(query.toLowerCase())) ||
-                (translation.description
-                    .toLowerCase()
-                    .contains(query.toLowerCase()));
+                .toLowerCase()
+                .contains(query.toLowerCase()));
           });
         }).toList(),
         isLoading: false,

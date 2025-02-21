@@ -54,6 +54,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
 
   Map<String, List<Gonpa>> get groupedMonasteries {
     return {
+      "ALL": gonpas,
       "NYINGMA": gonpas.where((m) => m.sect == "NYINGMA").toList(),
       "KAGYU": gonpas.where((m) => m.sect == "KAGYU").toList(),
       "SAKYA": gonpas.where((m) => m.sect == "SAKYA").toList(),
@@ -197,7 +198,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
 
   String _getTitle(String category, BuildContext context) {
     switch (category) {
-      case "All":
+      case "ALL":
         return AppLocalizations.of(context)!.allGonpa;
       case "NYINGMA":
         return AppLocalizations.of(context)!.nyingma;

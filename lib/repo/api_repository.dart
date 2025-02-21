@@ -199,15 +199,15 @@ class ApiRepository<T> {
   // filter data by type and category
   Future<List<T>> filterByTypeAndCategory(String type, String category) async {
     try {
-      final response = await _client.get(
-        Uri.parse('$baseUrl/$endpoint/?sect=$category&type=$type'),
-      );
+      final response = category == 'ALL'
+          ? await _client.get(Uri.parse('$baseUrl/$endpoint/?type=$type'))
+          : await _client.get(
+              Uri.parse('$baseUrl/$endpoint/?sect=$category&type=$type'),
+            );
       if (response.statusCode == 200) {
         final String decodedBody =
             const Utf8Decoder().convert(response.bodyBytes);
-        print("Decoded Body: $decodedBody");
         final List<dynamic> data = json.decode(decodedBody);
-        print("Data: $data");
         return data.map((json) => fromJson(json)).toList();
       }
       return [];
@@ -239,10 +239,7 @@ class SearchRepository {
 
     final stateQuery = statues.where((statue) {
       return statue.translations.any((translation) {
-        return (translation.name.toLowerCase().contains(query.toLowerCase())) ||
-            (translation.description
-                .toLowerCase()
-                .contains(query.toLowerCase()));
+        return (translation.name.toLowerCase().contains(query.toLowerCase()));
       });
     }).toList();
 
@@ -251,10 +248,7 @@ class SearchRepository {
 
     final gonpaQuery = gonpas.where((gonpa) {
       return gonpa.translations.any((translation) {
-        return (translation.name.toLowerCase().contains(query.toLowerCase())) ||
-            (translation.description
-                .toLowerCase()
-                .contains(query.toLowerCase()));
+        return (translation.name.toLowerCase().contains(query.toLowerCase()));
       });
     }).toList();
 
@@ -263,10 +257,7 @@ class SearchRepository {
 
     final pilgrimSiteQuery = pilgrimSites.where((pilgrimSite) {
       return pilgrimSite.translations.any((translation) {
-        return (translation.name.toLowerCase().contains(query.toLowerCase())) ||
-            (translation.description
-                .toLowerCase()
-                .contains(query.toLowerCase()));
+        return (translation.name.toLowerCase().contains(query.toLowerCase()));
       });
     }).toList();
 
@@ -275,10 +266,7 @@ class SearchRepository {
 
     final festivalQuery = festivals.where((festival) {
       return festival.translations.any((translation) {
-        return (translation.name.toLowerCase().contains(query.toLowerCase())) ||
-            (translation.description
-                .toLowerCase()
-                .contains(query.toLowerCase()));
+        return (translation.name.toLowerCase().contains(query.toLowerCase()));
       });
     }).toList();
 

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -93,17 +94,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Locale locale = Localizations.localeOf(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
+      padding: EdgeInsets.symmetric(
+        horizontal: 28,
+        vertical: 12,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
+          locale.languageCode == 'bo'
+              ? SizedBox(width: double.infinity, height: 4)
+              : const SizedBox(),
           Text(
             AppLocalizations.of(context)!.deptName,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: locale.languageCode == "bo" ? 16 : 16,
               fontWeight: FontWeight.w500,
+              height: locale.languageCode == "bo" ? 2 : 1.5,
             ),
           ),
           locale.languageCode == 'en'
@@ -114,7 +120,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     fontWeight: FontWeight.w500,
                   ),
                 )
-              : SizedBox(),
+              : SizedBox(width: double.infinity, height: 4),
         ],
       ),
     );
@@ -124,7 +130,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 28,
-        vertical: 16,
+        vertical: 12,
       ),
       child: SearchBar(
         padding: WidgetStateProperty.all<EdgeInsets>(
@@ -156,6 +162,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           )
         ],
         hintText: AppLocalizations.of(context)!.search,
+        hintStyle: WidgetStatePropertyAll<TextStyle>(
+          TextStyle(
+            color: Colors.grey.shade700,
+          ),
+        ),
         onChanged: (value) {
           _performSearch(value);
         },
@@ -205,6 +216,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildCard(
       MenuType type, String imagePath, BuildContext context, int count) {
+    Locale locale = Localizations.localeOf(context);
+
     return GestureDetector(
       onTap: () {
         switch (type) {
@@ -248,8 +261,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   Text(
                     _getTitle(type, context),
-                    style: const TextStyle(
-                      fontSize: 22,
+                    style: TextStyle(
+                      fontSize: locale.languageCode == 'bo' ? 20 : 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

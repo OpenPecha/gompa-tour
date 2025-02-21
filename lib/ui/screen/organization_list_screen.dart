@@ -30,6 +30,7 @@ class _OrganizationListScreenState
   final _searchDebouncer = SearchDebouncer();
   ViewType _currentView = ViewType.grid;
   String? _selectedType;
+  final _allStates = <String>[];
 
   List<String> types = ["MONASTERY", "NUNNERY", "TEMPLE", "NGAKPA", "OTHER"];
 
@@ -42,17 +43,25 @@ class _OrganizationListScreenState
     });
   }
 
-  void _loadInitialGonpasByCategory() {
+  Future<void> _loadInitialGonpasByCategory() async {
     gonpaNotifier = ref.read(gonpaNotifierProvider.notifier);
-    gonpaNotifier.fetchInitialGonpasByCategory(widget.sect!);
+    widget.sect == "ALL"
+        ? gonpaNotifier.fetchInitialGonpas()
+        : gonpaNotifier.fetchInitialGonpasByCategory(widget.sect!);
     gonpaNotifier.fetchAllGonpaTypes();
+    final allStates = await gonpaNotifier.getUniqueStates();
+    setState(() {
+      _allStates.addAll(allStates.cast<String>());
+    });
   }
 
   void _performSearch(String query) async {
     _searchDebouncer.run(
       query,
       onSearch: (q) {
-        if (widget.sect == "All") {
+        // set types to null to show all types
+        _selectedType = null;
+        if (widget.sect == "ALL") {
           return gonpaNotifier.searchGonpas(q);
         } else {
           return gonpaNotifier.searchGonpasByCategory(q, widget.sect!);
@@ -69,7 +78,6 @@ class _OrganizationListScreenState
   Widget build(BuildContext context) {
     final gonpaState = ref.watch(gonpaNotifierProvider);
 
-    print("Gonpa types: ${gonpaState.types}");
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: GonpaAppBar(title: AppLocalizations.of(context)!.organization),
@@ -78,7 +86,9 @@ class _OrganizationListScreenState
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
               !gonpaState.isLoading &&
               !gonpaState.hasReachedMax) {
-            gonpaNotifier.fetchMoreGonpasByCategory(widget.sect!);
+            widget.sect == "ALL"
+                ? gonpaNotifier.fetchMoreGonpas()
+                : gonpaNotifier.fetchMoreGonpasByCategory(widget.sect!);
           }
           return false;
         },
@@ -165,6 +175,7 @@ class _OrganizationListScreenState
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
+                    _selectedType = null;
                     _loadInitialGonpasByCategory();
                   },
                 )
@@ -185,69 +196,150 @@ class _OrganizationListScreenState
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Dropdown for gonpa types
-          DropdownButton2<String>(
-            value: _selectedType,
-            hint: Text(
-              'Select Types',
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
-            ),
-            items: [
-              DropdownMenuItem<String>(
-                value: null,
-                child: Text(
-                  'All Types',
-                  style: const TextStyle(fontSize: 14),
+          Row(
+            children: [
+              DropdownButton2<String>(
+                isExpanded: true,
+                value: _selectedType,
+                hint: Text(
+                  'Select Types',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                items: [
+                  DropdownMenuItem<String>(
+                    value: null,
+                    child: Text(
+                      'All Types',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  ...gonpaState.types.map(
+                    (type) => DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(
+                        type,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ],
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedType = value;
+                  });
+                  value == null
+                      ? _loadInitialGonpasByCategory()
+                      : gonpaNotifier.filterGonpas(value, widget.sect!);
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 40,
+                  width: 120,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                ),
+                iconStyleData: IconStyleData(
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
                 ),
               ),
-              ...gonpaState.types.map(
-                (type) => DropdownMenuItem<String>(
-                  value: type,
-                  child: Text(
-                    type,
-                    style: const TextStyle(fontSize: 14),
+              // dropdown for unqiue states
+              DropdownButton2<String>(
+                isExpanded: true,
+                value: null,
+                hint: Text(
+                  'Select State',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                items: [
+                  DropdownMenuItem<String>(
+                    value: null,
+                    child: Text(
+                      'All States',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  ..._allStates.map(
+                    (state) => DropdownMenuItem<String>(
+                      value: state,
+                      child: Text(
+                        state,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ],
+                onChanged: (String? value) {
+                  // value == null
+                  //     ? _loadInitialGonpasByCategory()
+                  //     : gonpaNotifier.filterGonpasByState(value, widget.sect!);
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 40,
+                  width: 120,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                ),
+                iconStyleData: IconStyleData(
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
                   ),
                 ),
               ),
             ],
-            onChanged: (String? value) {
-              setState(() {
-                _selectedType = value;
-              });
-              value == "All Types"
-                  ? _loadInitialGonpasByCategory()
-                  : gonpaNotifier.filterGonpas(value!, widget.sect!);
-            },
-            buttonStyleData: ButtonStyleData(
-              height: 40,
-              width: 140,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Theme.of(context).colorScheme.surface,
-              ),
-            ),
-            dropdownStyleData: DropdownStyleData(
-              maxHeight: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Theme.of(context).colorScheme.surface,
-              ),
-            ),
-            menuItemStyleData: const MenuItemStyleData(
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-            ),
-            iconStyleData: IconStyleData(
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
-            ),
           ),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
                 icon: Icon(

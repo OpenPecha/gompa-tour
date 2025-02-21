@@ -164,11 +164,8 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
         gonpas: gonpas.where((gonpa) {
           return gonpa.translations.any((translation) {
             return (translation.name
-                    .toLowerCase()
-                    .contains(query.toLowerCase())) ||
-                (translation.description
-                    .toLowerCase()
-                    .contains(query.toLowerCase()));
+                .toLowerCase()
+                .contains(query.toLowerCase()));
           });
         }).toList(),
         isLoading: false,
@@ -189,12 +186,7 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
       state = state.copyWith(
         gonpas: gonpas
             .where((gonpa) => gonpa.translations.any((translation) =>
-                (translation.name
-                    .toLowerCase()
-                    .contains(query.toLowerCase())) ||
-                (translation.description
-                    .toLowerCase()
-                    .contains(query.toLowerCase()))))
+                (translation.name.toLowerCase().contains(query.toLowerCase()))))
             .toList(),
         isLoading: false,
         hasReachedMax: true,
@@ -240,7 +232,36 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
         page: 1,
       );
     } catch (e) {
+      print("Error: $e");
       state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  // list out all the unique states of gonpa data
+  Future<List<Object?>> getUniqueStates() async {
+    try {
+      final gonpas = await apiRepository.getAll();
+      final states = gonpas
+          .expand((gonpa) =>
+              gonpa.contact?.translations
+                  .map((translation) => translation.state.trim())
+                  .where((state) => state.isNotEmpty) // Remove empty states
+                  .map((state) => state
+                      .replaceAll('(', '')
+                      .replaceAll(')', '')
+                      .replaceAll(',', '') // Remove all commas
+                      .replaceAll(
+                          '  ', ' ') // Replace double spaces with single space
+                      .trim()) // Remove parentheses
+              ??
+              [])
+          .toSet() // Get unique values
+          .toList()
+        ..sort();
+      return states;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return [];
     }
   }
 

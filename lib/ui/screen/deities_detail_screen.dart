@@ -107,7 +107,9 @@ class DeityDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               GonpaQRCard(
-                  qrData: KBaseUrl + langBase + "/Statue/${selectedStatue.id}"),
+                qrData: KBaseUrl + langBase + "/Statue/${selectedStatue.id}",
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),

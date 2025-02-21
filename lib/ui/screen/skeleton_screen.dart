@@ -46,8 +46,11 @@ class SkeletonScreen extends ConsumerWidget {
         title: Text(
           AppLocalizations.of(context)!.neykor,
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            fontFamily: currentLanguage == LanguageState.TIBETAN
+                ? "TsumachuTibetan"
+                : "Roboto",
           ),
         ),
         centerTitle: false,
@@ -133,10 +136,12 @@ class SkeletonScreen extends ConsumerWidget {
                       width: 55,
                       height: 30,
                       toggleSize: 20,
-                      valueFontSize: 12.0,
+                      valueFontSize: currentLanguage == LanguageState.ENGLISH
+                          ? 16.0
+                          : 12.0,
                       value: currentLanguage == LanguageState.TIBETAN,
-                      activeText: "བོད།",
-                      inactiveText: "EN",
+                      activeText: "EN",
+                      inactiveText: "བོད།",
                       showOnOff: true,
                       onToggle: (val) {
                         ref.read(languageProvider.notifier).setLanguage(val

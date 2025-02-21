@@ -122,6 +122,11 @@ flutter:
         - asset: assets/fonts/MonlamTBslim.ttf
           style: normal
 
+    - family: TsumachuTibetan
+      fonts:
+        - asset: assets/fonts/Tsumachu.ttf
+          style: normal
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
