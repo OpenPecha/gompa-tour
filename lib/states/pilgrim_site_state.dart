@@ -1,5 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/helper/database_helper.dart';
 import 'package:gompa_tour/models/pilgrim_site.dart';
 import 'package:gompa_tour/repo/api_repository.dart';
 
@@ -137,6 +138,58 @@ class PilgrimSiteNotifier extends StateNotifier<PilgrimSiteState> {
   Future<int> getTotalPilgrimSites() async {
     final totalPilgrimSites = await apiRepository.getTotalData();
     return totalPilgrimSites;
+  }
+
+  // filter pilgrimSites by state
+  Future<void> filterPilgrimSites(String stateFilter) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final pilgrimSites = await apiRepository.getAll();
+      final filteredPilgrimSites = pilgrimSites
+          .where((pilgrimSite) =>
+              pilgrimSite.contact?.translations.any((translation) => translation
+                  .state
+                  .toLowerCase()
+                  .contains(stateFilter.toLowerCase())) ??
+              false)
+          .toList();
+      state = state.copyWith(
+        pilgrimSites: filteredPilgrimSites,
+        isLoading: false,
+        hasReachedMax: true,
+        page: 1,
+      );
+    } catch (e) {
+      logger.severe('Failed to filter PilgrimSite: $e');
+    }
+  }
+
+  // list out all the unique states of the pilgrimSites
+  Future<List<String?>> getUniqueStates() async {
+    try {
+      final pilgrimSites = await apiRepository.getAll();
+      final sites = pilgrimSites
+          .expand((sites) =>
+              sites.contact?.translations
+                  .map((translation) => translation.state.trim())
+                  .where((state) => state.isNotEmpty) // Remove empty states
+                  .map((state) => state
+                      .replaceAll('(', '')
+                      .replaceAll(')', '')
+                      .replaceAll(',', '') // Remove all commas
+                      .replaceAll(
+                          '  ', ' ') // Replace double spaces with single space
+                      .trim()) // Remove parentheses
+              ??
+              [])
+          .toSet() // Get unique values
+          .toList()
+        ..sort();
+      return sites.cast<String?>();
+    } catch (e) {
+      logger.severe('Failed to get unique states: $e');
+      return [];
+    }
   }
 
   void clearSearchResults() {

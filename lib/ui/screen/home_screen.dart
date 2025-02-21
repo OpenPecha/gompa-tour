@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -293,8 +292,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: ListView.builder(
               itemCount: searchState.results.length,
               itemBuilder: (context, index) {
-                final searchableItem = searchState.results[index];
-                final translation = searchableItem.translations;
+                var searchableItem = searchState.results[index];
                 return SearchCardItem(searchableItem: searchableItem);
               },
             ),

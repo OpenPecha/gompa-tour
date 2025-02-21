@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/states/pilgrim_site_state.dart';
@@ -24,22 +25,35 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
+  var _allStates = [];
+  String? _selectedState;
 
   @override
   void initState() {
     super.initState();
     pilgrimSiteNotifier = ref.read(pilgrimSiteNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      pilgrimSiteNotifier.fetchInitialPilgrimSites();
+      _loadInitialPilgrimSites();
+    });
+  }
+
+  Future<void> _loadInitialPilgrimSites() async {
+    pilgrimSiteNotifier.fetchInitialPilgrimSites();
+    final allStates = await pilgrimSiteNotifier.getUniqueStates();
+    setState(() {
+      _allStates = allStates;
     });
   }
 
   void _performSearch(String query) async {
     _searchDebouncer.run(
       query,
-      onSearch: (q) => ref
-          .read(pilgrimSiteNotifierProvider.notifier)
-          .searchPilgrimSites(query),
+      onSearch: (q) {
+        _selectedState = null;
+        return ref
+            .read(pilgrimSiteNotifierProvider.notifier)
+            .searchPilgrimSites(query);
+      },
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
       onClearResults: pilgrimSiteNotifier.fetchInitialPilgrimSites,
@@ -142,6 +156,71 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
             AppLocalizations.of(context)!.pilgrimage,
             style: Theme.of(context).textTheme.titleLarge,
           ),
+          // dropdown for unqiue states
+          DropdownButton2<String>(
+            isExpanded: true,
+            value: _selectedState,
+            hint: Text(
+              'Select State',
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            items: [
+              DropdownMenuItem<String>(
+                value: null,
+                child: Text(
+                  'All States',
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+              ..._allStates.map(
+                (state) => DropdownMenuItem<String>(
+                  value: state,
+                  child: Text(
+                    state.toUpperCase(),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+            ],
+            onChanged: (String? value) {
+              setState(() {
+                _selectedState = value;
+              });
+              value == null
+                  ? _loadInitialPilgrimSites()
+                  : pilgrimSiteNotifier.filterPilgrimSites(value);
+            },
+            buttonStyleData: ButtonStyleData(
+              height: 40,
+              width: 120,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+            ),
+            iconStyleData: IconStyleData(
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
+          ),
           Row(
             children: [
               IconButton(
@@ -196,6 +275,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
+                    _selectedState = null;
                     pilgrimSiteNotifier.fetchInitialPilgrimSites();
                   },
                 )

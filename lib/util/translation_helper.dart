@@ -6,7 +6,9 @@ class TranslationHelper {
   }) {
     try {
       final translation = translations.firstWhere(
-        (t) => (t as dynamic).languageCode == languageCode,
+        (t) =>
+            (t as dynamic).languageCode.toString().toLowerCase() ==
+            languageCode.toLowerCase(),
         orElse: () => translations.first,
       );
       return fieldGetter(translation);

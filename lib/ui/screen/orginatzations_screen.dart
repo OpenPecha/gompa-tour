@@ -52,7 +52,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
     }
   }
 
-  Map<String, List<Gonpa>> get groupedMonasteries {
+  Map<String, List<Gonpa>> get groupedGonpas {
     return {
       "ALL": gonpas,
       "NYINGMA": gonpas.where((m) => m.sect == "NYINGMA").toList(),
@@ -109,10 +109,10 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
     return Expanded(
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
-        itemCount: groupedMonasteries.length,
+        itemCount: groupedGonpas.length,
         itemBuilder: (context, index) {
-          final sect = groupedMonasteries.keys.elementAt(index);
-          final monasteries = groupedMonasteries[sect] ?? [];
+          final sect = groupedGonpas.keys.elementAt(index);
+          final gonpas = groupedGonpas[sect] ?? [];
           return GestureDetector(
             onTap: () {
               // Navigate to the gonpa list screen
@@ -120,6 +120,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                 MaterialPageRoute(
                   builder: (context) => OrganizationListScreen(
                     sect: sect,
+                    gonpas: gonpas,
                   ),
                 ),
               );
@@ -161,7 +162,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            monasteries.length.toString(),
+                            gonpas.length.toString(),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey.shade600,

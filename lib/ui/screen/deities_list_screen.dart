@@ -202,10 +202,6 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
     );
   }
 
-  void _clearSearchResults() {
-    ref.read(statueNotifierProvider.notifier).clearSearchResults();
-  }
-
   @override
   void dispose() {
     _searchController.dispose();

@@ -1,5 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/helper/database_helper.dart';
 import 'package:gompa_tour/models/gonpa.dart';
 import 'package:gompa_tour/repo/api_repository.dart';
 
@@ -91,12 +92,12 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
     }
   }
 
-  // Fetch initial gonpa based on category
-  Future<void> fetchInitialGonpasByCategory(String category) async {
+  // Fetch initial gonpa based on sect
+  Future<void> fetchInitialGonpasBySect(String sect) async {
     state = state.copyWith(isLoading: true);
     try {
-      final initialGonpas = await apiRepository.getAllPaginatedByCategory(
-          0, state.pageSize, category);
+      final initialGonpas =
+          await apiRepository.getAllPaginatedBySect(0, state.pageSize, sect);
       state = state.copyWith(
         gonpas: initialGonpas,
         isLoading: false,
@@ -108,12 +109,12 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
     }
   }
 
-  // Fetch paginated gonpa based on category
-  Future<void> fetchMoreGonpasByCategory(String category) async {
+  // Fetch paginated gonpa based on sect
+  Future<void> fetchMoreGonpasBySect(String sect) async {
     if (state.isLoading || state.hasReachedMax) return;
     try {
-      final gonpas = await apiRepository.getAllPaginatedByCategory(
-          state.page, state.pageSize, category);
+      final gonpas = await apiRepository.getAllPaginatedBySect(
+          state.page, state.pageSize, sect);
       state = state.copyWith(
         gonpas: List.of(state.gonpas)..addAll(gonpas),
         isLoading: false,
@@ -177,12 +178,11 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
     }
   }
 
-  // search gonpa based on category
-  Future<void> searchGonpasByCategory(String query, String category) async {
+  // search gonpa based on sect
+  Future<void> searchGonpasBySect(String query, String sect) async {
     state = state.copyWith(isLoading: true);
     try {
-      final gonpas = await apiRepository.searchByTitleAndContentAndCategory(
-          query, category);
+      final gonpas = await apiRepository.filterBySect(sect);
       state = state.copyWith(
         gonpas: gonpas
             .where((gonpa) => gonpa.translations.any((translation) =>
@@ -219,18 +219,54 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
     }
   }
 
-  // filte gonpa by type and category
-  Future<void> filterGonpas(String type, String category) async {
+  // filte gonpa by type and sect
+  Future<void> filterGonpas(
+      {required String sect, String? type, String? stateFilter}) async {
     state = state.copyWith(isLoading: true);
     try {
-      final gonpas =
-          await apiRepository.filterByTypeAndCategory(type, category);
-      state = state.copyWith(
-        gonpas: gonpas,
-        isLoading: false,
-        hasReachedMax: true,
-        page: 1,
-      );
+      if (type != null && stateFilter != null) {
+        final gonpas = await apiRepository.filterByTypeAndSect(type, sect);
+        final filteredGonpas = gonpas
+            .where((gonpa) =>
+                gonpa.contact?.translations.any((translation) => translation
+                    .state
+                    .toLowerCase()
+                    .contains(stateFilter.toLowerCase())) ??
+                false)
+            .toList();
+        state = state.copyWith(
+          gonpas: filteredGonpas,
+          isLoading: false,
+          hasReachedMax: true,
+          page: 1,
+        );
+      } else if (type != null && stateFilter == null) {
+        final gonpas = await apiRepository.filterByTypeAndSect(type, sect);
+        state = state.copyWith(
+          gonpas: gonpas,
+          isLoading: false,
+          hasReachedMax: true,
+          page: 1,
+        );
+      } else if (type == null && stateFilter != null) {
+        final gonpas = await apiRepository.filterBySect(sect);
+        final filteredGonpas = gonpas
+            .where((gonpa) =>
+                gonpa.contact?.translations.any((translation) => translation
+                    .state
+                    .toLowerCase()
+                    .contains(stateFilter.toLowerCase())) ??
+                false)
+            .toList();
+        state = state.copyWith(
+          gonpas: filteredGonpas,
+          isLoading: false,
+          hasReachedMax: true,
+          page: 1,
+        );
+      } else {
+        return;
+      }
     } catch (e) {
       print("Error: $e");
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -238,7 +274,7 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
   }
 
   // list out all the unique states of gonpa data
-  Future<List<Object?>> getUniqueStates() async {
+  Future<List<String?>> getUniqueStates() async {
     try {
       final gonpas = await apiRepository.getAll();
       final states = gonpas
@@ -258,9 +294,9 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
           .toSet() // Get unique values
           .toList()
         ..sort();
-      return states;
+      return states.cast<String?>();
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      logger.severe('Failed to get unique states: $e');
       return [];
     }
   }

@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/models/gonpa.dart';
 import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
@@ -12,10 +13,12 @@ import 'package:gompa_tour/util/search_debouncer.dart';
 class OrganizationListScreen extends ConsumerStatefulWidget {
   static const String routeName = '/organization-list';
   final String? sect;
+  final List<Gonpa>? gonpas;
 
   OrganizationListScreen({
     super.key,
     this.sect,
+    this.gonpas,
   });
 
   @override
@@ -30,7 +33,8 @@ class _OrganizationListScreenState
   final _searchDebouncer = SearchDebouncer();
   ViewType _currentView = ViewType.grid;
   String? _selectedType;
-  final _allStates = <String>[];
+  String? _selectedState;
+  var _allStates = [];
 
   List<String> types = ["MONASTERY", "NUNNERY", "TEMPLE", "NGAKPA", "OTHER"];
 
@@ -47,11 +51,11 @@ class _OrganizationListScreenState
     gonpaNotifier = ref.read(gonpaNotifierProvider.notifier);
     widget.sect == "ALL"
         ? gonpaNotifier.fetchInitialGonpas()
-        : gonpaNotifier.fetchInitialGonpasByCategory(widget.sect!);
+        : gonpaNotifier.fetchInitialGonpasBySect(widget.sect!);
     gonpaNotifier.fetchAllGonpaTypes();
     final allStates = await gonpaNotifier.getUniqueStates();
     setState(() {
-      _allStates.addAll(allStates.cast<String>());
+      _allStates = allStates;
     });
   }
 
@@ -61,16 +65,17 @@ class _OrganizationListScreenState
       onSearch: (q) {
         // set types to null to show all types
         _selectedType = null;
+        _selectedState = null;
         if (widget.sect == "ALL") {
           return gonpaNotifier.searchGonpas(q);
         } else {
-          return gonpaNotifier.searchGonpasByCategory(q, widget.sect!);
+          return gonpaNotifier.searchGonpasBySect(q, widget.sect!);
         }
       },
       onSaveSearch: (q) =>
           ref.read(recentSearchesProvider.notifier).addSearch(q),
       onClearResults: () =>
-          gonpaNotifier.fetchInitialGonpasByCategory(widget.sect!),
+          gonpaNotifier.fetchInitialGonpasBySect(widget.sect!),
     );
   }
 
@@ -88,7 +93,7 @@ class _OrganizationListScreenState
               !gonpaState.hasReachedMax) {
             widget.sect == "ALL"
                 ? gonpaNotifier.fetchMoreGonpas()
-                : gonpaNotifier.fetchMoreGonpasByCategory(widget.sect!);
+                : gonpaNotifier.fetchMoreGonpasBySect(widget.sect!);
           }
           return false;
         },
@@ -176,6 +181,7 @@ class _OrganizationListScreenState
                   onPressed: () {
                     _searchController.clear();
                     _selectedType = null;
+                    _selectedState = null;
                     _loadInitialGonpasByCategory();
                   },
                 )
@@ -234,9 +240,11 @@ class _OrganizationListScreenState
                   setState(() {
                     _selectedType = value;
                   });
-                  value == null
-                      ? _loadInitialGonpasByCategory()
-                      : gonpaNotifier.filterGonpas(value, widget.sect!);
+                  gonpaNotifier.filterGonpas(
+                    sect: widget.sect!,
+                    type: value,
+                    stateFilter: _selectedState,
+                  );
                 },
                 buttonStyleData: ButtonStyleData(
                   height: 40,
@@ -271,7 +279,7 @@ class _OrganizationListScreenState
               // dropdown for unqiue states
               DropdownButton2<String>(
                 isExpanded: true,
-                value: null,
+                value: _selectedState,
                 hint: Text(
                   'Select State',
                   style: TextStyle(
@@ -295,16 +303,21 @@ class _OrganizationListScreenState
                     (state) => DropdownMenuItem<String>(
                       value: state,
                       child: Text(
-                        state,
+                        state.toUpperCase(),
                         style: const TextStyle(fontSize: 12),
                       ),
                     ),
                   ),
                 ],
                 onChanged: (String? value) {
-                  // value == null
-                  //     ? _loadInitialGonpasByCategory()
-                  //     : gonpaNotifier.filterGonpasByState(value, widget.sect!);
+                  setState(() {
+                    _selectedState = value;
+                  });
+                  gonpaNotifier.filterGonpas(
+                    sect: widget.sect!,
+                    type: _selectedType,
+                    stateFilter: value,
+                  );
                 },
                 buttonStyleData: ButtonStyleData(
                   height: 40,

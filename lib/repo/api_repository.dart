@@ -67,14 +67,14 @@ class ApiRepository<T> {
     }
   }
 
-  Future<List<T>> getAllPaginatedByCategory(
+  Future<List<T>> getAllPaginatedBySect(
     int page,
     int pageSize,
-    String category,
+    String sect,
   ) async {
     try {
       final response = await _client.get(
-        Uri.parse('$baseUrl/$endpoint/?sect=${category}'),
+        Uri.parse('$baseUrl/$endpoint/?sect=${sect}'),
       );
 
       if (response.statusCode == 200) {
@@ -92,7 +92,7 @@ class ApiRepository<T> {
       }
       return [];
     } catch (e) {
-      logger.severe('Failed to get paginated data by category: $e');
+      logger.severe('Failed to get paginated data by sect: $e');
       return [];
     }
   }
@@ -117,15 +117,16 @@ class ApiRepository<T> {
     }
   }
 
-  // search by title and content of the data based on category
-  Future<List<T>> searchByTitleAndContentAndCategory(
-    String query,
-    String category,
+  // filter data by sect
+  Future<List<T>> filterBySect(
+    String sect,
   ) async {
     try {
-      final response = await _client.get(
-        Uri.parse('$baseUrl/$endpoint/?sect=${category}'),
-      );
+      final response = sect == 'ALL'
+          ? await _client.get(Uri.parse('$baseUrl/$endpoint'))
+          : await _client.get(
+              Uri.parse('$baseUrl/$endpoint/?sect=${sect}'),
+            );
 
       if (response.statusCode == 200) {
         final String decodedBody =
@@ -135,7 +136,7 @@ class ApiRepository<T> {
       }
       return [];
     } catch (e) {
-      logger.severe('Failed to search data by category: $e');
+      logger.severe('Failed to search data by sect: $e');
       return [];
     }
   }
@@ -196,13 +197,13 @@ class ApiRepository<T> {
     }
   }
 
-  // filter data by type and category
-  Future<List<T>> filterByTypeAndCategory(String type, String category) async {
+  // filter data by type and sect
+  Future<List<T>> filterByTypeAndSect(String type, String sect) async {
     try {
-      final response = category == 'ALL'
+      final response = sect == 'ALL'
           ? await _client.get(Uri.parse('$baseUrl/$endpoint/?type=$type'))
           : await _client.get(
-              Uri.parse('$baseUrl/$endpoint/?sect=$category&type=$type'),
+              Uri.parse('$baseUrl/$endpoint/?sect=$sect&type=$type'),
             );
       if (response.statusCode == 200) {
         final String decodedBody =
@@ -237,7 +238,7 @@ class SearchRepository {
     // get all the statues
     final statues = await statueNotifier.fetchAllStatues();
 
-    final stateQuery = statues.where((statue) {
+    final statueResults = statues.where((statue) {
       return statue.translations.any((translation) {
         return (translation.name.toLowerCase().contains(query.toLowerCase()));
       });
@@ -246,7 +247,7 @@ class SearchRepository {
     // get all the gonpas
     final gonpas = await gonpaNotifier.fetchAllGonpas();
 
-    final gonpaQuery = gonpas.where((gonpa) {
+    final gonpaResults = gonpas.where((gonpa) {
       return gonpa.translations.any((translation) {
         return (translation.name.toLowerCase().contains(query.toLowerCase()));
       });
@@ -255,7 +256,7 @@ class SearchRepository {
     // get all the pilgrim sites
     final pilgrimSites = await pilgrimSiteNotifier.fetchAllPilgrimSites();
 
-    final pilgrimSiteQuery = pilgrimSites.where((pilgrimSite) {
+    final pilgrimSiteResults = pilgrimSites.where((pilgrimSite) {
       return pilgrimSite.translations.any((translation) {
         return (translation.name.toLowerCase().contains(query.toLowerCase()));
       });
@@ -264,18 +265,19 @@ class SearchRepository {
     // get all the festivals
     final festivals = await festivalNotifier.fetchAllFestivals();
 
-    final festivalQuery = festivals.where((festival) {
+    final festivalResults = festivals.where((festival) {
       return festival.translations.any((translation) {
         return (translation.name.toLowerCase().contains(query.toLowerCase()));
       });
     }).toList();
 
     final combineResults = [
-      ...stateQuery,
-      ...gonpaQuery,
-      ...pilgrimSiteQuery,
-      ...festivalQuery,
+      ...statueResults,
+      ...gonpaResults,
+      ...pilgrimSiteResults,
+      ...festivalResults,
     ];
+  
 
     return combineResults;
   }

@@ -219,10 +219,4 @@ class _QrScreenState extends ConsumerState<QrScreen> {
       _resetScanner();
     }
   }
-
-  void _navigateToEventDetail() {
-    context.push(FestivalDetailScreen.routeName).then((_) {
-      _resetScanner();
-    });
-  }
 }

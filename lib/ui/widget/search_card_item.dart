@@ -11,7 +11,6 @@ import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/states/statue_state.dart';
 import 'package:gompa_tour/ui/screen/pilgrimage_detail_screen.dart';
-import 'package:gompa_tour/util/translation_helper.dart';
 
 import '../../config/constant.dart';
 import '../../states/festival_state.dart';
@@ -23,30 +22,37 @@ import 'gonpa_cache_image.dart';
 class SearchCardItem extends ConsumerWidget {
   final dynamic searchableItem;
 
-  const SearchCardItem({super.key, required this.searchableItem});
+  const SearchCardItem({super.key, required this.searchableItem})
+      : assert(searchableItem is Statue ||
+            searchableItem is Festival ||
+            searchableItem is PilgrimSite ||
+            searchableItem is Gonpa);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void navigateToDetail() {
+      if (searchableItem is Statue) {
+        ref.read(selectedStatueProvider.notifier).state =
+            searchableItem as Statue;
+        context.push(DeityDetailScreen.routeName);
+      } else if (searchableItem is Festival) {
+        ref.read(selectedFestivalProvider.notifier).state =
+            searchableItem as Festival;
+        context.push(FestivalDetailScreen.routeName);
+      } else if (searchableItem is PilgrimSite) {
+        ref.read(selectedPilgrimSiteProvider.notifier).state =
+            searchableItem as PilgrimSite;
+        context.push(PilgrimageDetailScreen.routeName);
+      } else if (searchableItem is Gonpa) {
+        // Added explicit check
+        ref.read(selectedGonpaProvider.notifier).state =
+            searchableItem as Gonpa;
+        context.push(OrganizationDetailScreen.routeName);
+      }
+    }
+
     return GestureDetector(
-      onTap: () {
-        if (searchableItem is Statue) {
-          ref.read(selectedStatueProvider.notifier).state =
-              searchableItem as Statue;
-          context.push(DeityDetailScreen.routeName);
-        } else if (searchableItem is Festival) {
-          ref.read(selectedFestivalProvider.notifier).state =
-              searchableItem as Festival;
-          context.push(FestivalDetailScreen.routeName);
-        } else if (searchableItem is PilgrimSite) {
-          ref.read(selectedPilgrimSiteProvider.notifier).state =
-              searchableItem as PilgrimSite;
-          context.push(PilgrimageDetailScreen.routeName);
-        } else {
-          ref.read(selectedGonpaProvider.notifier).state =
-              searchableItem as Gonpa;
-          context.push(OrganizationDetailScreen.routeName);
-        }
-      },
+      onTap: navigateToDetail,
       child: Stack(
         children: [
           Card(
@@ -64,14 +70,8 @@ class SearchCardItem extends ConsumerWidget {
                     children: [
                       Text(
                         context.localizedText(
-                          enText: TranslationHelper.getTranslatedField(
-                              translations: searchableItem.translations,
-                              languageCode: "en",
-                              fieldGetter: (t) => (t as dynamic).name),
-                          boText: TranslationHelper.getTranslatedField(
-                              translations: searchableItem.translations,
-                              languageCode: "bo",
-                              fieldGetter: (t) => (t as dynamic).name),
+                          enText: searchableItem!.translations[1]!.name ?? '',
+                          boText: searchableItem!.translations[0]!.name ?? '',
                         ),
                         style: const TextStyle(
                           fontSize: 18,
@@ -97,16 +97,12 @@ class SearchCardItem extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               context.localizedText(
-                                enText: TranslationHelper.getTranslatedField(
-                                    translations: searchableItem.translations,
-                                    languageCode: "en",
-                                    fieldGetter: (t) =>
-                                        (t as dynamic).description),
-                                boText: TranslationHelper.getTranslatedField(
-                                    translations: searchableItem.translations,
-                                    languageCode: "bo",
-                                    fieldGetter: (t) =>
-                                        (t as dynamic).description),
+                                enText: searchableItem!
+                                        .translations[1]!.description ??
+                                    '',
+                                boText: searchableItem!
+                                        .translations[0]!.description ??
+                                    '',
                                 maxLength: kDescriptionMaxLength,
                               ),
                               style: const TextStyle(fontSize: 16),
