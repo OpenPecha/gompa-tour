@@ -1,5 +1,5 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/config/constant.dart';
 import 'package:gompa_tour/helper/database_helper.dart';
 import 'package:gompa_tour/models/pilgrim_site.dart';
 import 'package:gompa_tour/repo/api_repository.dart';
@@ -200,7 +200,7 @@ class PilgrimSiteNotifier extends StateNotifier<PilgrimSiteState> {
 // pilgrimSites provider
 final pilgrimSiteRepositoryProvider = Provider<ApiRepository<PilgrimSite>>(
   (ref) => ApiRepository<PilgrimSite>(
-    baseUrl: dotenv.env["BASE_URL"]!,
+    baseUrl: kBaseAPIUrl,
     endpoint: 'pilgrim',
     fromJson: PilgrimSite.fromJson,
     toJson: (pillgrimSite) => pillgrimSite.toJson(),

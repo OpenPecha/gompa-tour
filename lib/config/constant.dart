@@ -15,3 +15,6 @@ const String kAndriodTibetanPrayerAppUrl =
 
 const KIosTibetanPrayerAppUrl =
     "https://apps.apple.com/in/app/tibetan-prayers/id6448322701";
+
+// base url for the api
+const String kBaseAPIUrl = "https://gompa-tour-api.onrender.com";

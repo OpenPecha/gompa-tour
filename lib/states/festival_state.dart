@@ -1,5 +1,5 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/config/constant.dart';
 import 'package:gompa_tour/models/festival.dart';
 import 'package:gompa_tour/repo/api_repository.dart';
 
@@ -155,7 +155,7 @@ class FestivalNotifier extends StateNotifier<FestivalListState> {
 // Providers remain the same
 final festivalRepositoryProvider = Provider<ApiRepository<Festival>>(
   (ref) => ApiRepository<Festival>(
-    baseUrl: dotenv.env["BASE_URL"]!,
+    baseUrl: kBaseAPIUrl,
     endpoint: 'festival',
     fromJson: (json) => Festival.fromJson(json),
     toJson: (festival) => festival.toJson(),
