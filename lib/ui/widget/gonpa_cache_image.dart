@@ -83,7 +83,7 @@ class GonpaCacheImage extends StatelessWidget {
 
   Future<bool> _checkImageExist(String url) async {
     try {
-      await rootBundle.load('assets/' + url);
+      await rootBundle.load('assets/$url');
       return true;
     } catch (_) {
       logger.info("Image not found: $url");

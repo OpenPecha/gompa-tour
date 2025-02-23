@@ -69,8 +69,11 @@ class SettingsScreen extends ConsumerWidget {
           leading: const Icon(Icons.share),
           title: AppLocalizations.of(context)!.shareApp,
           onTap: () {
-            Share.share(
-                "https://play.google.com/store/apps/details?id=com.chorig.tibetanprayer");
+            // open the app store link
+            final String shareUrl = Platform.isIOS
+                ? kIosTibetanPrayerAppUrl
+                : kAndriodTibetanPrayerAppUrl;
+            Share.share(shareUrl);
           },
         ),
       ),
@@ -172,7 +175,7 @@ class SettingsScreen extends ConsumerWidget {
                 ..onTap = () {
                   // open the app store link
                   final String downloadUrl = Platform.isIOS
-                      ? KIosTibetanPrayerAppUrl
+                      ? kIosTibetanPrayerAppUrl
                       : kAndriodTibetanPrayerAppUrl;
                   _launchUrl(downloadUrl);
                 },

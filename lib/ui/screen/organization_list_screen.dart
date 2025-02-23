@@ -15,7 +15,7 @@ class OrganizationListScreen extends ConsumerStatefulWidget {
   final String? sect;
   final List<Gonpa>? gonpas;
 
-  OrganizationListScreen({
+  const OrganizationListScreen({
     super.key,
     this.sect,
     this.gonpas,

@@ -155,19 +155,19 @@ class StatueNotifier extends StateNotifier<StatueListState> {
   }
 }
 
-final StatueApiRepositoryProvider = Provider<ApiRepository<Statue>>(
+final statueApiRepositoryProvider = Provider<ApiRepository<Statue>>(
   (ref) => ApiRepository<Statue>(
     baseUrl: kBaseAPIUrl,
     endpoint: 'statue',
     fromJson: Statue.fromJson,
-    toJson: (Statue) => Statue.toJson(),
+    toJson: (statue) => statue.toJson(),
   ),
 );
 
 final statueNotifierProvider =
     StateNotifierProvider<StatueNotifier, StatueListState>(
   (ref) {
-    final repository = ref.watch(StatueApiRepositoryProvider);
+    final repository = ref.watch(statueApiRepositoryProvider);
     return StatueNotifier(repository);
   },
 );

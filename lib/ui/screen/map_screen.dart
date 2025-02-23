@@ -73,8 +73,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               markers: [
                 ...state.gonpas
                     .where((gonpa) => gonpa.geoLocation.trim().isNotEmpty)
-                    .map((gonpa) => _buildMarker(gonpa))
-                    .toList(),
+                    .map((gonpa) => _buildMarker(gonpa)),
                 ..._buildCountryMarker(),
               ],
             );
