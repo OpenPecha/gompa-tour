@@ -74,7 +74,7 @@ class ApiRepository<T> {
   ) async {
     try {
       final response = await _client.get(
-        Uri.parse('$baseUrl/$endpoint/?sect=${sect}'),
+        Uri.parse('$baseUrl/$endpoint/?sect=$sect'),
       );
 
       if (response.statusCode == 200) {
@@ -125,7 +125,7 @@ class ApiRepository<T> {
       final response = sect == 'ALL'
           ? await _client.get(Uri.parse('$baseUrl/$endpoint'))
           : await _client.get(
-              Uri.parse('$baseUrl/$endpoint/?sect=${sect}'),
+              Uri.parse('$baseUrl/$endpoint/?sect=$sect'),
             );
 
       if (response.statusCode == 200) {

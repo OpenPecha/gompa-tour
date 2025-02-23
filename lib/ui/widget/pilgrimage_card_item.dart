@@ -14,8 +14,7 @@ class PilgrimageCardItem extends ConsumerWidget {
   final PilgrimSite pilgrimSite;
   final bool isGridView;
   const PilgrimageCardItem(
-      {Key? key, required this.pilgrimSite, this.isGridView = false})
-      : super(key: key);
+      {super.key, required this.pilgrimSite, this.isGridView = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

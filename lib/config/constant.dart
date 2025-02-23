@@ -7,13 +7,13 @@ const String kOrganizationQrCodeUrl =
     'https://gompatour.com/organization.php?url=';
 const String kEventQrCodeUrl = 'https://gompatour.com/event.php?url=';
 
-const String KBaseUrl = "https://neykorweb.onrender.com/";
+const String kBaseUrl = "https://neykorweb.onrender.com/";
 
 // tibetan prayer app url
 const String kAndriodTibetanPrayerAppUrl =
     "https://play.google.com/store/apps/details?id=com.chorig.tibetanprayer";
 
-const KIosTibetanPrayerAppUrl =
+const kIosTibetanPrayerAppUrl =
     "https://apps.apple.com/in/app/tibetan-prayers/id6448322701";
 
 // base url for the api

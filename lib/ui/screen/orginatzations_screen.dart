@@ -68,6 +68,58 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
     };
   }
 
+  final bgimagelink = [
+    {
+      'nyingma':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732078167GP205668.jpg",
+      'kagyu':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731493541GP205597.jpg",
+      'sakya':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732251070GP205684.jpg",
+      'gelug':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731488192GP205592.jpg",
+      'bhon':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731914731GP205645.jpg",
+      'remey':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732603840GP205717.jpg",
+      'jonang':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731559304GP205604.jpg",
+      'shalu':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732605178GP205720.jpg",
+      'bodong':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732602550GP205715.jpg",
+      'other':
+          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732603251GP205716.jpg",
+    }
+  ];
+
+  String getSectImage(String sect) {
+    switch (sect) {
+      case "NYINGMA":
+        return bgimagelink[0]['nyingma'].toString();
+      case "KAGYU":
+        return bgimagelink[0]['kagyu'].toString();
+      case "SAKYA":
+        return bgimagelink[0]['sakya'].toString();
+      case "GELUG":
+        return bgimagelink[0]['gelug'].toString();
+      case "BHON":
+        return bgimagelink[0]['bhon'].toString();
+      case "JONANG":
+        return bgimagelink[0]['jonang'].toString();
+      case "REMEY":
+        return bgimagelink[0]['remey'].toString();
+      case "SHALU":
+        return bgimagelink[0]['shalu'].toString();
+      case "BODONG":
+        return bgimagelink[0]['bodong'].toString();
+      case "OTHER":
+        return bgimagelink[0]['other'].toString();
+      default:
+        return "media/1710929961IMG20220622104550.jpg";
+    }
+  }
+
   _performSearch(String query) async {
     _searchDebouncer.run(
       query,
@@ -139,7 +191,7 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: GonpaCacheImage(
-                        url: "media/1710929961IMG20220622104550.jpg",
+                        url: getSectImage(sect),
                         height: 100,
                         width: 100,
                         fit: BoxFit.cover,

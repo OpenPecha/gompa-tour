@@ -268,7 +268,7 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
         return;
       }
     } catch (e) {
-      print("Error: $e");
+      logger.severe('Failed to filter gonpas: $e');
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }

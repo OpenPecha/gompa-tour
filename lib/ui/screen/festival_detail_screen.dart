@@ -72,7 +72,7 @@ class FestivalDetailScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               GonpaQRCard(
                   qrData:
-                      KBaseUrl + langBase + "/Festival/${selectedFestival.id}"),
+                      "$kBaseUrl$langBase/Festival/${selectedFestival.id}"),
               const SizedBox(height: 16),
             ],
           ),

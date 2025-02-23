@@ -133,9 +133,9 @@ class AddressCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                 ],
-                if (geoLocation == true) ...[
+                if (geoLocation.isNotEmpty) ...[
                   Text(
-                    'Map: ${geoLocation}',
+                    'Map: $geoLocation',
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],

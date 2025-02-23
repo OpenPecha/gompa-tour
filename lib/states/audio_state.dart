@@ -77,6 +77,7 @@ class AudioPlayerStateNotifier extends StateNotifier<AudioPlayerState> {
     }
   }
 
+  @override
   Future<void> dispose() async {
     super.dispose();
     await _audioPlayer.dispose();
