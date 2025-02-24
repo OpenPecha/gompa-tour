@@ -46,7 +46,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
       SettingsCard(
         child: SettingsListTile(
-          leading: Image.asset('assets/images/logo.png', width: 40),
+          leading: Image.asset('assets/images/app_logo.png', width: 40),
           title: AppLocalizations.of(context)!.aboutApp,
           onTap: () => _showDialog(
             context,
