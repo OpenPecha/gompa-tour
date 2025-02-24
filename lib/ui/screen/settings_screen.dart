@@ -70,9 +70,8 @@ class SettingsScreen extends ConsumerWidget {
           title: AppLocalizations.of(context)!.shareApp,
           onTap: () {
             // open the app store link
-            final String shareUrl = Platform.isIOS
-                ? kIosTibetanPrayerAppUrl
-                : kAndriodTibetanPrayerAppUrl;
+            final String shareUrl =
+                Platform.isIOS ? kIosNeykorAppUrl : kAndriodNeykorAppUrl;
             Share.share(shareUrl);
           },
         ),

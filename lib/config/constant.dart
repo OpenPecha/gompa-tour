@@ -16,5 +16,11 @@ const String kAndriodTibetanPrayerAppUrl =
 const kIosTibetanPrayerAppUrl =
     "https://apps.apple.com/in/app/tibetan-prayers/id6448322701";
 
+// Neykor app url
+const String kAndriodNeykorAppUrl =
+    "https://play.google.com/store/apps/details?id=com.monlam.gompa_tour";
+
+const kIosNeykorAppUrl = "https://apps.apple.com/au/app/neykor/id6738796267";
+
 // base url for the api
 const String kBaseAPIUrl = "https://gompa-tour-api.onrender.com";
