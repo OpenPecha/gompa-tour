@@ -39,7 +39,7 @@ class SkeletonScreen extends ConsumerWidget {
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
           child: Image.asset(
-            'assets/images/logo.png',
+            'assets/images/app_logo.png',
             height: 40,
           ),
         ),
