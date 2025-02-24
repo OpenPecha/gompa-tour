@@ -17,6 +17,12 @@ import 'package:gompa_tour/ui/widget/search_card_item.dart';
 import 'package:gompa_tour/util/enum.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
 
+// Create providers for the counts
+final totalStatueProvider = StateProvider<int>((ref) => 0);
+final totalGonpaProvider = StateProvider<int>((ref) => 0);
+final totalFestivalProvider = StateProvider<int>((ref) => 0);
+final totalPilgrimSiteProvider = StateProvider<int>((ref) => 0);
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -28,11 +34,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
-
-  int totalStatue = 0;
-  int totalGonpa = 0;
-  int totalFestival = 0;
-  int totalPilgrimSite = 0;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -45,17 +47,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         await ref.read(statueNotifierProvider.notifier).getTotalStatues();
     final gonpaCount =
         await ref.read(gonpaNotifierProvider.notifier).getTotalGonpas();
-    final festivalCout =
+    final festivalCount =
         await ref.read(festivalNotifierProvider.notifier).getFestivalCount();
     final pilgrimSiteCount = await ref
         .read(pilgrimSiteNotifierProvider.notifier)
         .getTotalPilgrimSites();
-    setState(() {
-      totalStatue = statueCount;
-      totalGonpa = gonpaCount;
-      totalFestival = festivalCout;
-      totalPilgrimSite = pilgrimSiteCount;
-    });
+
+    // Update the providers
+    ref.read(totalStatueProvider.notifier).state = statueCount;
+    ref.read(totalGonpaProvider.notifier).state = gonpaCount;
+    ref.read(totalFestivalProvider.notifier).state = festivalCount;
+    ref.read(totalPilgrimSiteProvider.notifier).state = pilgrimSiteCount;
   }
 
   void _performSearch(String query) async {
@@ -77,13 +79,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchNotifierProvider);
+    final totalStatue = ref.watch(totalStatueProvider);
+    final totalGonpa = ref.watch(totalGonpaProvider);
+    final totalFestival = ref.watch(totalFestivalProvider);
+    final totalPilgrimSite = ref.watch(totalPilgrimSiteProvider);
 
     return Column(
       children: [
         _buildHeader(context),
         _buildSearchBar(context),
         const Divider(),
-        _buildCategoryCards(context),
+        _buildCategoryCards(context,
+            totalStatue: totalStatue,
+            totalGonpa: totalGonpa,
+            totalFestival: totalFestival,
+            totalPilgrimSite: totalPilgrimSite),
         _buildSearchResults(context, searchState),
       ],
     );
@@ -173,7 +183,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryCards(BuildContext context) {
+  Widget _buildCategoryCards(BuildContext context,
+      {required int totalStatue,
+      required int totalGonpa,
+      required int totalFestival,
+      required int totalPilgrimSite}) {
     return _searchController.text.isEmpty
         ? Expanded(
             child: GridView.count(
