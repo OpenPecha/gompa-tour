@@ -43,21 +43,62 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _loadCounts() async {
-    final statueCount =
-        await ref.read(statueNotifierProvider.notifier).getTotalStatues();
-    final gonpaCount =
-        await ref.read(gonpaNotifierProvider.notifier).getTotalGonpas();
-    final festivalCount =
-        await ref.read(festivalNotifierProvider.notifier).getFestivalCount();
-    final pilgrimSiteCount = await ref
-        .read(pilgrimSiteNotifierProvider.notifier)
-        .getTotalPilgrimSites();
+    // Check if any count is 0 (not loaded yet)
+    final needsLoading = ref.read(totalStatueProvider) == 0 ||
+        ref.read(totalGonpaProvider) == 0 ||
+        ref.read(totalFestivalProvider) == 0 ||
+        ref.read(totalPilgrimSiteProvider) == 0;
 
-    // Update the providers
-    ref.read(totalStatueProvider.notifier).state = statueCount;
-    ref.read(totalGonpaProvider.notifier).state = gonpaCount;
-    ref.read(totalFestivalProvider.notifier).state = festivalCount;
-    ref.read(totalPilgrimSiteProvider.notifier).state = pilgrimSiteCount;
+    if (!needsLoading) {
+      return; // Skip loading if counts are already present
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final counts = await Future.wait([
+      ref.read(statueNotifierProvider.notifier).getTotalStatues(),
+      ref.read(gonpaNotifierProvider.notifier).getTotalGonpas(),
+      ref.read(festivalNotifierProvider.notifier).getFestivalCount(),
+      ref.read(pilgrimSiteNotifierProvider.notifier).getTotalPilgrimSites(),
+    ]);
+
+    // Update the providers only if they're still mounted
+    if (mounted) {
+      ref.read(totalStatueProvider.notifier).state = counts[0];
+      ref.read(totalGonpaProvider.notifier).state = counts[1];
+      ref.read(totalFestivalProvider.notifier).state = counts[2];
+      ref.read(totalPilgrimSiteProvider.notifier).state = counts[3];
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _refreshCounts() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final counts = await Future.wait([
+      ref.read(statueNotifierProvider.notifier).getTotalStatues(),
+      ref.read(gonpaNotifierProvider.notifier).getTotalGonpas(),
+      ref.read(festivalNotifierProvider.notifier).getFestivalCount(),
+      ref.read(pilgrimSiteNotifierProvider.notifier).getTotalPilgrimSites(),
+    ]);
+
+    if (mounted) {
+      ref.read(totalStatueProvider.notifier).state = counts[0];
+      ref.read(totalGonpaProvider.notifier).state = counts[1];
+      ref.read(totalFestivalProvider.notifier).state = counts[2];
+      ref.read(totalPilgrimSiteProvider.notifier).state = counts[3];
+
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void _performSearch(String query) async {
@@ -89,11 +130,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _buildHeader(context),
         _buildSearchBar(context),
         const Divider(),
-        _buildCategoryCards(context,
-            totalStatue: totalStatue,
-            totalGonpa: totalGonpa,
-            totalFestival: totalFestival,
-            totalPilgrimSite: totalPilgrimSite),
+        isLoading
+            ? Center(child: CircularProgressIndicator())
+            : _buildCategoryCards(context,
+                totalStatue: totalStatue,
+                totalGonpa: totalGonpa,
+                totalFestival: totalFestival,
+                totalPilgrimSite: totalPilgrimSite),
         _buildSearchResults(context, searchState),
       ],
     );
@@ -190,38 +233,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       required int totalPilgrimSite}) {
     return _searchController.text.isEmpty
         ? Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              padding: EdgeInsets.all(8),
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.8,
-              children: [
-                _buildCard(
-                  MenuType.deities,
-                  'assets/images/statues.jpg',
-                  context,
-                  totalStatue,
-                ),
-                _buildCard(
-                  MenuType.organization,
-                  'assets/images/monsatery.jpeg',
-                  context,
-                  totalGonpa,
-                ),
-                _buildCard(
-                  MenuType.pilgrimage,
-                  'assets/images/pilgrimage.jpg',
-                  context,
-                  totalPilgrimSite,
-                ),
-                _buildCard(
-                  MenuType.festival,
-                  'assets/images/Festivals.jpeg',
-                  context,
-                  totalFestival,
-                ),
-              ],
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await _refreshCounts();
+              },
+              child: GridView.count(
+                crossAxisCount: 2,
+                padding: EdgeInsets.all(8),
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 0.8,
+                children: [
+                  _buildCard(
+                    MenuType.deities,
+                    'assets/images/statues.jpg',
+                    context,
+                    totalStatue,
+                  ),
+                  _buildCard(
+                    MenuType.organization,
+                    'assets/images/monsatery.jpeg',
+                    context,
+                    totalGonpa,
+                  ),
+                  _buildCard(
+                    MenuType.pilgrimage,
+                    'assets/images/pilgrimage.jpg',
+                    context,
+                    totalPilgrimSite,
+                  ),
+                  _buildCard(
+                    MenuType.festival,
+                    'assets/images/Festivals.jpeg',
+                    context,
+                    totalFestival,
+                  ),
+                ],
+              ),
             ),
           )
         : const SizedBox();
