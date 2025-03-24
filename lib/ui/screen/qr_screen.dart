@@ -36,18 +36,23 @@ class _QrScreenState extends ConsumerState<QrScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen size
+    final Size screenSize = MediaQuery.of(context).size;
+
+    // Calculate center point
+    final Offset center = Offset(screenSize.width / 2, screenSize.height / 2);
     final scanWindow = Rect.fromCenter(
-      center: MediaQuery.sizeOf(context).center(Offset.zero),
-      width: 200,
-      height: 200,
+      center: center,
+      width: 300,
+      height: 300,
     );
 
     return Stack(
-      fit: StackFit.expand,
+      // fit: StackFit.expand,
       children: [
         MobileScanner(
           scanWindow: scanWindow,
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
           controller: controller,
           onDetect: (data) {
             if (!isDetecting) {
@@ -66,7 +71,9 @@ class _QrScreenState extends ConsumerState<QrScreen> {
             }
 
             return CustomPaint(
-              painter: ScannerOverlay(scanWindow: scanWindow),
+              painter: ScannerOverlay(scanWindow: scanWindow,
+              ),
+              // size: Size.infinite,
             );
           },
         ),

@@ -61,9 +61,6 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
       "GELUG": gonpas.where((m) => m.sect == "GELUG").toList(),
       "BHON": gonpas.where((m) => m.sect == "BHON").toList(),
       "JONANG": gonpas.where((m) => m.sect == "JONANG").toList(),
-      "REMEY": gonpas.where((m) => m.sect == "REMEY").toList(),
-      "SHALU": gonpas.where((m) => m.sect == "SHALU").toList(),
-      "BODONG": gonpas.where((m) => m.sect == "BODONG").toList(),
       "OTHER": gonpas.where((m) => m.sect == "OTHER").toList(),
     };
   }
@@ -80,14 +77,8 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
           "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731488192GP205592.jpg",
       'bhon':
           "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731914731GP205645.jpg",
-      'remey':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732603840GP205717.jpg",
       'jonang':
           "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731559304GP205604.jpg",
-      'shalu':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732605178GP205720.jpg",
-      'bodong':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732602550GP205715.jpg",
       'other':
           "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732603251GP205716.jpg",
     }
@@ -107,12 +98,6 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
         return bgimagelink[0]['bhon'].toString();
       case "JONANG":
         return bgimagelink[0]['jonang'].toString();
-      case "REMEY":
-        return bgimagelink[0]['remey'].toString();
-      case "SHALU":
-        return bgimagelink[0]['shalu'].toString();
-      case "BODONG":
-        return bgimagelink[0]['bodong'].toString();
       case "OTHER":
         return bgimagelink[0]['other'].toString();
       default:
@@ -265,12 +250,6 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
         return AppLocalizations.of(context)!.bon;
       case "JONANG":
         return AppLocalizations.of(context)!.jonang;
-      case "REMEY":
-        return AppLocalizations.of(context)!.remey;
-      case "SHALU":
-        return AppLocalizations.of(context)!.shalu;
-      case "BODONG":
-        return AppLocalizations.of(context)!.bodong;
       case "Others":
         return AppLocalizations.of(context)!.others;
       default:

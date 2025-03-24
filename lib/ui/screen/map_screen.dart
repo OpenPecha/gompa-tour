@@ -14,6 +14,7 @@ import 'package:gompa_tour/util/translation_helper.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../config/constant.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
@@ -24,12 +25,55 @@ class MapScreen extends ConsumerStatefulWidget {
 
 class _MapScreenState extends ConsumerState<MapScreen> {
   late final MapController mapController;
+  LatLng? _currentLocation;
+
   @override
   void initState() {
     super.initState();
     mapController = MapController();
+    _fetchCurrentLocation();
     Future(() {
       ref.read(gonpaNotifierProvider.notifier).fetchAllGonpas();
+    });
+  }
+
+  Future<void> _fetchCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+    print('serviceEnabled: $serviceEnabled');
+
+    // Check and request location permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied');
+    }
+
+    // Get the current position using the new `settings` parameter
+    final position = await Geolocator.getCurrentPosition(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.high, // High accuracy
+        distanceFilter: 1000, // Minimum distance (in meters) to trigger updates
+      ),
+    );
+
+    // Update the current location state
+    setState(() {
+      _currentLocation = LatLng(position.latitude, position.longitude);
+      // Animate to the current location
+      mapController.move(_currentLocation!, 10);
     });
   }
 
@@ -45,15 +89,19 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
-  Widget _buildMap(
-    MapController mapController,
-  ) {
+  Widget _buildMap(MapController mapController) {
     return FlutterMap(
       mapController: mapController,
-      options: const MapOptions(
-        initialCenter: LatLng(20.5937, 78.9629),
-        initialZoom: 5,
+      options: MapOptions(
+        initialCenter: _currentLocation ?? LatLng(20.5937, 78.9629),
+        initialZoom: _currentLocation != null ? 10 : 5,
         minZoom: 4,
+        onMapReady: () {
+          // Ensure map animates to current location if it's available when map is ready
+          if (_currentLocation != null) {
+            mapController.move(_currentLocation!, 10);
+          }
+        },
       ),
       children: [
         GestureDetector(
@@ -75,6 +123,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     .where((gonpa) => gonpa.geoLocation.trim().isNotEmpty)
                     .map((gonpa) => _buildMarker(gonpa)),
                 ..._buildCountryMarker(),
+                if (_currentLocation != null)
+                  Marker(
+                    point: _currentLocation!,
+                    width: 20,
+                    height: 20,
+                    child: Icon(Icons.location_on, color: Colors.red[800]),
+                  ),
               ],
             );
           },

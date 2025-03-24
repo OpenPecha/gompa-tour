@@ -154,7 +154,10 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
         children: [
           Text(
             AppLocalizations.of(context)!.pilgrimage,
-            style: Theme.of(context).textTheme.titleLarge,
+     style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           // dropdown for unqiue states
           DropdownButton2<String>(

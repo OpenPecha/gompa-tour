@@ -77,30 +77,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  Future<void> _refreshCounts() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    final counts = await Future.wait([
-      ref.read(statueNotifierProvider.notifier).getTotalStatues(),
-      ref.read(gonpaNotifierProvider.notifier).getTotalGonpas(),
-      ref.read(festivalNotifierProvider.notifier).getFestivalCount(),
-      ref.read(pilgrimSiteNotifierProvider.notifier).getTotalPilgrimSites(),
-    ]);
-
-    if (mounted) {
-      ref.read(totalStatueProvider.notifier).state = counts[0];
-      ref.read(totalGonpaProvider.notifier).state = counts[1];
-      ref.read(totalFestivalProvider.notifier).state = counts[2];
-      ref.read(totalPilgrimSiteProvider.notifier).state = counts[3];
-
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
   void _performSearch(String query) async {
     if (query.isEmpty || query.length < 3) {
       _clearSearchResults();
@@ -233,43 +209,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       required int totalPilgrimSite}) {
     return _searchController.text.isEmpty
         ? Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await _refreshCounts();
-              },
-              child: GridView.count(
-                crossAxisCount: 2,
-                padding: EdgeInsets.all(8),
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 0.8,
-                children: [
-                  _buildCard(
-                    MenuType.deities,
-                    'assets/images/statues.jpg',
-                    context,
-                    totalStatue,
-                  ),
-                  _buildCard(
-                    MenuType.organization,
-                    'assets/images/monsatery.jpeg',
-                    context,
-                    totalGonpa,
-                  ),
-                  _buildCard(
-                    MenuType.pilgrimage,
-                    'assets/images/pilgrimage.jpg',
-                    context,
-                    totalPilgrimSite,
-                  ),
-                  _buildCard(
-                    MenuType.festival,
-                    'assets/images/Festivals.jpeg',
-                    context,
-                    totalFestival,
-                  ),
-                ],
-              ),
+            child: GridView.count(
+              crossAxisCount: 2,
+              padding: EdgeInsets.all(8),
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 0.8,
+              children: [
+                _buildCard(
+                  MenuType.deities,
+                  'assets/images/statues.jpg',
+                  context,
+                  totalStatue,
+                ),
+                _buildCard(
+                  MenuType.organization,
+                  'assets/images/monsatery.jpeg',
+                  context,
+                  totalGonpa,
+                ),
+                _buildCard(
+                  MenuType.pilgrimage,
+                  'assets/images/pilgrimage.jpg',
+                  context,
+                  totalPilgrimSite,
+                ),
+                _buildCard(
+                  MenuType.festival,
+                  'assets/images/Festivals.jpeg',
+                  context,
+                  totalFestival,
+                ),
+              ],
             ),
           )
         : const SizedBox();

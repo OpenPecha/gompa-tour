@@ -36,7 +36,7 @@ class _OrganizationListScreenState
   String? _selectedState;
   var _allStates = [];
 
-  List<String> types = ["MONASTERY", "NUNNERY", "TEMPLE", "NGAKPA", "OTHER"];
+  List<String> types = ["MONASTERY", "NUNNERY", "TEMPLE"];
 
   @override
   void initState() {

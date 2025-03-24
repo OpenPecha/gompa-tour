@@ -26,7 +26,7 @@ class SettingsScreen extends ConsumerWidget {
     return [
       SettingsCard(
         child: SettingsListTile(
-          leading: Image.asset('assets/images/cta.jpg', width: 40),
+          leading: Image.asset('assets/images/cta_logo.png', width: 40),
           title: AppLocalizations.of(context)!.aboutUs,
           onTap: () => _showDialog(
             context,
@@ -104,7 +104,7 @@ class SettingsScreen extends ConsumerWidget {
   String _getDialogTitle(BuildContext context, DialogContent content) {
     switch (content) {
       case DialogContent.contact:
-        return AppLocalizations.of(context)!.contactSupport;
+        return "";
       case DialogContent.aboutApp:
         return AppLocalizations.of(context)!.aboutApp;
       case DialogContent.aboutUs:
@@ -114,6 +114,37 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
+  // Add this method in the class:
+  List<Widget> _buildContactItems(
+      BuildContext context, List<(String, String?)> items) {
+    Locale locale = Localizations.localeOf(context);
+
+    return items
+        .map((item) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0),
+              child: item.$2 != null
+                  ? InkWell(
+                      onTap: () => _launchUrl(item.$2!),
+                      child: Text(
+                        item.$1,
+                        style: TextStyle(
+                          fontSize: locale.languageCode == 'bo' ? 14 : 16,
+                          height: locale.languageCode == 'bo' ? 1.8 : 1.5,
+
+                          color: Theme.of(context).colorScheme.primary,
+                          // decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    )
+                  : Text(item.$1,
+                      style: TextStyle(
+                        fontSize: locale.languageCode == 'bo' ? 14 : 16,
+                        height: locale.languageCode == 'bo' ? 1.8 : 1.5,
+                      )),
+            ))
+        .toList();
+  }
+
   List<Widget> _getDialogContent(DialogContent content, BuildContext context) {
     const spacing = SizedBox(height: 16);
     Locale locale = Localizations.localeOf(context);
@@ -121,13 +152,16 @@ class SettingsScreen extends ConsumerWidget {
     switch (content) {
       case DialogContent.contact:
         return [
-          const Text("Central Tibetan Administration"),
-          const Text("Gangchen Kyishong, Dharamshala"),
-          const Text("Kangra District, HP 176215, India"),
-          const Text("Tel: +91-1892-222685, 226737"),
-          const Text('Fax: +91-1892-228037'),
-          const Text('Email: religion@tibet.net'),
-          spacing,
+          ..._buildContactItems(context, [
+            ('Central Tibetan Administration', null),
+            ('Gangchen Kyishong, Dharamshala', null),
+            ('Kangra District, HP 176215, India', null),
+            ('Tel: +91-1892-222685, 226737', 'Tel:+91-1892-222685'),
+            ('Fax: +91-1892-228037', null),
+            ('Email: religion@tibet.net', 'mailto:religion@tibet.net'),
+          ]),
+
+          // spacing,
         ];
       case DialogContent.aboutApp:
         return [
@@ -153,22 +187,21 @@ class SettingsScreen extends ConsumerWidget {
         ];
       case DialogContent.prayerApp:
         return [
-          const Text(
-              "This prayer app is developed by the Dept of Religion and Culture of Central Tibetan Administration to make availability of the Tibetan prayers in digital format."),
-          const Text(
-              "The app consist of daily prayers, prayers of different Tibetan Buddhist schools, mantras and official prayers books. "),
-          const Text(
-              "It also has a facility of listening short daily prayers and mantras in audio."),
-          const Text(
-              "Apart from prayers, this app  contains a list and description of holy Buddhist pilgrimage sites and festivals of Tibet."),
+          Text(
+            AppLocalizations.of(context)!.prayerAppDescription,
+            style: TextStyle(
+              fontSize: 16,
+              height: locale.languageCode == 'bo' ? 2 : 1.5,
+            ),
+          ),
           const SizedBox(height: 12),
           // add a download link based on the platform
           Text.rich(
             TextSpan(
-              text: "Download the app",
+              text: AppLocalizations.of(context)!.downloadApp,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
-                decoration: TextDecoration.underline,
+                fontWeight: FontWeight.bold,
               ),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {

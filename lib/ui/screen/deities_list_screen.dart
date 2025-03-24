@@ -133,7 +133,10 @@ class _DeitiesListScreenState extends ConsumerState<DeitiesListScreen> {
         children: [
           Text(
             AppLocalizations.of(context)!.deities,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Row(
             children: [

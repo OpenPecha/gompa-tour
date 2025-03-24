@@ -49,8 +49,8 @@ class FestivalCardItem extends ConsumerWidget {
                   children: [
                     Text(
                       context.localizedText(
-                        enText: festival.translations[1].description,
-                        boText: festival.translations[0].description,
+                        enText: festival.translations[1].name,
+                        boText: festival.translations[0].name,
                       ),
                       style: TextStyle(
                         fontSize: 16,

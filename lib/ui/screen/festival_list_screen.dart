@@ -134,7 +134,10 @@ class _FestivalListScreenState extends ConsumerState<FestivalListScreen> {
         children: [
           Text(
             AppLocalizations.of(context)!.festival,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Row(
             children: [
