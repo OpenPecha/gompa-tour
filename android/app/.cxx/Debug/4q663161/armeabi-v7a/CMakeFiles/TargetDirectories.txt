@@ -1,0 +1,2 @@
+/Users/tenzintamdin/Developer/Work-Dev/gompa_tour/android/app/.cxx/Debug/4q663161/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/tenzintamdin/Developer/Work-Dev/gompa_tour/android/app/.cxx/Debug/4q663161/armeabi-v7a/CMakeFiles/rebuild_cache.dir

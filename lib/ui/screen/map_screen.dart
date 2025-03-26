@@ -73,7 +73,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     setState(() {
       _currentLocation = LatLng(position.latitude, position.longitude);
       // Animate to the current location
-      mapController.move(_currentLocation!, 10);
+      mapController.move(_currentLocation!, 12);
     });
   }
 
@@ -99,7 +99,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         onMapReady: () {
           // Ensure map animates to current location if it's available when map is ready
           if (_currentLocation != null) {
-            mapController.move(_currentLocation!, 10);
+            mapController.move(_currentLocation!, 12);
           }
         },
       ),

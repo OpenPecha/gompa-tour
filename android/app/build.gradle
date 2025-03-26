@@ -11,7 +11,7 @@ if (keystorePropertiesFile.exists()) {
 }
 android {
     namespace = "com.monlam.gompa_tour"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = "25.1.8937393"
 
     compileOptions {

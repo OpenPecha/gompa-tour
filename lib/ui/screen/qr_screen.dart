@@ -39,16 +39,19 @@ class _QrScreenState extends ConsumerState<QrScreen> {
     // Get the screen size
     final Size screenSize = MediaQuery.of(context).size;
 
-    // Calculate center point
+    // Define a fixed size for the scan window
+    const double scanSize = 250;
+
+    // Calculate center point - ensure it's precisely at the center of the screen
     final Offset center = Offset(screenSize.width / 2, screenSize.height / 2);
     final scanWindow = Rect.fromCenter(
       center: center,
-      width: 300,
-      height: 300,
+      width: scanSize,
+      height: scanSize,
     );
 
     return Stack(
-      // fit: StackFit.expand,
+      fit: StackFit.expand,
       children: [
         MobileScanner(
           scanWindow: scanWindow,
@@ -71,9 +74,10 @@ class _QrScreenState extends ConsumerState<QrScreen> {
             }
 
             return CustomPaint(
-              painter: ScannerOverlay(scanWindow: scanWindow,
+              painter: ScannerOverlay(
+                scanWindow: scanWindow,
               ),
-              // size: Size.infinite,
+              size: Size.infinite,
             );
           },
         ),

@@ -12,6 +12,7 @@ import '../../states/bottom_nav_state.dart';
 import '../widget/bottom_nav_bar.dart';
 import 'home_screen.dart';
 import 'map_screen.dart';
+import 'dart:io' show Platform;
 
 class SkeletonScreen extends ConsumerWidget {
   const SkeletonScreen({super.key});
@@ -20,6 +21,7 @@ class SkeletonScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final int? navIndex = ref.watch(bottomNavProvider) as int?;
     final currentLanguage = ref.watch(languageProvider).currentLanguage;
+    final isIos = Platform.isIOS;
 
     // Tab configuration
     List<Map<String, dynamic>> tabConfigurations = _tabConfiguration(context);
@@ -61,8 +63,11 @@ class SkeletonScreen extends ConsumerWidget {
                   width: 60,
                   height: 30,
                   toggleSize: 20,
-                  valueFontSize:
-                      currentLanguage == LanguageState.ENGLISH ? 12.0 : 12.0,
+                  valueFontSize: currentLanguage == LanguageState.ENGLISH
+                      ? isIos
+                          ? 16.0
+                          : 14.0
+                      : 12.0,
                   value: currentLanguage == LanguageState.TIBETAN,
                   activeText: "EN",
                   inactiveText: "བོད།",
@@ -112,6 +117,11 @@ class SkeletonScreen extends ConsumerWidget {
                       width: 55,
                       height: 30,
                       toggleSize: 20,
+                      valueFontSize: currentLanguage == LanguageState.ENGLISH
+                          ? isIos
+                              ? 16.0
+                              : 14.0
+                          : 12.0,
                       value: themeMode == ThemeMode.dark,
                       activeIcon: Icon(Icons.dark_mode, size: 15),
                       inactiveIcon: Icon(Icons.light_mode, size: 15),
