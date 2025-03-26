@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/constants/state_data.dart';
 import 'package:gompa_tour/models/gonpa.dart';
 import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
@@ -203,29 +204,32 @@ class _OrganizationListScreenState
         children: [
           // Dropdown for gonpa types
           Row(
+            mainAxisSize: MainAxisSize.max,
             children: [
               DropdownButton2<String>(
                 isExpanded: true,
                 value: _selectedType,
-                hint: Text(
-                  'Select Types',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.7),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                items: [
-                  DropdownMenuItem<String>(
-                    value: null,
-                    child: Text(
-                      'All Types',
-                      style: const TextStyle(fontSize: 14),
+                hint: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    AppLocalizations.of(context)!.gonpaTypes,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
                     ),
                   ),
+                ),
+                items: [
+                  // DropdownMenuItem<String>(
+                  //   value: null,
+                  //   child: Text(
+                  //     AppLocalizations.of(context)!.gonpaTypes,
+                  //     style: const TextStyle(fontSize: 14),
+                  //   ),
+                  // ),
                   ...gonpaState.types.map(
                     (type) => DropdownMenuItem<String>(
                       value: type,
@@ -248,7 +252,7 @@ class _OrganizationListScreenState
                 },
                 buttonStyleData: ButtonStyleData(
                   height: 40,
-                  width: 120,
+                  width: 130,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
@@ -267,46 +271,73 @@ class _OrganizationListScreenState
                   padding: EdgeInsets.symmetric(horizontal: 8),
                 ),
                 iconStyleData: IconStyleData(
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.7),
-                  ),
+                  icon: _selectedType != null
+                      ? GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedType = null;
+                            });
+                            gonpaNotifier.filterGonpas(
+                              sect: widget.sect!,
+                              type: null,
+                              stateFilter: _selectedState,
+                            );
+                          },
+                          child: Icon(
+                            Icons.close,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.7),
+                          ),
+                        )
+                      : Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.7),
+                        ),
                 ),
               ),
               // dropdown for unqiue states
               DropdownButton2<String>(
                 isExpanded: true,
-                value: _selectedState,
-                hint: Text(
-                  'Select State',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.7),
+                value: _selectedState?.toUpperCase(),
+                hint: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    AppLocalizations.of(context)!.allStates,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
+                    ),
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
                 items: [
-                  DropdownMenuItem<String>(
-                    value: null,
-                    child: Text(
-                      'All States',
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  ..._allStates.map(
-                    (state) => DropdownMenuItem<String>(
-                      value: state,
-                      child: Text(
-                        state.toUpperCase(),
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ),
+                  // DropdownMenuItem<String>(
+                  //   value: null,
+                  //   child: Text(
+                  //     AppLocalizations.of(context)!.allStates,
+                  //     style: const TextStyle(fontSize: 12),
+                  //   ),
+                  // ),
+                  ...StateData.stateTranslationsForGonpa.entries.map(
+                    (state) {
+                      return DropdownMenuItem<String>(
+                        value: state.key,
+                        child: Text(
+                          StateData.getLocalizedStateNameForGonpa(
+                            state.key,
+                            Localizations.localeOf(context).languageCode,
+                          ),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      );
+                    },
                   ),
                 ],
                 onChanged: (String? value) {
@@ -321,7 +352,7 @@ class _OrganizationListScreenState
                 },
                 buttonStyleData: ButtonStyleData(
                   height: 40,
-                  width: 120,
+                  width: 130,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
@@ -340,13 +371,33 @@ class _OrganizationListScreenState
                   padding: EdgeInsets.symmetric(horizontal: 8),
                 ),
                 iconStyleData: IconStyleData(
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.7),
-                  ),
+                  icon: _selectedState != null
+                      ? GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedState = null;
+                            });
+                            gonpaNotifier.filterGonpas(
+                              sect: widget.sect!,
+                              type: _selectedType,
+                              stateFilter: null,
+                            );
+                          },
+                          child: Icon(
+                            Icons.close,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.7),
+                          ),
+                        )
+                      : Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.7),
+                        ),
                 ),
               ),
             ],

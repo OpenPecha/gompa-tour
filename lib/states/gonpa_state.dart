@@ -265,7 +265,13 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
           page: 1,
         );
       } else {
-        return;
+        final gonpas = await apiRepository.filterBySect(sect);
+        state = state.copyWith(
+          gonpas: gonpas,
+          isLoading: false,
+          hasReachedMax: true,
+          page: 1,
+        );
       }
     } catch (e) {
       logger.severe('Failed to filter gonpas: $e');

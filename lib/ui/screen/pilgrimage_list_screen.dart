@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/constants/state_data.dart';
 import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
@@ -25,7 +26,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final _searchDebouncer = SearchDebouncer();
-  var _allStates = [];
+  // var _allStates = [];
   String? _selectedState;
 
   @override
@@ -39,10 +40,10 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
 
   Future<void> _loadInitialPilgrimSites() async {
     pilgrimSiteNotifier.fetchInitialPilgrimSites();
-    final allStates = await pilgrimSiteNotifier.getUniqueStates();
-    setState(() {
-      _allStates = allStates;
-    });
+    // final allStates = await pilgrimSiteNotifier.getUniqueStates();
+    // setState(() {
+    //   _allStates = allStates;
+    // });
   }
 
   void _performSearch(String query) async {
@@ -154,7 +155,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
         children: [
           Text(
             AppLocalizations.of(context)!.pilgrimage,
-     style: TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -163,30 +164,38 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
           DropdownButton2<String>(
             isExpanded: true,
             value: _selectedState,
-            hint: Text(
-              'Select State',
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            hint: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                AppLocalizations.of(context)!.allStates,
+                style: TextStyle(
+                  fontSize: 14,
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                ),
               ),
-              overflow: TextOverflow.ellipsis,
             ),
             items: [
-              DropdownMenuItem<String>(
-                value: null,
-                child: Text(
-                  'All States',
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
-              ..._allStates.map(
-                (state) => DropdownMenuItem<String>(
-                  value: state,
-                  child: Text(
-                    state.toUpperCase(),
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ),
+              // DropdownMenuItem<String>(
+              //   value: null,
+              //   child: Text(
+              //     'All States',
+              //     style: const TextStyle(fontSize: 14),
+              //   ),
+              // ),
+              ...StateData.stateTranslationForPilgrim.entries.map(
+                (state) {
+                  return DropdownMenuItem<String>(
+                    value: state.key,
+                    child: Text(
+                      StateData.getLocalizedStateNameForPilgrim(
+                        state.key,
+                        Localizations.localeOf(context).languageCode,
+                      ),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  );
+                },
               ),
             ],
             onChanged: (String? value) {
@@ -218,10 +227,29 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
               padding: EdgeInsets.symmetric(horizontal: 8),
             ),
             iconStyleData: IconStyleData(
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+              icon: _selectedState != null
+                  ? GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedState = null;
+                        });
+                        _loadInitialPilgrimSites();
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                      ),
+                    )
+                  : Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
+                    ),
             ),
           ),
           Row(
