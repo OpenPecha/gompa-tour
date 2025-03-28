@@ -14,11 +14,6 @@ class ScannerOverlay extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Calculate the scaling factors to ensure the overlay matches the camera preview
-    final double scaleX = size.width / scanWindow.width;
-    final double scaleY = size.height / scanWindow.height;
-    final double scale = scaleX < scaleY ? scaleX : scaleY;
-
     // Calculate the centered scan window based on the canvas size
     // This ensures the scan area is perfectly centered in the camera preview
     final Rect centeredScanWindow = Rect.fromCenter(

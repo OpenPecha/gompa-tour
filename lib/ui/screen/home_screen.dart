@@ -212,10 +212,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       required int totalFestival,
       required int totalPilgrimSite}) {
     return _searchController.text.isEmpty
-        ? Expanded(
+        ? Padding(
+            padding: EdgeInsets.all(8),
             child: GridView.count(
               crossAxisCount: 2,
-              padding: EdgeInsets.all(8),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               childAspectRatio: 0.8,
@@ -269,9 +271,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           case MenuType.pilgrimage:
             context.push(PilgrimageListScreen.routeName);
             return;
-          default:
-            break;
-        }
+          }
       },
       child: Card(
         color: Theme.of(context).colorScheme.surfaceContainer,

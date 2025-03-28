@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/constants/state_data.dart';
+import 'package:gompa_tour/constants/type_data.dart';
 import 'package:gompa_tour/models/gonpa.dart';
 import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
@@ -35,9 +36,6 @@ class _OrganizationListScreenState
   ViewType _currentView = ViewType.grid;
   String? _selectedType;
   String? _selectedState;
-  var _allStates = [];
-
-  List<String> types = ["MONASTERY", "NUNNERY", "TEMPLE"];
 
   @override
   void initState() {
@@ -53,11 +51,6 @@ class _OrganizationListScreenState
     widget.sect == "ALL"
         ? gonpaNotifier.fetchInitialGonpas()
         : gonpaNotifier.fetchInitialGonpasBySect(widget.sect!);
-    gonpaNotifier.fetchAllGonpaTypes();
-    final allStates = await gonpaNotifier.getUniqueStates();
-    setState(() {
-      _allStates = allStates;
-    });
   }
 
   void _performSearch(String query) async {
@@ -230,11 +223,14 @@ class _OrganizationListScreenState
                   //     style: const TextStyle(fontSize: 14),
                   //   ),
                   // ),
-                  ...gonpaState.types.map(
+                  ...TypeData.typeTranslations.entries.map(
                     (type) => DropdownMenuItem<String>(
-                      value: type,
+                      value: type.key,
                       child: Text(
-                        type,
+                        TypeData.getLocalizedTypeName(
+                          type.key,
+                          Localizations.localeOf(context).languageCode,
+                        ),
                         style: const TextStyle(fontSize: 12),
                       ),
                     ),

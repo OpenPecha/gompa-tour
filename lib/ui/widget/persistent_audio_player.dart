@@ -37,7 +37,7 @@ class PersistentAudioPlayer extends ConsumerWidget {
                 onTap: () {
                   final data = audioState.contextData;
                   if (data != null) {
-                    final currentLocation = router.state?.path;
+                    final currentLocation = router.state.path;
                     if (data is Organization) {
                       final currentSelectedOrg =
                           ref.read(selectedOrganizationProvider);

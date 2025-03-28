@@ -46,7 +46,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     if (!serviceEnabled) {
       return Future.error('Location services are disabled.');
     }
-    print('serviceEnabled: $serviceEnabled');
 
     // Check and request location permissions
     permission = await Geolocator.checkPermission();

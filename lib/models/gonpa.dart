@@ -1,21 +1,6 @@
 import 'package:gompa_tour/models/contact.dart';
 import 'package:gompa_tour/models/gonpa_translation.dart';
 
-enum Sect {
-  NYINGMA,
-  KAGYU,
-  SAKYA,
-  GELUG,
-  BHON,
-  REMEY,
-  JONANG,
-  SHALU,
-  BODONG,
-  OTHER
-}
-
-enum GonpaType { MONASTERY, NUNNERY, TEMPLE, NGAKPA, OTHER }
-
 class Gonpa {
   final String id;
   final String image;
