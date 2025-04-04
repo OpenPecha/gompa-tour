@@ -1,4 +1,4 @@
-name: Gonpa Tour CICD
+name: Neykor CICD
 
 on:
   push:

@@ -4,7 +4,7 @@
 
 
     <application
-        android:label="Gonpa Tour"
+        android:label="Neykor"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

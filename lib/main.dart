@@ -38,7 +38,7 @@ class MyApp extends ConsumerWidget {
     }
 
     return MaterialApp.router(
-      title: 'Gompa Tour',
+      title: 'Neykor',
       locale: Locale(currentLanguage.currentLanguage),
       theme: currentLightTheme,
       darkTheme: currentDarkTheme,

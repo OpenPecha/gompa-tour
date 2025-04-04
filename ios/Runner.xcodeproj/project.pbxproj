@@ -491,7 +491,7 @@
 				DEVELOPMENT_TEAM = N9G5QJKAY4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Gonpa Tour";
+				INFOPLIST_KEY_CFBundleDisplayName = Neykor;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos*]" = 15.5.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -678,7 +678,7 @@
 				DEVELOPMENT_TEAM = N9G5QJKAY4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Gonpa Tour";
+				INFOPLIST_KEY_CFBundleDisplayName = Neykor;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos*]" = 15.5.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -705,7 +705,7 @@
 				DEVELOPMENT_TEAM = N9G5QJKAY4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Gonpa Tour";
+				INFOPLIST_KEY_CFBundleDisplayName = Neykor;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos*]" = 15.5.0;
 				LD_RUNPATH_SEARCH_PATHS = (
