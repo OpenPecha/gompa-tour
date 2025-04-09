@@ -83,6 +83,10 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         title: Text(_getDialogTitle(context, content)),
         content: SingleChildScrollView(
           child: Column(

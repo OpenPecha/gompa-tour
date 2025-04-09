@@ -11,6 +11,7 @@ import 'package:gompa_tour/ui/screen/deities_list_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/organization_card_item.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
+import 'package:gompa_tour/util/string_extensions.dart';
 
 class OrganizationListScreen extends ConsumerStatefulWidget {
   static const String routeName = '/organization-list';
@@ -323,14 +324,19 @@ class _OrganizationListScreenState
                   // ),
                   ...StateData.stateTranslationsForGonpa.entries.map(
                     (state) {
+                      String stateName =
+                          StateData.getLocalizedStateNameForGonpa(
+                        state.key,
+                        Localizations.localeOf(context).languageCode,
+                      );
                       return DropdownMenuItem<String>(
                         value: state.key,
                         child: Text(
-                          StateData.getLocalizedStateNameForGonpa(
-                            state.key,
-                            Localizations.localeOf(context).languageCode,
-                          ),
+                          Localizations.localeOf(context).languageCode == "en"
+                              ? stateName.toPascalCase()
+                              : stateName,
                           style: const TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       );
                     },
