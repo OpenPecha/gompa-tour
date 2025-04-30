@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:gompa_tour/l10n/generated/app_localizations.dart';
 import 'package:gompa_tour/states/language_state.dart';
 import 'package:gompa_tour/states/theme_mode_state.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:gompa_tour/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/states/bottom_nav_state.dart';
@@ -271,7 +271,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           case MenuType.pilgrimage:
             context.push(PilgrimageListScreen.routeName);
             return;
-          }
+        }
       },
       child: Card(
         color: Theme.of(context).colorScheme.surfaceContainer,

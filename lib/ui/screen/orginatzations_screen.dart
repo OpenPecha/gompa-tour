@@ -5,7 +5,7 @@ import 'package:gompa_tour/states/gonpa_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/screen/organization_list_screen.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:gompa_tour/l10n/generated/app_localizations.dart';
 import 'package:gompa_tour/ui/widget/gonpa_cache_image.dart';
 import 'package:gompa_tour/ui/widget/organization_card_item.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';

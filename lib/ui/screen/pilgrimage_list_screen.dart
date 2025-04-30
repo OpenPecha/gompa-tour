@@ -7,7 +7,7 @@ import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
 import 'package:gompa_tour/ui/widget/pilgrimage_card_item.dart';
 import 'package:gompa_tour/util/search_debouncer.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:gompa_tour/l10n/generated/app_localizations.dart';
 
 enum ViewType { grid, list }
 

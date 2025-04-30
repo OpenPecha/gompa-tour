@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gompa_tour/l10n/generated/app_localizations.dart';
 import 'package:gompa_tour/states/statue_state.dart';
 import 'package:gompa_tour/states/recent_search.dart';
 import 'package:gompa_tour/ui/widget/gonpa_app_bar.dart';
