@@ -114,9 +114,10 @@ class OrganizationDetailScreen extends ConsumerWidget {
               const SizedBox(
                 height: 16,
               ),
-              LocationCard(
-                address: selectedGonpa,
-              ),
+              if (selectedGonpa.geoLocation.isNotEmpty)
+                LocationCard(
+                  address: selectedGonpa,
+                ),
               ...[
                 const SizedBox(height: 16),
                 GonpaQRCard(

@@ -134,9 +134,10 @@ class PilgrimageDetailScreen extends ConsumerWidget {
               const SizedBox(
                 height: 16,
               ),
-              LocationCard(
-                address: selectedPilgrimSite,
-              ),
+              if (selectedPilgrimSite.geoLocation.isNotEmpty)
+                LocationCard(
+                  address: selectedPilgrimSite,
+                ),
               const SizedBox(height: 16),
             ],
           ),
