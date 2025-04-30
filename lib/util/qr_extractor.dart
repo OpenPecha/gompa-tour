@@ -1,3 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 enum QrType { statue, gonpa, festival, site }
 
 class QrCodeValidator {
@@ -15,9 +17,9 @@ QrCodeValidator extractQrAndValidate(String url) {
   try {
     Uri? uri = Uri.tryParse(url);
 
-    if (uri == null || uri.host != 'neykorweb.onrender.com') {
+    if (uri == null || uri.host != dotenv.env['BASE_URL']) {
       return QrCodeValidator(
-          error: 'Invalid URL. The domain must be neykorweb.onrender.com');
+          error: 'Invalid URL. The domain must be ${dotenv.env['BASE_URL']}');
     }
 
     List<String> path = uri.pathSegments.isNotEmpty ? uri.pathSegments : [];

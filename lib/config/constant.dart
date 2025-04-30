@@ -7,7 +7,7 @@ const String kOrganizationQrCodeUrl =
     'https://gompatour.com/organization.php?url=';
 const String kEventQrCodeUrl = 'https://gompatour.com/event.php?url=';
 
-const String kBaseUrl = "https://neykorweb.onrender.com/";
+const String kBaseUrl = "https://gompatour.com";
 
 // tibetan prayer app url
 const String kAndriodTibetanPrayerAppUrl =
@@ -21,6 +21,3 @@ const String kAndriodNeykorAppUrl =
     "https://play.google.com/store/apps/details?id=com.monlam.gompa_tour";
 
 const kIosNeykorAppUrl = "https://apps.apple.com/au/app/neykor/id6738796267";
-
-// base url for the api
-const String kBaseAPIUrl = "https://gompa-tour-api.onrender.com";

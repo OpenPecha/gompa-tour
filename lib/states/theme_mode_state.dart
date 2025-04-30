@@ -18,7 +18,7 @@ class ThemeModeState extends ChangeNotifier {
 
   ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
 
-  set themeMode(ThemeMode mode) {
+  set  themeMode(ThemeMode mode) {
     _themeMode = mode;
     _saveThemeMode();
     notifyListeners();

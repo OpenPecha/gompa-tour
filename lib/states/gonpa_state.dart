@@ -1,5 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gompa_tour/config/constant.dart';
 import 'package:gompa_tour/helper/database_helper.dart';
 import 'package:gompa_tour/models/gonpa.dart';
 import 'package:gompa_tour/repo/api_repository.dart';
@@ -314,7 +314,7 @@ class GonpaNotifier extends StateNotifier<GonpaListState> {
 
 final gonpaRepositoryProvider = Provider<ApiRepository<Gonpa>>((ref) {
   return ApiRepository<Gonpa>(
-    baseUrl: kBaseAPIUrl,
+    baseUrl: dotenv.env['BASE_URL'] ?? '',
     endpoint: "gonpa",
     fromJson: (json) => Gonpa.fromJson(json),
     toJson: (gonpa) => gonpa.toJson(),

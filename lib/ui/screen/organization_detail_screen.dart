@@ -120,7 +120,8 @@ class OrganizationDetailScreen extends ConsumerWidget {
               ...[
                 const SizedBox(height: 16),
                 GonpaQRCard(
-                  qrData: "$kBaseUrl$langBase/Monastary/${selectedGonpa.sect}/${selectedGonpa.id}",
+                  qrData:
+                      "$kBaseUrl/$langBase/Monastary/${selectedGonpa.sect}/${selectedGonpa.id}",
                 ),
                 const SizedBox(height: 16),
               ],
