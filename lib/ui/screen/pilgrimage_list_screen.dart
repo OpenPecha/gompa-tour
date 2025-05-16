@@ -170,8 +170,10 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                 AppLocalizations.of(context)!.allStates,
                 style: TextStyle(
                   fontSize: 14,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
               ),
             ),
@@ -240,7 +242,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                            .withValues(alpha: 0.7),
                       ),
                     )
                   : Icon(
@@ -248,7 +250,7 @@ class _PilgrimageListScreenState extends ConsumerState<PilgrimageListScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
             ),
           ),

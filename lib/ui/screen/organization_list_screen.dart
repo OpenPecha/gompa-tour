@@ -212,7 +212,7 @@ class _OrganizationListScreenState
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                 ),
@@ -285,7 +285,7 @@ class _OrganizationListScreenState
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.7),
+                                .withValues(alpha: 0.7),
                           ),
                         )
                       : Icon(
@@ -293,7 +293,7 @@ class _OrganizationListScreenState
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                 ),
               ),
@@ -310,7 +310,7 @@ class _OrganizationListScreenState
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                 ),
@@ -390,7 +390,7 @@ class _OrganizationListScreenState
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.7),
+                                .withValues(alpha: 0.7),
                           ),
                         )
                       : Icon(
@@ -398,7 +398,7 @@ class _OrganizationListScreenState
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                 ),
               ),

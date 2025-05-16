@@ -51,7 +51,7 @@ class Style {
     // Divider
     dividerColor: const Color(0xFFcbd5e1), // slate-300
     // Used for shadows and in this project also borders of cards
-    shadowColor: Colors.black.withOpacity(.1),
+    shadowColor: Colors.black.withValues(alpha: 0.1),
     // Specific text styles and fonts
     textTheme: _getTextTheme(Brightness.light,
         fontFamily: 'Nunito',
@@ -96,7 +96,7 @@ class Style {
     // Divider
     dividerColor: const Color(0xFF52525b), // zinc-600
     // Used for shadows and in this project also borders of cards
-    shadowColor: Colors.white.withOpacity(.1),
+    shadowColor: Colors.white.withValues(alpha: 0.1),
     // Specific text styles and fonts
     textTheme: _getTextTheme(Brightness.dark,
         fontFamily: 'Nunito',
@@ -146,7 +146,6 @@ class Style {
   static ThemeData getTibetanTheme({
     required ThemeData baseTheme,
   }) {
-    return getThemeWithFont(
-        baseTheme: baseTheme, fontFamily: 'MonlamTibetan');
+    return getThemeWithFont(baseTheme: baseTheme, fontFamily: 'MonlamTibetan');
   }
 }
