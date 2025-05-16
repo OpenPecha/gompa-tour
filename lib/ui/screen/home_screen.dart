@@ -106,13 +106,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _buildHeader(context),
         _buildSearchBar(context),
         const Divider(),
-        isLoading
-            ? Center(child: CircularProgressIndicator())
-            : _buildCategoryCards(context,
-                totalStatue: totalStatue,
-                totalGonpa: totalGonpa,
-                totalFestival: totalFestival,
-                totalPilgrimSite: totalPilgrimSite),
+        if (isLoading)
+          const Center(child: CircularProgressIndicator())
+        else
+          _buildCategoryCards(context,
+              totalStatue: totalStatue,
+              totalGonpa: totalGonpa,
+              totalFestival: totalFestival,
+              totalPilgrimSite: totalPilgrimSite),
         _buildSearchResults(context, searchState),
       ],
     );
@@ -211,13 +212,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       required int totalGonpa,
       required int totalFestival,
       required int totalPilgrimSite}) {
+    // Get the keyboard visibility status
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return _searchController.text.isEmpty
-        ? Padding(
-            padding: EdgeInsets.all(8),
+        ? Expanded(
             child: GridView.count(
               crossAxisCount: 2,
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.all(8),
+              physics: isKeyboardVisible
+                  ? const BouncingScrollPhysics()
+                  : const NeverScrollableScrollPhysics(),
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               childAspectRatio: 0.8,
