@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gompa_tour/states/festival_state.dart';
 import 'package:gompa_tour/states/gonpa_state.dart';
+import 'package:gompa_tour/states/pilgrim_site_state.dart';
 import 'package:gompa_tour/states/statue_state.dart';
 import 'package:gompa_tour/ui/screen/deities_detail_screen.dart';
 import 'package:gompa_tour/ui/screen/festival_detail_screen.dart';
 import 'package:gompa_tour/ui/screen/organization_detail_screen.dart';
+import 'package:gompa_tour/ui/screen/pilgrimage_detail_screen.dart';
 import 'package:gompa_tour/util/qr_extractor.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -123,11 +125,10 @@ class _QrScreenState extends ConsumerState<QrScreen> {
         _fetchOrganizationDetails(qrCodeValidator.idValue!);
         return;
       case QrType.festival:
-        _fetchEventDetails(qrCodeValidator.idValue!);
+        _fetchFestivalDetails(qrCodeValidator.idValue!);
       case QrType.site:
-        showGonpaSnackBar(context, 'Site not found');
-        Navigator.pop(context);
-        _resetScanner();
+        // showGonpaSnackBar(context, 'Site not found');
+        _fetchSiteDetails(qrCodeValidator.idValue!);
         break;
       default:
         showGonpaSnackBar(context, 'Invalid QR Code');
@@ -193,6 +194,62 @@ class _QrScreenState extends ConsumerState<QrScreen> {
     }
   }
 
+  Future<void> _fetchFestivalDetails(String id) async {
+    try {
+      final festival = await ref
+          .read(festivalNotifierProvider.notifier)
+          .fetchFestivalById(id);
+
+      // Dismiss loading dialog
+      Navigator.of(context).pop();
+
+      if (festival != null) {
+        // Update selected deity and navigate
+        ref.read(selectedFestivalProvider.notifier).state = festival;
+        context.push(FestivalDetailScreen.routeName).then((_) {
+          _resetScanner();
+        });
+      } else {
+        showGonpaSnackBar(context, 'Festival not found');
+        _resetScanner();
+      }
+    } catch (e) {
+      // Dismiss loading dialog
+      Navigator.of(context).pop();
+
+      showGonpaSnackBar(context, 'Error fetching festival details');
+      _resetScanner();
+    }
+  }
+
+  _fetchSiteDetails(String id) async {
+    try {
+      final site = await ref
+          .read(pilgrimSiteNotifierProvider.notifier)
+          .fetchPilgrimSiteById(id);
+
+      // Dismiss loading dialog
+      Navigator.of(context).pop();
+
+      if (site != null) {
+        // Update selected deity and navigate
+        ref.read(selectedPilgrimSiteProvider.notifier).state = site;
+        context.push(PilgrimageDetailScreen.routeName).then((_) {
+          _resetScanner();
+        });
+      } else {
+        showGonpaSnackBar(context, 'Site not found');
+        _resetScanner();
+      }
+    } catch (e) {
+      // Dismiss loading dialog
+      Navigator.of(context).pop();
+
+      showGonpaSnackBar(context, 'Error fetching site details');
+      _resetScanner();
+    }
+  }
+
   void _resetScanner() {
     setState(() => isDetecting = false);
     controller.start();
@@ -202,32 +259,5 @@ class _QrScreenState extends ConsumerState<QrScreen> {
   void dispose() {
     controller.dispose();
     super.dispose();
-  }
-
-  Future<void> _fetchEventDetails(String id) async {
-    try {
-      final event = null;
-      await ref.read(festivalNotifierProvider.notifier).fetchFestivalById(id);
-
-      // Dismiss loading dialog
-      Navigator.of(context).pop();
-
-      if (event != null) {
-        // Update selected deity and navigate
-        ref.read(selectedFestivalProvider.notifier).state = event;
-        context.push(FestivalDetailScreen.routeName).then((_) {
-          _resetScanner();
-        });
-      } else {
-        showGonpaSnackBar(context, 'Event not found');
-        _resetScanner();
-      }
-    } catch (e) {
-      // Dismiss loading dialog
-      Navigator.of(context).pop();
-
-      showGonpaSnackBar(context, 'Error fetching Event details');
-      _resetScanner();
-    }
   }
 }

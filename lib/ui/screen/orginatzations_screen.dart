@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gompa_tour/models/gonpa.dart';
 import 'package:gompa_tour/states/gonpa_state.dart';
@@ -65,41 +66,39 @@ class _OrginatzationsScreenState extends ConsumerState<OrginatzationsScreen> {
     };
   }
 
-  final bgimagelink = [
-    {
-      'nyingma':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732078167GP205668.jpg",
-      'kagyu':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731493541GP205597.jpg",
-      'sakya':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732251070GP205684.jpg",
-      'gelug':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731488192GP205592.jpg",
-      'bhon':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731914731GP205645.jpg",
-      'jonang':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1731559304GP205604.jpg",
-      'other':
-          "https://gompa-tour.s3.ap-south-1.amazonaws.com/media/images/1732603251GP205716.jpg",
-    }
-  ];
+  final bgimagelink = {
+    'nyingma':
+        "${dotenv.env['IMAGE_BASE_URL'] ?? ''}/media/images/1732078167GP205668.jpg",
+    'kagyu':
+        "${dotenv.env['IMAGE_BASE_URL'] ?? ''}/media/images/1731493541GP205597.jpg",
+    'sakya':
+        "${dotenv.env['IMAGE_BASE_URL'] ?? ''}/media/images/1732251070GP205684.jpg",
+    'gelug':
+        "${dotenv.env['IMAGE_BASE_URL'] ?? ''}/media/images/1731488192GP205592.jpg",
+    'bhon':
+        "${dotenv.env['IMAGE_BASE_URL'] ?? ''}/media/images/1731914731GP205645.jpg",
+    'jonang':
+        "${dotenv.env['IMAGE_BASE_URL'] ?? ''}/media/images/1731559304GP205604.jpg",
+    'other':
+        "${dotenv.env['IMAGE_BASE_URL'] ?? ''}/media/images/1732603251GP205716.jpg",
+  };
 
   String getSectImage(String sect) {
     switch (sect) {
       case "NYINGMA":
-        return bgimagelink[0]['nyingma'].toString();
+        return bgimagelink['nyingma']!;
       case "KAGYU":
-        return bgimagelink[0]['kagyu'].toString();
+        return bgimagelink['kagyu']!;
       case "SAKYA":
-        return bgimagelink[0]['sakya'].toString();
+        return bgimagelink['sakya']!;
       case "GELUG":
-        return bgimagelink[0]['gelug'].toString();
+        return bgimagelink['gelug']!;
       case "BHON":
-        return bgimagelink[0]['bhon'].toString();
+        return bgimagelink['bhon']!;
       case "JONANG":
-        return bgimagelink[0]['jonang'].toString();
+        return bgimagelink['jonang']!;
       case "OTHER":
-        return bgimagelink[0]['other'].toString();
+        return bgimagelink['other']!;
       default:
         return "media/1710929961IMG20220622104550.jpg";
     }

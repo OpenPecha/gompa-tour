@@ -192,6 +192,16 @@ class PilgrimSiteNotifier extends StateNotifier<PilgrimSiteState> {
     }
   }
 
+  // get pilgrimSite by id
+  Future<PilgrimSite?> fetchPilgrimSiteById(String id) async {
+    try {
+      final pilgrimSite = await apiRepository.getById(id);
+      return pilgrimSite;
+    } catch (e) {
+      return null;
+    }
+  }
+
   void clearSearchResults() {
     state = PilgrimSiteState.initial();
   }
